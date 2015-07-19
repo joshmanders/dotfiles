@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+
+# dis kills install
+set -eo pipefail
+
+# NO GUTS NO GLORY!!1!!!ONE!!1ELEVEN
+source no_guts_no_glory.sh
+
+# Welcome!
+welcome
+
+# Ask for the sudo upfront
+can_i_has_sudo
+
+# Install Homebrew
+install_homebrew
+
+# Install Brew Packages
+brew_packages
+
+# Install Brew Cask Applications
+cask_applications
+
+# Install Atom Packages
+atom_packages
+
+# Install NPM Packages
+npm_packages
+
+# Clear all ~ files
+remove_files
+
+# Symlink all ~ files
+symlink_files
+
+# Finished!
+thank_youuuuu

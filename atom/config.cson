@@ -1,0 +1,41 @@
+"*":
+  "exception-reporting":
+    userId: "4c0a8964-75e3-df56-9b62-cd8d0b555513"
+  welcome:
+    showOnStartup: false
+  core:
+    themes: [
+      "one-dark-ui"
+      "seti-syntax"
+    ]
+    audioBeep: false
+    ignoredNames: [
+      ".git"
+      ".vagrant"
+      ".DS_Store"
+      "node_modules"
+      "bower_components"
+    ]
+    projectHome: "~/Projects"
+  editor:
+    invisibles: {}
+    softWrapAtPreferredLineLength: true
+    fontSize: 15
+    lineHeight: 1.6
+  "one-dark-ui":
+    layoutMode: "Compact"
+  "atom-terminal-panel":
+    XExperimentEnableForceLinking: true
+  minimap: {}
+  "terminal-panel": {}
+  docblockr: {}
+  linter:
+    underlineIssues: false
+    showErrorPanel: false
+    showErrorTabFile: false
+    showErrorTabProject: false
+  "linter-js-standard":
+    checkStyleDevDependencies: true
+  "sync-settings":
+    personalAccessToken: "d5a5c8984f8e241663ab948e75af543d28b8fee3"
+    gistId: "7af28eebcc8369e4ea5e"

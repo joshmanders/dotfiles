@@ -1,0 +1,39 @@
+[user]
+  name = Josh Manders
+  email = josh@joshmanders.com
+[push]
+  default = simple
+[alias]
+  save = "!git add -A && git commit -m"
+  ls = "log --pretty=format:'%C(yellow)%h %C(cyan)%ad%C(red)%d %C(reset)%s%C(green) [%cn]' --decorate --date=short"
+  lsv = "log --pretty=format:'%C(yellow)%h %C(cyan)%ad%C(red)%d %C(reset)%s%C(green) [%cn]' --decorate --date=short --numstat"
+  pr = "!f() { git fetch ${2-origin} pull/$1/head:pr-$1 && git checkout pr-$1; }; f"
+  stale = "for-each-ref --sort=-committerdate --format='%(committerdate:relative)%09%(refname:short)' refs/heads"
+  tree = "log --all --graph --decorate --oneline"
+  ignore = "!f() { git update-index --assume-unchanged $1; }; f"
+  delete = "!f() { git rm --cached $1; }; f"
+  restore = "!f() { git checkout $2 -- $1; }; f"
+  update = "!f() { branch=$(git symbolic-ref HEAD 2>/dev/null | cut -d"/" -f 3); default=${1-develop}; git checkout $default && git pull ${2-origin} && git fetch --prune && git checkout $branch && git merge --no-ff $default; }; f"
+  upstream = "!f() { branch=$(git symbolic-ref HEAD 2>/dev/null | cut -d"/" -f 3); default=${1-origin}; git push --set-upstream $default $branch; }; f"
+  tidy = "!git remote prune origin 2>/dev/null; echo \"$(git branch -vv | grep origin | tr '[]*?+' ' ')\" | egrep -v \"$(git branch -r | awk '{print $1}')\" | awk '{print $1}' | xargs git branch -d 2>/dev/null"
+  sync = "!f() { branch=${1-develop}; git fetch; git checkout $branch && git pull ${2-origin} $branch && git tidy; }; f"
+  feature = "!f() { name=`echo $* | sed 's/ /-/g'`; git checkout -b "feature-$name"; }; f"
+  bug = "!f() { name=`echo $* | sed 's/ /-/g'`; git checkout -b "bug-$name"; }; f"
+  hotfix = "!f() { name=`echo $* | sed 's/ /-/g'`; git checkout -b "hotfix-$name"; }; f"
+  jira = "!f() { auth=josh:JoshMandrs63; issue=$*; jira=`curl --silent https://threadmeup.atlassian.net/rest/api/2/issue/$* -G -u $auth | python -c 'import json,sys,re;obj=json.load(sys.stdin);print re.sub(\"[^0-9a-zA-Z\\s]+\", \"\", \" \".join(obj[\"fields\"][\"summary\"].lower().split()[0:8]))'`; branch=`echo $jira | sed 's/ /-/g'`; git checkout -b "$issue-$branch"; }; f"
+  trello = "!f() { trello=`curl --silent https://api.trello.com/1/cards/$*/url -G -d 'key=062fa507860bbd0e3e60e4d777828063&token=adfa38f60a3c7b2d130ea38a98a0bdf476beb0168f2fdbc2e15d84118e7db1dc' | python -c 'import json,sys;obj=json.load(sys.stdin);print obj[\"_value\"].split(\"/\")[5]'`; git checkout -b "$trello"; }; f"
+  grep = "!git ls-files | grep -i"
+  undo = "!f() { git reset --hard HEAD~${1-'1'}; }; f"
+  abort = "!f() { branch=$(git symbolic-ref HEAD 2>/dev/null | cut -d"/" -f 3); if [[ -z "$1" ]]; then git reset --hard HEAD; else if [ $1 = '-d' ]; then git checkout ${2-develop} && git branch -D $branch; fi fi }; f"
+  conflicts = "diff --name-only --diff-filter=U"
+  amend = "commit --amend"
+[filter "media"]
+	clean = git-media-clean %f
+	smudge = git-media-smudge %f
+[core]
+	editor = atom
+	excludesfile = ~/Dropbox/.files/gitignore
+[http]
+	sslVerify = false
+[init]
+	templatedir = ~/Dropbox/.files/git

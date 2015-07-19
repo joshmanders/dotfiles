@@ -1,0 +1,144 @@
+# Your snippets
+#
+# Atom snippets allow you to enter a simple prefix in the editor and hit tab to
+# expand the prefix into a larger code block with templated values.
+#
+# You can create a new snippet in this file by typing "snip" and then hitting
+# tab.
+#
+# An example CoffeeScript snippet to expand log to console.log:
+#
+# '.source.coffee':
+#   'Console log':
+#     'prefix': 'log'
+#     'body': 'console.log $1'
+#
+# This file uses CoffeeScript Object Notation (CSON).
+# If you are unfamiliar with CSON, you can read more about it here:
+# https://github.com/bevry/cson#what-is-cson
+
+'.js':
+  'Kratos Application':
+    'prefix': 'kratos:app',
+    'body': 'var app = require(\'kratos\')${1}'
+  'Require':
+    'prefix': 'require'
+    'body': 'var ${1} = require(\'${2}\')${3}'
+  'Gulp Task':
+    'prefix': 'gulp:task'
+    'body': """
+    gulp.task(\'${1:default}\', ${2:false}, function (${3:done}) {
+      ${4://task code here.}
+    })
+    """
+  'Gulp Watch':
+    'prefix': 'gulp:watch'
+    'body': 'gulp.watch(\`$1\`, [\`$2\`$3])'
+  'Gulp Default':
+    'prefix': 'gulp.task(\'default\', [\'$1\'$3])'
+  'Angular Module':
+    'prefix': 'ng:module'
+    'body': 'var app = angular.module(\'$1\', [$2])'
+  'Angular Factory':
+    'prefix': 'ng:factory'
+    'body': """
+    app.factory('$1', function ($2) {
+      $3
+    })
+    """
+  'Angular Filter':
+    'prefix': 'ng:filter'
+    'body': """
+    app.filter('$1', function ($2) {
+      return function (input, $3) {
+        $4
+      }
+    })
+    """
+  'Angular Service':
+    'prefix': 'ng:service'
+    'body': """
+    app.service('$1', function ($2) {
+      $3
+    })
+    """
+  'Angular Directive':
+    'prefix': 'ng:directive'
+    'body': """
+    app.directive('$1', function ($2) {
+      $3
+      return function (scope, element, attrs) {
+        $4
+      }
+    })
+    """
+  'Angular $http':
+    'prefix': 'ng:$http'
+    'body': """
+    $http({method: '${1:GET}', url: '$2'})
+    .success(function (data, status, headers, config) {
+      $3
+    })
+    .error(function (data, status, headers, config) {
+      $4
+    })
+    """
+  'Angular Copy':
+    'prefix': 'ng:copy'
+    'body': 'angular.copy(${1:source}${2:, ${3:destination}})'
+  'Angular Element':
+    'prefix': 'ng:element'
+    'body': 'angular.element(${1:element})'
+  'Angular Equals':
+    'prefix': 'ng:equals'
+    'body': 'angular.equals(${1:object}, ${2:object2})'
+  'Angular Extend':
+    'prefix': 'ng:extend'
+    'body': 'angular.extend(${1:destination}, ${2:source})'
+  'Angular isArray':
+    'prefix': 'ng:isarray'
+    'body': 'angular.isArray(${1:value})'
+  'Angular isDefined':
+    'prefix': 'ng:isdefined'
+    'body': 'angular.isDefined(${1:value})'
+  'Angular isFunction':
+    'prefix': 'ng:isfunction'
+    'body': 'angular.isFunction(${1:value})'
+  'Angular isNumber':
+    'prefix': 'ng:isnumber'
+    'body': 'angular.isNumber(${1:value})'
+  'Angular isObject':
+    'prefix': 'ng:isobject'
+    'body': 'angular.isObject(${1:value})'
+  'Angular isString':
+    'prefix': 'ng:isstring'
+    'body': 'angular.isString(${1:value})'
+  'Angular Lowercase':
+    'prefix': 'ng:lowercase'
+    'body': 'angular.lowercase(${1:value})'
+  'Angular Uppercase':
+    'prefix': 'ng:uppercase'
+    'body': 'angular.uppercase(${1:value})'
+'.html':
+  'HTML5 Doc':
+    'prefix': 'html5'
+    'body': """
+    <!DOCTYPE html>
+    <html lang="en"${1}>
+      <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>${2:Untitled Document}</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+      </head>
+      <body>
+        ${3}
+      </body>
+    </html>
+    """
+  'Angular Plural':
+    'prefix': 'ng:plural'
+    'body': '<ng-pluralize count="$1" when="$2"${3: offset="$4"}></ng-pluralize>'
+  'Angular Switch':
+    'prefix': 'ng:switch'
+    'body': '<ng-switch on="$1">$2</ng-switch>'
