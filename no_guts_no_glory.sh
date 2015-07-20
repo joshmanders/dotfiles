@@ -47,6 +47,8 @@ function install_homebrew () {
   notify "Installing Homebrew"
   sleep 1
   # ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)" 1&2>/dev/null
+  brew tap homebrew/dupes
+  brew tap homebrew/versions
   success "Installed" "Homebrew"
   sleep 1
   linebreak
