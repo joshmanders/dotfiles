@@ -27,12 +27,13 @@
   abort = "!f() { branch=$(git symbolic-ref HEAD 2>/dev/null | cut -d"/" -f 3); if [[ -z "$1" ]]; then git reset --hard HEAD; else if [ $1 = '-d' ]; then git checkout ${2-develop} && git branch -D $branch; fi fi }; f"
   conflicts = "diff --name-only --diff-filter=U"
   amend = "commit --amend"
+  contributors = shortlog --summary --numbered
 [filter "media"]
 	clean = git-media-clean %f
 	smudge = git-media-smudge %f
 [core]
 	editor = atom
-	excludesfile = ~/Dropbox/.files/gitignore
+	excludesfile = ~/.gitignore
 [http]
 	sslVerify = false
 [init]
