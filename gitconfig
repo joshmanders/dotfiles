@@ -37,4 +37,4 @@
 [http]
 	sslVerify = false
 [init]
-	templatedir = ~/Dropbox/.files/git
+	templatedir = ~/.files/git
