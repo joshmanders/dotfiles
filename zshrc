@@ -18,7 +18,7 @@ HISTSIZE=10000
 SAVEHIST=8500
 
 # Is antigen installed?
-if [ ! -d "$HOME/antigen" ]; then
+if [ ! -d "$HOME/.antigen" ]; then
   # Nope! Install it.
   git clone https://github.com/zsh-users/antigen.git $HOME/.antigen
 fi
