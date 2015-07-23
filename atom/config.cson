@@ -39,3 +39,5 @@
   "sync-settings":
     personalAccessToken: "d5a5c8984f8e241663ab948e75af543d28b8fee3"
     gistId: "7af28eebcc8369e4ea5e"
+  "standard-formatter":
+    checkStyleDevDependencies: true
