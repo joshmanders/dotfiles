@@ -20,7 +20,6 @@
   feature = "!f() { name=`echo $* | sed 's/ /-/g'`; git checkout -b "feature-$name"; }; f"
   bug = "!f() { name=`echo $* | sed 's/ /-/g'`; git checkout -b "bug-$name"; }; f"
   hotfix = "!f() { name=`echo $* | sed 's/ /-/g'`; git checkout -b "hotfix-$name"; }; f"
-  jira = "!f() { auth=josh:JoshMandrs63; issue=$*; jira=`curl --silent https://threadmeup.atlassian.net/rest/api/2/issue/$* -G -u $auth | python -c 'import json,sys,re;obj=json.load(sys.stdin);print re.sub(\"[^0-9a-zA-Z\\s]+\", \"\", \" \".join(obj[\"fields\"][\"summary\"].lower().split()[0:8]))'`; branch=`echo $jira | sed 's/ /-/g'`; git checkout -b "$issue-$branch"; }; f"
   trello = "!f() { trello=`curl --silent https://api.trello.com/1/cards/$*/url -G -d 'key=062fa507860bbd0e3e60e4d777828063&token=adfa38f60a3c7b2d130ea38a98a0bdf476beb0168f2fdbc2e15d84118e7db1dc' | python -c 'import json,sys;obj=json.load(sys.stdin);print obj[\"_value\"].split(\"/\")[5]'`; git checkout -b "$trello"; }; f"
   grep = "!git ls-files | grep -i"
   undo = "!f() { git reset --hard HEAD~${1-'1'}; }; f"
