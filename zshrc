@@ -56,6 +56,9 @@ setopt nocorrectall
 # Typing `edit .` is easier than anything else.
 alias edit="$EDITOR"
 
+# Hack to auto expand aliases in sudo.
+alias sudo="sudo "
+
 # Because sometimes you gotta be harsh.
 alias fucking="sudo"
 
