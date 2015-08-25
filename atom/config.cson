@@ -17,6 +17,7 @@
       "bower_components"
     ]
     projectHome: "~/Projects"
+    destroyEmptyPanes: false
   editor:
     invisibles: {}
     softWrapAtPreferredLineLength: true
@@ -27,7 +28,8 @@
   "atom-terminal-panel":
     XExperimentEnableForceLinking: true
   minimap: {}
-  "terminal-panel": {}
+  "terminal-panel":
+    overrideLs: false
   docblockr: {}
   linter:
     underlineIssues: false
@@ -36,6 +38,8 @@
     showErrorTabProject: false
   "linter-js-standard":
     checkStyleDevDependencies: true
+    honorStyleSettings: true
+    showEslintRules: true
   "sync-settings":
     personalAccessToken: "d5a5c8984f8e241663ab948e75af543d28b8fee3"
     gistId: "7af28eebcc8369e4ea5e"
