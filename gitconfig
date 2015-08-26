@@ -4,7 +4,7 @@
 [push]
   default = simple
 [alias]
-  save = "!git add -A && git commit -m"
+  save = "!f() { if [ \"$#\" -eq 1 ]; then git add -A && git commit -m \"$1\"; else git add $1 && git commit -m \"$2\"; fi }; f"
   ls = "log --pretty=format:'%C(yellow)%h %C(cyan)%ad%C(red)%d %C(reset)%s%C(green) [%cn]' --decorate --date=short"
   lsv = "log --pretty=format:'%C(yellow)%h %C(cyan)%ad%C(red)%d %C(reset)%s%C(green) [%cn]' --decorate --date=short --numstat"
   pr = "!f() { git fetch ${2-origin} pull/$1/head:pr-$1 && git checkout pr-$1; }; f"
@@ -20,7 +20,6 @@
   feature = "!f() { name=`echo $* | sed 's/ /-/g'`; git checkout -b "feature-$name"; }; f"
   bug = "!f() { name=`echo $* | sed 's/ /-/g'`; git checkout -b "bug-$name"; }; f"
   hotfix = "!f() { name=`echo $* | sed 's/ /-/g'`; git checkout -b "hotfix-$name"; }; f"
-  trello = "!f() { trello=`curl --silent https://api.trello.com/1/cards/$*/url -G -d 'key=062fa507860bbd0e3e60e4d777828063&token=adfa38f60a3c7b2d130ea38a98a0bdf476beb0168f2fdbc2e15d84118e7db1dc' | python -c 'import json,sys;obj=json.load(sys.stdin);print obj[\"_value\"].split(\"/\")[5]'`; git checkout -b "$trello"; }; f"
   grep = "!git ls-files | grep -i"
   undo = "!f() { git reset --hard HEAD~${1-'1'}; }; f"
   abort = "!f() { branch=$(git symbolic-ref HEAD 2>/dev/null | cut -d"/" -f 3); if [[ -z "$1" ]]; then git reset --hard HEAD; else if [ $1 = '-d' ]; then git checkout ${2-develop} && git branch -D $branch; fi fi }; f"
@@ -31,7 +30,7 @@
 	clean = git-media-clean %f
 	smudge = git-media-smudge %f
 [core]
-	editor = atom
+	editor = atom --wait
 	excludesfile = ~/.gitignore
 [http]
 	sslVerify = false
