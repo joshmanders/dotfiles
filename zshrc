@@ -77,6 +77,8 @@ alias cleanupDS="find . -type f -name '*.DS_Store' -ls -delete"
 # Clean up multiple launch services.
 alias cleanupLS="/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -kill -r -domain local -domain system -domain user && killall Finder"
 
+# Clean up terminal log files.
+alias cleanupLogs="sudo rm -f /private/var/log/asl/*.asl"
 # Get my IP Address
 function ip() {
   echo "IP Address: $(curl -s ip.appspot.com)"
