@@ -18,12 +18,15 @@
 # https://github.com/bevry/cson#what-is-cson
 
 '.js':
+
   'Kratos Application':
     'prefix': 'kratos:app',
     'body': 'var app = require(\'kratos\')${1}'
+
   'Require':
     'prefix': 'require'
     'body': 'var ${1} = require(\'${2}\')${3}'
+
   'Gulp Task':
     'prefix': 'gulp:task'
     'body': """
@@ -31,14 +34,18 @@
       ${4://task code here.}
     })
     """
+
   'Gulp Watch':
     'prefix': 'gulp:watch'
     'body': 'gulp.watch(\`$1\`, [\`$2\`$3])'
+
   'Gulp Default':
     'prefix': 'gulp.task(\'default\', [\'$1\'$3])'
+
   'Angular Module':
     'prefix': 'ng:module'
     'body': 'var app = angular.module(\'$1\', [$2])'
+
   'Angular Factory':
     'prefix': 'ng:factory'
     'body': """
@@ -46,6 +53,7 @@
       $3
     })
     """
+
   'Angular Filter':
     'prefix': 'ng:filter'
     'body': """
@@ -55,6 +63,7 @@
       }
     })
     """
+
   'Angular Service':
     'prefix': 'ng:service'
     'body': """
@@ -62,6 +71,7 @@
       $3
     })
     """
+
   'Angular Directive':
     'prefix': 'ng:directive'
     'body': """
@@ -72,6 +82,7 @@
       }
     })
     """
+
   'Angular $http':
     'prefix': 'ng:$http'
     'body': """
@@ -83,43 +94,57 @@
       $4
     })
     """
+
   'Angular Copy':
     'prefix': 'ng:copy'
     'body': 'angular.copy(${1:source}${2:, ${3:destination}})'
+
   'Angular Element':
     'prefix': 'ng:element'
     'body': 'angular.element(${1:element})'
+
   'Angular Equals':
     'prefix': 'ng:equals'
     'body': 'angular.equals(${1:object}, ${2:object2})'
+
   'Angular Extend':
     'prefix': 'ng:extend'
     'body': 'angular.extend(${1:destination}, ${2:source})'
+
   'Angular isArray':
     'prefix': 'ng:isarray'
     'body': 'angular.isArray(${1:value})'
+
   'Angular isDefined':
     'prefix': 'ng:isdefined'
     'body': 'angular.isDefined(${1:value})'
+
   'Angular isFunction':
     'prefix': 'ng:isfunction'
     'body': 'angular.isFunction(${1:value})'
+
   'Angular isNumber':
     'prefix': 'ng:isnumber'
     'body': 'angular.isNumber(${1:value})'
+
   'Angular isObject':
     'prefix': 'ng:isobject'
     'body': 'angular.isObject(${1:value})'
+
   'Angular isString':
     'prefix': 'ng:isstring'
     'body': 'angular.isString(${1:value})'
+
   'Angular Lowercase':
     'prefix': 'ng:lowercase'
     'body': 'angular.lowercase(${1:value})'
+
   'Angular Uppercase':
     'prefix': 'ng:uppercase'
     'body': 'angular.uppercase(${1:value})'
+
 '.html':
+
   'HTML5 Doc':
     'prefix': 'html5'
     'body': """
@@ -136,9 +161,192 @@
       </body>
     </html>
     """
+
   'Angular Plural':
     'prefix': 'ng:plural'
     'body': '<ng-pluralize count="$1" when="$2"${3: offset="$4"}></ng-pluralize>'
+
   'Angular Switch':
     'prefix': 'ng:switch'
     'body': '<ng-switch on="$1">$2</ng-switch>'
+
+'.source.jade':
+
+    # html elements snippets
+
+    'a.class(href="#", title="title")':
+        'prefix': 'a'
+        'body': '''
+            a${1:.class}(href='${2:#}', title="${3:title}", ${4:attr}) ${5:link}
+            $6
+        '''
+
+    'img.class(href="#", title="title")':
+        'prefix': 'image'
+        'body': '''
+            img${1:.class}(src='${2:source}', title="${3:title}", alt="${4:alt}", ${5:attr})
+            $5
+        '''
+
+    'img.class(href="#", title="title")':
+        'prefix': 'figure'
+        'body': '''
+            figure
+                img${1:.class}(src='${2:source}', title="${3:title}", alt="${4:alt}", ${5:attr})
+                figcaption $6
+        '''
+
+    'Lorem ipsum dolor sit amet':
+        'prefix': 'ipsum'
+        'body': '''
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+            $1
+        '''
+
+    # filters snippets
+
+    ':markdown':
+        'prefix': 'markdown'
+        'body': '''
+            :markdown
+                ${1:# Markdown}
+                $2
+        '''
+
+    ':coffee-script':
+        'prefix': 'coffee'
+        'body': '''
+            :coffee-script
+                ${1:console.log 'This is coffee script'}
+                $2
+        '''
+
+    # html templates snippets
+
+    'doctype html':
+        'prefix': 'doctype'
+        'body': '''
+            doctype html
+            $1
+        '''
+
+    'html':
+        'prefix': 'html'
+        'body': '''
+            doctype html
+            html(lang='${1:en}')
+                head
+                    title $1
+                body
+                    $2
+        '''
+
+    'html5 template':
+        'prefix': 'html5'
+        'body': '''
+            doctype html
+            html(lang='${1:en}')
+                head
+                    title ${2:Untitled Document}
+                    meta(charset='utf-8')
+                    meta(name='viewport', content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no')
+                    meta(name='description', content='${3:description}')
+                    meta(name='keywords', content='${4:keywords}')
+                    meta(name='author', content='${5:author}')
+                    meta(name="robots", content="index, follow")
+                    link(rel='icon' href='images/favicon.png' type='image/x-icon')
+                    link(rel='stylesheet', href='app.css')
+                body
+                    $6
+                    script(type='text/javascript', src='app.js')
+        '''
+
+    # script snippets
+
+    'script(type="text/javascript", src="js/main.js")':
+        'prefix': 'script.source'
+        'body': '''
+            script(type='${1:text/javascript}', src='${2:js/main.js}', ${3:attr})
+            $4
+        '''
+
+    'script.':
+        'prefix': 'script.inline'
+        'body': '''
+            script.
+                $1
+        '''
+
+    'script include':
+        'prefix': 'script.include'
+        'body': '''
+            script
+                include ${1:script.js}
+        '''
+
+    # style snippets
+
+    'link(rel="stylesheet", href="css/style.css")':
+        'prefix': 'link'
+        'body': '''
+            link(rel='${1:stylesheet}', href='${2:css/style.css}', ${3:attr})
+            $4
+        '''
+
+    'style.':
+        'prefix': 'style.inline'
+        'body': '''
+            style.
+                $1
+        '''
+
+    'style include':
+        'prefix': 'style.include'
+        'body': '''
+            style
+                include ${1:style.css}
+        '''
+
+    # jade syntax snippets
+
+    'each val in [ 1, 2 ]':
+        'prefix': 'each'
+        'body': '''
+            - each ${1:val} in ${2:[ bla ]}
+                ${4:div= ${1:val}}
+        '''
+
+    'for( var i = 0; i <= 0; i++ )':
+        'prefix': 'for'
+        'body': '''
+            - for( var ${1:i} = ${2:0}; ${1:i} ${3:<= 0}; ${1:i}${4:++} )
+                ${5:div= ${1:val}}
+        '''
+
+    'extends ./templates/layout.jade':
+        'prefix': 'extends'
+        'body': '''
+            extends ${1:${2:./template}/${3:file}.${4:jade}}
+            $5
+        '''
+
+    'include ./includes/file.jade':
+        'prefix': 'include'
+        'body': '''
+            include ${1:${2:./includes}/${3:file}.${4:jade}}
+            $5
+        '''
+
+    '- var name = value':
+        'prefix': 'var'
+        'body': '''
+            - var ${1:name} = ${2:value}
+            $3
+        '''
+
+    'block blockname':
+        'prefix': 'block'
+        'body': '''
+            block ${1:blockname}
+            $2
+        '''
