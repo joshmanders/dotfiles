@@ -1,4 +1,5 @@
 android-sdk
+archey
 asciinema
 autoconf
 automake
@@ -29,10 +30,12 @@ pcre
 pinentry
 pkg-config
 readline
+spark
 texi2html
 unixodbc
 unrar
 wget
+whereami
 x264
 xvid
 xz
