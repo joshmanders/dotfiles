@@ -1,0 +1,14 @@
+# Typing `edit .` is easier than anything else.
+# But we want special conditions, such as our dotfiles.
+function edit () {
+  if [ $1 = "dotfiles" ]; then
+    $EDITOR "$DOTFILES"
+  else
+    $EDITOR "$1"
+  fi
+}
+
+# All executable paths.
+function paths () {
+  echo ${PATH//:/\\n}
+}

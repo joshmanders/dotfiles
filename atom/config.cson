@@ -6,7 +6,7 @@
   core:
     themes: [
       "one-dark-ui"
-      "seti-syntax"
+      "smyck"
     ]
     audioBeep: false
     ignoredNames: [
@@ -17,12 +17,12 @@
       "bower_components"
     ]
     projectHome: "~/Projects"
-    destroyEmptyPanes: false
   editor:
     invisibles: {}
     softWrapAtPreferredLineLength: true
     fontSize: 16
     lineHeight: 1.6
+    softWrap: true
   "one-dark-ui":
     layoutMode: "Compact"
   "atom-terminal-panel":

@@ -14,8 +14,8 @@ export PATH=`cat /etc/paths | tr "\\n" ":" | sed 's/:$//'`
 export ANDROID_HOME=/usr/local/opt/android-sdk
 
 # For historical purposes.
-HISTSIZE=10000
-SAVEHIST=8500
+export HISTSIZE=10000
+export SAVEHIST=8500
 
 # Is antigen installed?
 if [ ! -d "$HOME/.antigen" ]; then
@@ -53,44 +53,8 @@ antigen apply
 # Not sure what this is, yet.
 setopt nocorrectall
 
-# Typing `edit .` is easier than anything else.
-alias edit="$EDITOR"
+# Load aliases.
+source $DOTFILES/aliases
 
-# Hack to auto expand aliases in sudo.
-alias sudo="sudo "
-
-# Because sometimes you gotta be harsh.
-alias fucking="sudo"
-
-# And sometimes you gotta be nice.
-alias please="sudo"
-
-# Edit my dotfiles!
-alias dotfiles="edit $DOTFILES"
-
-# Flush out the DNS cache.
-alias flushDNS="dscacheutil -flushcache"
-
-# Clean up pesky .DS_Store all over.
-alias cleanupDS="find . -type f -name '*.DS_Store' -ls -delete"
-
-# Clean up multiple launch services.
-alias cleanupLS="/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -kill -r -domain local -domain system -domain user && killall Finder"
-
-# Clean up terminal log files.
-alias cleanupLogs="sudo rm -f /private/var/log/asl/*.asl"
-# Get my IP Address
-function ip() {
-  echo "IP Address: $(curl -s ip.appspot.com)"
-}
-
-# Reload this file
-function reload() {
-  echo "Reloading .zshrc"
-  source $HOME/.zshrc
-}
-
-# All executable paths
-function paths() {
-  echo -e ${PATH//:/\\n}
-}
+# Load functions.
+source $DOTFILES/functions

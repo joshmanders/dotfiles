@@ -1,0 +1,23 @@
+# Hack to auto expand aliases in sudo.
+alias sudo="sudo "
+
+# Because sometimes you gotta be harsh.
+alias fucking="sudo"
+
+# And sometimes you gotta be nice.
+alias please="sudo"
+
+# Flush out the DNS cache.
+alias flushDNS="dscacheutil -flushcache"
+
+# Clean up pesky .DS_Store all over.
+alias cleanupDS="find . -type f -name '*.DS_Store' -ls -delete"
+
+# Clean up multiple launch services.
+alias cleanupLS="/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -kill -r -domain local -domain system -domain user && killall Finder"
+
+# Clean up terminal log files.
+alias cleanupLogs="sudo rm -f /private/var/log/asl/*.asl"
+
+# Get my IP Address
+alias ip="curl -s ip.appspot.com; echo"
