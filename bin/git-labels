@@ -1,0 +1,178 @@
+#! /usr/bin/env bash
+
+source _git-common.sh
+
+function main () {
+  local repo=$(origin_url)
+  local cmd="${1:-help}"
+  shift
+
+  case $cmd in
+    help) help;;
+    list) list_labels "${repo}";;
+    create) create_label "${repo}" "${1}" "${2}";;
+    clear) clear_labels "${repo}";;
+    setup) setup_labels "${repo}";;
+    reset) reset_labels "${repo}";;
+  esac
+}
+
+function help () {
+  local script=$(script_name "${0}")
+cat << EOD
+  Usage: ${script} <command> [param1, param2, ...]
+
+  Commands:
+    list      List all labels.
+    create    Create a new label.
+    clear     Clear all labels.
+    setup     Clear and setup kanban labels.
+    reset     Reset to default labels.
+    help      Show this messsage.
+
+  Examples:
+    $ ${script} create review
+    $ ${script} create review ffcc00
+
+EOD
+exit 0
+}
+
+function gh_get_labels () {
+  local repo="${1}"
+  echo $(gh_http_get "repos/${repo}/labels")
+}
+
+function gh_create_label () {
+  local repo="${1}"
+  local name="${2}"
+  local color="${3}"
+  echo -n $(gh_http_post "repos/${repo}/labels" '{ "name": "'"${name}"'", "color": "'"${color}"'" }')
+}
+
+function gh_delete_label () {
+  local repo="${1}"
+  local name="${2}"
+  echo -n $(gh_http_delete "repos/${repo}/labels/${name}")
+}
+
+function list_labels () {
+  local repo="${1}"
+  local res=$(gh_get_labels "${repo}")
+  declare -a "labels=($(echo "${res}" | jq '.[].name'))"
+  declare -a "colors=($(echo "${res}" | jq '.[].color'))"
+  echo "Labels for ${repo}:"
+for ((i=0; i < ${#labels[@]}; i++)); do
+    echo "- ${labels[$i]} (#${colors[$i]})"
+  done
+  echo ""
+}
+
+function create_label () {
+  local repo="${1}"
+  local name="${2}"
+  local color="${3:-ededed}"
+  if [ "$#" -lt 1 ]; then
+    echo "Label creation requires a label name."
+    echo "Example:"
+    echo "  $ git labels my-label"
+    echo ""
+    exit 1
+  else
+    gh_create_label "${repo}" "${name}" "${color}" 2>&1 >/dev/null
+    echo "Label created."
+    exit 0
+  fi
+}
+
+function clear_labels () {
+  local repo="${1}"
+  echo -n "WARNING: Do you want to delete all labels on ${repo}? [N/y]: "
+  read do_continue
+  if [ "${do_continue:-n}" == 'n' ]; then
+    echo "Canceling..."
+    exit 1
+  else
+    declare -a "labels=($(gh_get_labels "$repo" | jq '.[].name'))"
+    for ((i=0; i < ${#labels[@]}; i++)); do
+      gh_delete_label "$repo" "${labels[$i]// /%20}"
+      echo "Deleted ${labels[$i]} label."
+    done
+    exit 0
+  fi
+}
+
+function setup_labels () {
+  local repo="${1}"
+  echo "Clearing current labels."
+  echo "---"
+  sleep 1
+  declare -a "labels=($(gh_get_labels "$repo" | jq '.[].name'))"
+  for ((i=0; i < ${#labels[@]}; i++)); do
+    gh_delete_label "$repo" "${labels[$i]// /%20}"
+    echo "Deleted ${labels[$i]} label."
+  done
+  echo "---"
+  sleep 1
+  echo "Setting up labels for ${repo}."
+  echo "---"
+  sleep 1
+  echo "Creating board labels."
+  gh_create_label "${repo}" "board:backlog" "d4c5f9" 2>&1 >/dev/null
+  gh_create_label "${repo}" "board:todo" "d4c5f9" 2>&1 >/dev/null
+  gh_create_label "${repo}" "board:in-progress" "d4c5f9" 2>&1 >/dev/null
+  gh_create_label "${repo}" "board:in-review" "d4c5f9" 2>&1 >/dev/null
+  echo "Creating estimate labels."
+  gh_create_label "${repo}" "estimate:easy(hour)" "ededed" 2>&1 >/dev/null
+  gh_create_label "${repo}" "estimate:medium(day)" "ededed" 2>&1 >/dev/null
+  gh_create_label "${repo}" "estimate:hard(week)" "ededed" 2>&1 >/dev/null
+  echo "Creating spent labels."
+  gh_create_label "${repo}" "spent:easy(hour)" "d5d5d5" 2>&1 >/dev/null
+  gh_create_label "${repo}" "spent:medium(day)" "d5d5d5" 2>&1 >/dev/null
+  gh_create_label "${repo}" "spent:hard(week)" "d5d5d5" 2>&1 >/dev/null
+  echo "Creating type labels."
+  gh_create_label "${repo}" "type:bug" "fef2c0" 2>&1 >/dev/null
+  gh_create_label "${repo}" "type:hotfix" "fef2c0" 2>&1 >/dev/null
+  gh_create_label "${repo}" "type:feature" "fef2c0" 2>&1 >/dev/null
+  gh_create_label "${repo}" "type:chore" "fef2c0" 2>&1 >/dev/null
+  gh_create_label "${repo}" "type:refactor" "fef2c0" 2>&1 >/dev/null
+  echo "Creating miscellaneous labels."
+  gh_create_label "${repo}" "Discussion" "009800" 2>&1 >/dev/null
+  gh_create_label "${repo}" "Duplicate" "006b75" 2>&1 >/dev/null
+  gh_create_label "${repo}" "Help Wanted" "5319e7" 2>&1 >/dev/null
+  gh_create_label "${repo}" "Question" "fbca04" 2>&1 >/dev/null
+  gh_create_label "${repo}" "Wont Fix" "e11d21" 2>&1 >/dev/null
+}
+
+function reset_labels () {
+  local repo="${repo}"
+  echo "Clearing current labels."
+  echo "---"
+  sleep 1
+  declare -a "labels=($(gh_get_labels "$repo" | jq '.[].name'))"
+  for ((i=0; i < ${#labels[@]}; i++)); do
+    gh_delete_label "$repo" "${labels[$i]// /%20}"
+    echo "Deleted ${labels[$i]} label."
+  done
+  echo "---"
+  sleep 1
+  echo "Resetting labels on ${repo}."
+  echo "---"
+  sleep 1
+  echo "creating bug label."
+  gh_create_label "${repo}" "bug" "fc2929" 2>&1 >/dev/null
+  echo "creating duplicate label."
+  gh_create_label "${repo}" "duplicate" "cccccc" 2>&1 >/dev/null
+  echo "creating enhancement label."
+  gh_create_label "${repo}" "enhancement" "84b6eb" 2>&1 >/dev/null
+  echo "creating help wanted label."
+  gh_create_label "${repo}" "help wanted" "159818" 2>&1 >/dev/null
+  echo "creating invalid label."
+  gh_create_label "${repo}" "invalid" "e6e6e6" 2>&1 >/dev/null
+  echo "creating question label."
+  gh_create_label "${repo}" "question" "cc317c" 2>&1 >/dev/null
+  echo "creating wontfix label."
+  gh_create_label "${repo}" "wontfix" "ffffff" 2>&1 >/dev/null
+}
+
+main "$@"

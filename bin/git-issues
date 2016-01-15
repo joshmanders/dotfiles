@@ -1,0 +1,55 @@
+#! /usr/bin/env bash
+
+source _git-common.sh
+
+function main () {
+  local repo=$(origin_url)
+  local cmd="${1:-help}"
+  shift
+
+  case $cmd in
+    help) help;;
+    list) list_issues "${repo}";;
+    open) open_issue "${repo}" "${1}";;
+  esac
+}
+
+function help () {
+  local script=$(script_name "${0}")
+cat << EOD
+  Usage: ${script} <command> [param1, param2, ...]
+
+  Commands:
+    help      Show this messsage.
+    list      List all open issues.
+    open      Open issue in browser.
+
+  Examples:
+    $ ${script} list
+    $ ${script} open 1
+
+EOD
+exit 0
+}
+
+function list_issues () {
+  local repo="${1}"
+  local issues=$(gh_http_get "repos/${repo}/issues?state=open" | jq -r 'map(. | {id: .number, title: .title})')
+  declare -a "ids=($(echo -n "${issues}" | jq -r '.[].id'))"
+  declare -a "titles=($(echo -n "${issues}" | jq '.[].title'))"
+  echo "Issues for ${repo}:"
+  for ((i=0; i < ${#ids[@]}; i++)); do
+    echo "- #${ids[$i]}: ${titles[$i]}"
+  done
+  echo ""
+}
+
+function open_issue () {
+  local repo="${1}"
+  local id="${2}"
+  local url="https://github.com/${repo}/issues/${id}"
+  open "${url}"
+  echo "Opened ${url} in your browser."
+}
+
+main "$@"

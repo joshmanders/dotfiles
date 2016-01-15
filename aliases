@@ -19,5 +19,14 @@ alias cleanupLS="/System/Library/Frameworks/CoreServices.framework/Frameworks/La
 # Clean up terminal log files.
 alias cleanupLogs="sudo rm -f /private/var/log/asl/*.asl"
 
-# Get my IP Address
+# Get my IP Address.
 alias ip="curl -s ip.appspot.com; echo"
+
+# Typing `brew cask` repeatedly gets old.
+alias cask="brew cask"
+
+# Run remote commands over ssh.
+alias remote="ssh $1 -T $2"
+
+# Docker is a joy.
+alias docker="docker --tlsverify=false"

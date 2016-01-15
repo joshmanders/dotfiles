@@ -1,14 +1,39 @@
 "*":
-  "exception-reporting":
-    userId: "4c0a8964-75e3-df56-9b62-cd8d0b555513"
-  welcome:
-    showOnStartup: false
+  Zen:
+    showWordCount: "Right"
+    width: 160
+  "atom-terminal-panel":
+    XExperimentEnableForceLinking: true
+  "auto-update-packages":
+    intervalMinutes: 60
+  "bottom-dock": {}
   core:
-    themes: [
-      "one-dark-ui"
-      "smyck"
-    ]
     audioBeep: false
+    disabledPackages: [
+      "metrics"
+      "wrap-guide"
+      "autosave"
+      "archive-view"
+      "autoflow"
+      "background-tips"
+      "bookmarks"
+      "exception-reporting"
+      "language-c"
+      "language-clojure"
+      "language-csharp"
+      "language-java"
+      "language-mustache"
+      "language-objective-c"
+      "language-perl"
+      "language-todo"
+      "language-toml"
+      "link"
+      "open-on-github"
+      "package-generator"
+      "release-notes"
+      "welcome"
+      "symbols-view"
+    ]
     ignoredNames: [
       ".git"
       ".vagrant"
@@ -16,32 +41,47 @@
       "node_modules"
       "bower_components"
     ]
-    projectHome: "~/Projects"
-  editor:
-    invisibles: {}
-    softWrapAtPreferredLineLength: true
-    fontSize: 16
-    lineHeight: 1.6
-    softWrap: true
-  "one-dark-ui":
-    layoutMode: "Compact"
-  "atom-terminal-panel":
-    XExperimentEnableForceLinking: true
-  minimap: {}
-  "terminal-panel":
-    overrideLs: false
+    packagesWithKeymapsDisabled: [
+      "one-dark-ui"
+      "symbols-view"
+    ]
+    projectHome: "~"
+    themes: [
+      "one-dark-ui"
+      "base16-tomorrow-dark-theme"
+    ]
   docblockr: {}
+  editor:
+    fontSize: 15
+    invisibles: {}
+    lineHeight: 1.6
+    tabType: "soft"
+  "exception-reporting":
+    userId: "4c0a8964-75e3-df56-9b62-cd8d0b555513"
   linter:
-    underlineIssues: false
-    showErrorPanel: false
+    showErrorInline: false
     showErrorTabFile: false
     showErrorTabProject: false
+    statusIconScope: "File"
+    underlineIssues: false
   "linter-js-standard":
     checkStyleDevDependencies: true
     honorStyleSettings: true
     showEslintRules: true
-  "sync-settings":
-    personalAccessToken: "d5a5c8984f8e241663ab948e75af543d28b8fee3"
-    gistId: "7af28eebcc8369e4ea5e"
+  "markdown-preview":
+    useGitHubStyle: true
+  minimap: {}
+  "one-dark-ui": {}
+  "one-light-ui": {}
+  react:
+    enabledForAllJavascriptFiles: true
   "standard-formatter":
     checkStyleDevDependencies: true
+  "sync-settings":
+    gistId: "7af28eebcc8369e4ea5e"
+    personalAccessToken: "d5a5c8984f8e241663ab948e75af543d28b8fee3"
+  "terminal-panel":
+    overrideLs: false
+  "tree-view": {}
+  welcome:
+    showOnStartup: false

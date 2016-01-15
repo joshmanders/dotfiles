@@ -3,3 +3,16 @@ ServerAliveInterval 60
 Host 192.168.*.*
   StrictHostKeyChecking no
   UserKnownHostsFile /dev/null
+
+Host weblog.sh
+  Hostname weblog.sh
+  User josh
+  Port 2222
+
+Host joshmanders.com
+  HostName 159.203.112.203
+  User core
+
+Host europa.printerdash.com
+  HostName 107.170.148.64
+  User josh

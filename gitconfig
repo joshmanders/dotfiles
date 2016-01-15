@@ -4,10 +4,8 @@
 [push]
   default = simple
 [alias]
-  save = "!f() { if [ \"$#\" -eq 1 ]; then git add -A && git commit -m \"$1\"; else git add $1 && git commit -m \"$2\"; fi }; f"
   ls = "log --pretty=format:'%C(yellow)%h %C(cyan)%ad%C(red)%d %C(reset)%s%C(green) [%cn]' --decorate --date=short"
   lsv = "log --pretty=format:'%C(yellow)%h %C(cyan)%ad%C(red)%d %C(reset)%s%C(green) [%cn]' --decorate --date=short --numstat"
-  pr = "!f() { git fetch ${2-origin} pull/$1/head:pr-$1 && git checkout pr-$1; }; f"
   stale = "for-each-ref --sort=-committerdate --format='%(committerdate:relative)%09%(refname:short)' refs/heads"
   tree = "log --all --graph --decorate --oneline"
   ignore = "!f() { git update-index --assume-unchanged $1; }; f"
@@ -36,3 +34,6 @@
 	sslVerify = false
 [init]
 	templatedir = ~/.files/git
+[github]
+	user = joshmanders
+	token = b2e8d133464d2569f0051a1fe27d1f07e57b07bc

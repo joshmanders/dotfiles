@@ -19,18 +19,14 @@
 
 '.js':
 
-  'Kratos Application':
-    'prefix': 'kratos:app',
-    'body': 'var app = require(\'kratos\')${1}'
-
-  'Require':
-    'prefix': 'require'
-    'body': 'var ${1} = require(\'${2}\')${3}'
+  'Import':
+    'prefix': 'import'
+    'body': 'import ${1} from \'${2}\'${3}'
 
   'Gulp Task':
     'prefix': 'gulp:task'
     'body': """
-    gulp.task(\'${1:default}\', ${2:false}, function (${3:done}) {
+    gulp.task(\'${1:default}\', ${2:false}, (${3:done}) => {
       ${4://task code here.}
     })
     """
@@ -44,12 +40,12 @@
 
   'Angular Module':
     'prefix': 'ng:module'
-    'body': 'var app = angular.module(\'$1\', [$2])'
+    'body': 'const app = angular.module(\'$1\', [$2])'
 
   'Angular Factory':
     'prefix': 'ng:factory'
     'body': """
-    app.factory('$1', function ($2) {
+    app.factory('$1', ($2) => {
       $3
     })
     """
@@ -57,8 +53,8 @@
   'Angular Filter':
     'prefix': 'ng:filter'
     'body': """
-    app.filter('$1', function ($2) {
-      return function (input, $3) {
+    app.filter('$1', ($2) => {
+      return (input, $3) => {
         $4
       }
     })
@@ -67,7 +63,7 @@
   'Angular Service':
     'prefix': 'ng:service'
     'body': """
-    app.service('$1', function ($2) {
+    app.service('$1', ($2) => {
       $3
     })
     """
@@ -75,9 +71,9 @@
   'Angular Directive':
     'prefix': 'ng:directive'
     'body': """
-    app.directive('$1', function ($2) {
+    app.directive('$1', ($2) => {
       $3
-      return function (scope, element, attrs) {
+      return (scope, element, attrs) => {
         $4
       }
     })
@@ -86,11 +82,14 @@
   'Angular $http':
     'prefix': 'ng:$http'
     'body': """
-    $http({method: '${1:GET}', url: '$2'})
-    .success(function (data, status, headers, config) {
+    $http({
+      method: '${1:GET}',
+      url: '$2'
+    })
+    .success((data, status, headers, config) => {
       $3
     })
-    .error(function (data, status, headers, config) {
+    .error((data, status, headers, config) => {
       $4
     })
     """
@@ -177,134 +176,98 @@
     'a.class(href="#", title="title")':
         'prefix': 'a'
         'body': '''
-            a${1:.class}(href='${2:#}', title="${3:title}", ${4:attr}) ${5:link}
-            $6
+          a${1:.class}(href="${2:#}", title="${3:title}", ${4:attr}) ${5:link}
+          $6
         '''
 
     'img.class(href="#", title="title")':
-        'prefix': 'image'
+        'prefix': 'img'
         'body': '''
-            img${1:.class}(src='${2:source}', title="${3:title}", alt="${4:alt}", ${5:attr})
-            $5
+          img${1:.class}(src="${2:source}", title="${3:title}", alt="${4:alt}", ${5:attr})
+          $5
         '''
 
     'img.class(href="#", title="title")':
         'prefix': 'figure'
         'body': '''
-            figure
-                img${1:.class}(src='${2:source}', title="${3:title}", alt="${4:alt}", ${5:attr})
-                figcaption $6
+          figure
+            img${1:.class}(src="${2:source}", title="${3:title}", alt="${4:alt}", ${5:attr})
+            figcaption $6
         '''
 
     'Lorem ipsum dolor sit amet':
         'prefix': 'ipsum'
         'body': '''
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-            $1
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+          $1
         '''
 
     # filters snippets
 
     ':markdown':
-        'prefix': 'markdown'
+        'prefix': 'md'
         'body': '''
-            :markdown
-                ${1:# Markdown}
-                $2
-        '''
-
-    ':coffee-script':
-        'prefix': 'coffee'
-        'body': '''
-            :coffee-script
-                ${1:console.log 'This is coffee script'}
-                $2
+          :markdown
+            ${1:# Markdown}
+            $2
         '''
 
     # html templates snippets
 
-    'doctype html':
-        'prefix': 'doctype'
-        'body': '''
-            doctype html
-            $1
-        '''
-
     'html':
         'prefix': 'html'
         'body': '''
-            doctype html
-            html(lang='${1:en}')
-                head
-                    title $1
-                body
-                    $2
+          doctype html
+          html(lang="${1:en}")
+            head
+              title $1
+              body
+                $2
         '''
 
     'html5 template':
         'prefix': 'html5'
         'body': '''
-            doctype html
-            html(lang='${1:en}')
-                head
-                    title ${2:Untitled Document}
-                    meta(charset='utf-8')
-                    meta(name='viewport', content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no')
-                    meta(name='description', content='${3:description}')
-                    meta(name='keywords', content='${4:keywords}')
-                    meta(name='author', content='${5:author}')
-                    meta(name="robots", content="index, follow")
-                    link(rel='icon' href='images/favicon.png' type='image/x-icon')
-                    link(rel='stylesheet', href='app.css')
-                body
-                    $6
-                    script(type='text/javascript', src='app.js')
+          doctype html
+          html(lang="${1:en}")
+            head
+              title ${2:Untitled Document}
+              meta(charset="utf-8")
+              meta(name="viewport", content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no")
+              meta(name="description", content="${3:description}")
+              meta(name="keywords", content="${4:keywords}")
+              meta(name="author", content="${5:author}")
+              meta(name="robots", content="index, follow")
+              link(rel="icon" href="/images/favicon.png" type="image/x-icon")
+                    link(rel="stylesheet", href="/app.css")
+            body
+              $6
+              script(src="/app.js")
         '''
 
     # script snippets
 
-    'script(type="text/javascript", src="js/main.js")':
-        'prefix': 'script.source'
+    'script':
+        'prefix': 'script'
         'body': '''
-            script(type='${1:text/javascript}', src='${2:js/main.js}', ${3:attr})
-            $4
+          script(src="${1:app.js}")
+          $3
         '''
 
     'script.':
-        'prefix': 'script.inline'
+        'prefix': 'inline'
         'body': '''
-            script.
-                $1
-        '''
-
-    'script include':
-        'prefix': 'script.include'
-        'body': '''
-            script
-                include ${1:script.js}
+          script.
+            $1
         '''
 
     # style snippets
 
-    'link(rel="stylesheet", href="css/style.css")':
+    'stylesheet':
         'prefix': 'link'
         'body': '''
-            link(rel='${1:stylesheet}', href='${2:css/style.css}', ${3:attr})
-            $4
-        '''
-
-    'style.':
-        'prefix': 'style.inline'
-        'body': '''
-            style.
-                $1
-        '''
-
-    'style include':
-        'prefix': 'style.include'
-        'body': '''
-            style
-                include ${1:style.css}
+          link(href="${1:app.css}")
+          $3
         '''
 
     # jade syntax snippets
@@ -312,41 +275,41 @@
     'each val in [ 1, 2 ]':
         'prefix': 'each'
         'body': '''
-            - each ${1:val} in ${2:[ bla ]}
-                ${4:div= ${1:val}}
+          - each ${1:val} in ${2:[ bla ]}
+            ${4:div= ${1:val}}
         '''
 
     'for( var i = 0; i <= 0; i++ )':
         'prefix': 'for'
         'body': '''
-            - for( var ${1:i} = ${2:0}; ${1:i} ${3:<= 0}; ${1:i}${4:++} )
-                ${5:div= ${1:val}}
+          - for( var ${1:i} = ${2:0}; ${1:i} ${3:<= 0}; ${1:i}${4:++} )
+            ${5:div= ${1:val}}
         '''
 
     'extends ./templates/layout.jade':
         'prefix': 'extends'
         'body': '''
-            extends ${1:${2:./template}/${3:file}.${4:jade}}
-            $5
+          extends ${1:${2:./template}/${3:file}.${4:jade}}
+          $5
         '''
 
     'include ./includes/file.jade':
         'prefix': 'include'
         'body': '''
-            include ${1:${2:./includes}/${3:file}.${4:jade}}
-            $5
+          include ${1:${2:./includes}/${3:file}.${4:jade}}
+          $5
         '''
 
     '- var name = value':
         'prefix': 'var'
         'body': '''
-            - var ${1:name} = ${2:value}
-            $3
+          - var ${1:name} = ${2:value}
+          $3
         '''
 
     'block blockname':
         'prefix': 'block'
         'body': '''
-            block ${1:blockname}
-            $2
+          block ${1:blockname}
+          $2
         '''
