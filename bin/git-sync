@@ -1,0 +1,12 @@
+#! /usr/bin/env bash
+
+function main () {
+  local branch="${1-master}"
+  local remote="${2-origin}"
+  git fetch
+  git checkout "${branch}"
+  git pull "${2-origin}" "${branch}"
+  git tidy
+}
+
+main "$@"

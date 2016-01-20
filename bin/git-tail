@@ -1,0 +1,7 @@
+#! /usr/bin/env bash
+
+function main () {
+  git for-each-ref --sort=-committerdate --format='%(committerdate:relative)%09%(refname:short)' refs/heads
+}
+
+main "$@"

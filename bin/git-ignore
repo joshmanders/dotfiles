@@ -1,0 +1,8 @@
+#! /usr/bin/env bash
+
+function main () {
+  local file="${1}"
+  git update-index --assume-unchanged "${file}";
+}
+
+main "$@"

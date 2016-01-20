@@ -1,0 +1,132 @@
+#! /usr/bin/env bash
+
+source _git-common.sh
+
+function main () {
+  local cache="${HOME}/.git-ideas"
+  local repo="joshmanders/ideas"
+  local cmd="${1:-help}"
+  shift
+
+  ensure_cache_exists "${cache}"
+
+  case $cmd in
+    help) help;;
+    list) list_ideas "${repo}";;
+    create) create_idea "${repo}" "${cache}" "${@}";;
+    edit) edit_idea "${repo}" "${cache}" "${1}";;
+  esac
+}
+
+function help () {
+  local script=$(script_name "${0}")
+cat << EOD
+  Usage: ${script} <command> [param1, param2, ...]
+
+  Commands:
+    help      Show this messsage.
+    list      List all open ideas.
+    create    Create a new idea.
+    edit      Edit an idea.
+
+  Examples:
+    $ ${script} list
+    $ ${script} edit 1
+
+EOD
+exit 0
+}
+
+function ensure_cache_exists () {
+  local cache="${1}"
+  if [ ! -d "${cache}" ]; then
+    mkdir "${cache}" 2>&1 >/dev/null
+  fi
+}
+
+function list_published_ideas () {
+  local repo="${1}"
+  local ideas=$(gh_http_get "repos/${repo}/issues?state=open&labels=published" | jq -r 'map(. | {id: .number, title: .title})')
+  declare -a "ids=($(echo -n "${ideas}" | jq -r '.[].id'))"
+  declare -a "titles=($(echo -n "${ideas}" | jq '.[].title'))"
+  echo "Published:"
+  for ((i=0; i < ${#ids[@]}; i++)); do
+    echo "- #${ids[$i]}: ${titles[$i]}"
+  done
+  echo ""
+}
+
+function list_draft_ideas () {
+  local repo="${1}"
+  local ideas=$(gh_http_get "repos/${repo}/issues?state=open&labels=draft" | jq -r 'map(. | {id: .number, title: .title})')
+  declare -a "ids=($(echo -n "${ideas}" | jq -r '.[].id'))"
+  declare -a "titles=($(echo -n "${ideas}" | jq '.[].title'))"
+  echo "Drafts:"
+  for ((i=0; i < ${#ids[@]}; i++)); do
+    echo "- #${ids[$i]}: ${titles[$i]}"
+  done
+  echo ""
+}
+
+function list_ideas () {
+  list_published_ideas "${1}"
+  list_draft_ideas "${1}"
+}
+
+function create_new_cache () {
+  local path="${1}"
+  local body="${2}"
+  echo "${body}" >> "${path}"
+}
+
+function delete_old_cache () {
+  local path="${1}"
+  if [ -f "${path}" ]; then
+    rm -r "${path}" 2>&1 >/dev/null
+  fi
+}
+
+function gh_create_idea () {
+  local repo="${1}"
+  local title="${3}"
+  local contents=$(cat "${2}")
+  local body=$(echo -e "${contents}" | perl -pe 's/\n/\\n/g')
+  echo "Created idea."
+  gh_http_post "repos/${repo}/issues" '{"title": "'"${title}"'", "body": "'"${body}"'", "labels": ["published"]}' 2>&1 >/dev/null
+}
+
+function create_idea () {
+  local repo="${1}"
+  local cache="${2}"
+  shift
+  shift
+  local title="${@}"
+  local path="${cache}/${title// /-}.md"
+  delete_old_cache "${path}"
+  create_new_cache "${path}" "Insert idea here."
+  "${EDITOR}" -w "${path}"
+  gh_create_idea "${repo}" "${path}" "${title}"
+}
+
+function gh_edit_idea () {
+  local repo="${1}"
+  local id="${2}"
+  local contents=$(cat "${3}")
+  local body=$(echo -e "${contents}" | perl -pe 's/\n/\\n/g')
+  echo "Updated idea."
+  gh_http_patch "repos/${repo}/issues/${id}" '{"body":"'"${body}"'"}' 2>&1 >/dev/null
+}
+
+function edit_idea () {
+  local repo="${1}"
+  local cache="${2}"
+  local id="${3}"
+  local path="${cache}/edit-${id}.md"
+  local body=$(gh_http_get "repos/${repo}/issues/${id}" | jq -r '.body')
+  delete_old_cache "${path}"
+  create_new_cache "${path}" "${body}"
+  "${EDITOR}" -w "${path}"
+  gh_edit_idea "${repo}" "${id}" "${path}"
+}
+
+main "$@"

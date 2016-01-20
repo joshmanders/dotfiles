@@ -1,0 +1,12 @@
+#! /usr/bin/env bash
+
+function main () {
+  local branch="${1-master}"
+  local current=$(git symbolic-ref HEAD 2>/dev/null | cut -d"/" -f 3)
+  git checkout $branch && git pull ${2-origin}
+  git fetch --prune
+  git checkout $current
+  git merge --no-ff $branch
+}
+
+main "$@"

@@ -11,6 +11,7 @@ function main () {
     help) help;;
     list) list_issues "${repo}";;
     open) open_issue "${repo}" "${1}";;
+    branch) create_branch "${repo}" "${1}";;
   esac
 }
 
@@ -23,6 +24,7 @@ cat << EOD
     help      Show this messsage.
     list      List all open issues.
     open      Open issue in browser.
+    branch    Create branch from issue.
 
   Examples:
     $ ${script} list
@@ -50,6 +52,26 @@ function open_issue () {
   local url="https://github.com/${repo}/issues/${id}"
   open "${url}"
   echo "Opened ${url} in your browser."
+}
+
+function create_branch () {
+  local repo="${1}"
+  local number="${2}"
+  local issue=$(gh_http_get "repos/${repo}/issues/${number}" | jq -r '{ id: .number, title: .title, labels: (.labels | map(.name)) }')
+  local title=$(echo "${issue}" | jq -r '"\(.id) \(.title)"' | tr '[:upper:]' '[:lower:]')
+  local is_bug=$(echo "${issue}" | jq -r 'select([.labels[] == "type:bug"] | any)')
+  local is_feature=$(echo "${issue}" | jq -r 'select([.labels[] == "type:feature"] | any)')
+  local is_hotfix=$(echo "${issue}" | jq -r 'select([.labels[] == "type:hotfix"] | any)')
+  if [ ! -z "${is_bug}" ]; then
+    git bug "${title}"
+  elif [ ! -z "${is_feature}" ]; then
+    git feature "${title}"
+  elif [ ! -z "${is_hotfix}" ]; then
+    git hotfix "${title}"
+  else
+    echo "Unable to match any of the following labels:"
+    echo "'type:bug', 'type:feature', 'type:hotfix'."
+  fi
 }
 
 main "$@"

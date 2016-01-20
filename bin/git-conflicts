@@ -1,0 +1,7 @@
+#! /usr/bin/env bash
+
+function main () {
+  git diff --name-only --diff-filter=U
+}
+
+main "$@"

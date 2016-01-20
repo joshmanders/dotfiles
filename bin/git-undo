@@ -1,0 +1,8 @@
+#! /usr/bin/env bash
+
+function main () {
+  local steps="${1-'1'}"
+  git reset --hard HEAD~${steps};
+}
+
+main "$@"

@@ -8,6 +8,10 @@ function git_config () {
   git config --get "${key}"
 }
 
+function json_escape () {
+  echo -n "$1" | python -c 'import json,sys; print json.dumps(sys.stdin.read())'
+}
+
 function origin_url () {
   local remote=$(git_config "remote.origin.url")
   local url=$(echo "${remote}" | awk -F'git@github.com:' '{print $2}' | cut -d" " -f1)

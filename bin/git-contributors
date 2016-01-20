@@ -1,0 +1,7 @@
+#! /usr/bin/env bash
+
+function main () {
+  git shortlog --summary --numbered
+}
+
+main "$@"

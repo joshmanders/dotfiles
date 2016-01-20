@@ -1,0 +1,8 @@
+#! /usr/bin/env bash
+
+function main () {
+  local name=$(echo $* | sed 's/ /-/g')
+  git checkout -b "feature/${name}"
+}
+
+main "$@"

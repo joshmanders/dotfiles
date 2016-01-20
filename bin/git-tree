@@ -1,0 +1,7 @@
+#! /usr/bin/env bash
+
+function main () {
+  git log --all --graph --decorate --oneline
+}
+
+main "$@"

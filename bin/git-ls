@@ -1,0 +1,7 @@
+#! /usr/bin/env bash
+
+function main () {
+  git log --pretty=format:'%C(yellow)%h %C(cyan)%ad%C(red)%d %C(reset)%s%C(green) [%cn]' --decorate --date=short
+}
+
+main "$@"

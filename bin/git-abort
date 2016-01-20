@@ -1,0 +1,7 @@
+#! /usr/bin/env bash
+
+function main () {
+  git reset --hard HEAD
+}
+
+main "$@"

@@ -1,0 +1,8 @@
+#! /usr/bin/env bash
+
+function main () {
+  local file="${1}"
+  git rm --cached "${1}";
+}
+
+main "$@"
