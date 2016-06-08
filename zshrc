@@ -11,17 +11,18 @@ export TZ=America/Chicago
 export PATH=`cat /etc/paths | tr "\\n" ":" | sed 's/:$//'`
 
 # Now lets add our own to $PATH.
-export PATH="${HOME}/.files/bin:${PATH}"
+export PATH="${DOTFILES}/bin:${PATH}"
 
 # Cask needs to keep all applications together.
 export HOMEBREW_CASK_OPTS="--appdir=/Applications"
 
 # Docker is life.
-export DOCKER_IP=192.168.99.100
-export DOCKER_PORT=2376
-export DOCKER_HOST=tcp://${DOCKER_IP}:${DOCKER_PORT}
-export DOCKER_CERT_PATH=${HOME}/.docker/machine/machines/default
-export DOCKER_TLS_VERIFY=1
+export DOCKER_MACHINE="default"
+if docker-machine status $DOCKER_MACHINE | grep "Running" &> /dev/null; then
+  eval "$(docker-machine env $DOCKER_MACHINE)"
+else
+  docker-machine start $DOCKER_MACHINE && eval "$(docker-machine env $DOCKER_MACHINE)"
+fi
 
 # Android Emulation.
 export ANDROID_HOME=/usr/local/opt/android-sdk
@@ -50,6 +51,7 @@ antigen theme joshmanders/zsh-theme
 antigen bundle git
 antigen bundle zsh-users/zsh-syntax-highlighting
 antigen bundle zsh-users/zsh-history-substring-search
+antigen bundle jocelynmallon/zshmarks
 
 # bind UP and DOWN arrow keys.
 zmodload zsh/terminfo

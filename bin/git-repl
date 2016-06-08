@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+
+## Source: https://raw.githubusercontent.com/tj/git-extras/master/bin/git-repl
+
+
+echo "Type 'exit' or 'quit' to close repl."
+while true; do
+  # Current branch
+  branch=$(git symbolic-ref HEAD 2> /dev/null | cut -d/ -f3-)
+
+  # Prompt
+  if test -n "${branch}"; then
+    prompt="git (${branch})> "
+  else
+    prompt="git> "
+  fi
+
+  # Readline
+  read -e -r -p "${prompt}" cmd
+
+  # EOF
+  test $? -ne 0 && break
+
+  # History
+  history -s "${cmd}"
+
+  # Built-in commands
+  case ${cmd} in
+    "") continue;;
+    quit|exit) break;;
+  esac
+
+  if [[ ${cmd} == !* ]]; then
+    eval ${cmd:1}
+  elif [[ ${cmd} == git* ]]; then
+    eval ${cmd}
+  else
+    eval git "${cmd}"
+  fi
+done
+
+echo

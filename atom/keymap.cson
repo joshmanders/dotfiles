@@ -30,3 +30,9 @@
 'atom-workspace, atom-workspace atom-text-editor':
   'cmd-M': 'markdown-preview:toggle',
   'cmd-r': 'tree-view:move'
+
+'body':
+  'cmd-k down': 'unset!',
+  'cmd-k up': 'unset!',
+  'cmd-k left': 'unset!',
+  'cmd-k right': 'unset!'

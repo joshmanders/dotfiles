@@ -1,0 +1,14 @@
+#! /usr/bin/env bash
+
+# Usage: git io URL [CODE]
+#
+# Turns a github.com URL
+#  into a git.io URL
+
+URL="$1"
+CODE="$2"
+
+SHORT_URL=$(curl -si https://git.io -F "url=${URL}" ${CODE:+-F "code=${CODE}"} | grep 'Location:' | sed 's/Location: //')
+
+echo "Copied URL to clipboard."
+echo "${SHORT_URL}" | pbcopy

@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+
+_docker () {
+  docker "${@}"
+}
+
+machine () {
+  shift
+  local args=("${@:1}")
+  docker-machine "${args[@]}"
+}
+
+compose () {
+  shift
+  local args=("${@:1}")
+  docker-compose "${args[@]}"
+}
+
+cleanup () {
+  case "$2" in
+    images)
+      _docker rmi $(_docker images -f "dangling=true" -q)
+    ;;
+    containers)
+      _docker ps -a | grep 'Exited' | awk '{print $1}' | _docker rm -f
+    ;;
+    *)
+      echo "Please provide an extra argument, either \`images\` or \`containers\`."
+    ;;
+  esac
+}
+
+main () {
+  local args=("$@")
+
+  case "$1" in
+    machine) machine "${args[@]}" ;;
+    compose) compose "${args[@]}" ;;
+    cleanup) cleanup "${args[@]}" ;;
+    *) _docker "${args[@]}" ;;
+  esac
+}
+
+main "$@"

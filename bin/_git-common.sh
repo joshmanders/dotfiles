@@ -24,7 +24,7 @@ function gh_http_request () {
   local method="${1}"
   local endpoint="${2}"
   local args="${3}"
-  local result=$(curl --silent --user "${user}:${token}" -A "GH Scripts by /joshmanders" -H "Accept: application/json" -X "${method}" "${args}" "https://api.github.com/${endpoint}")
+  local result=$(curl --silent --user "${user}:${token}" -A "GH Scripts by /joshmanders" -H "Accept: application/json" -X "${method}" "${args}" -L "https://api.github.com/${endpoint}")
   local error=$(echo -n "${result}" | jq -r 'select(.message?)')
   if [ "${error}" != "" ]; then
     echo "ERROR: $(echo -n "${error}" | jq -r '.message')"

@@ -9,6 +9,7 @@
   "bottom-dock": {}
   core:
     audioBeep: false
+    automaticallyUpdate: false
     disabledPackages: [
       "metrics"
       "wrap-guide"
@@ -25,14 +26,11 @@
       "language-mustache"
       "language-objective-c"
       "language-perl"
-      "language-todo"
       "language-toml"
-      "link"
       "open-on-github"
       "package-generator"
       "release-notes"
       "welcome"
-      "symbols-view"
     ]
     ignoredNames: [
       ".git"
@@ -47,29 +45,32 @@
     ]
     projectHome: "~"
     themes: [
-      "one-dark-ui"
-      "base16-tomorrow-dark-theme"
+      "dracula-ui"
+      "dracula-theme"
     ]
   docblockr: {}
   editor:
-    fontSize: 15
+    fontSize: 17
     invisibles: {}
-    lineHeight: 1.6
+    lineHeight: 2
     tabType: "soft"
   "exception-reporting":
     userId: "4c0a8964-75e3-df56-9b62-cd8d0b555513"
+  "flex-tool-bar": {}
+  "git-control": {}
   linter:
+    errorPanelHeight: 25
+    ignoreMatchedFiles: "dist/**/**"
     showErrorInline: false
-    showErrorTabFile: false
-    showErrorTabProject: false
-    statusIconScope: "File"
     underlineIssues: false
   "linter-js-standard":
     checkStyleDevDependencies: true
     honorStyleSettings: true
+    lintMarkdownFiles: true
     showEslintRules: true
   "markdown-preview":
     useGitHubStyle: true
+  "merge-conflicts": {}
   minimap: {}
   "one-dark-ui": {}
   "one-light-ui": {}
@@ -80,8 +81,20 @@
   "sync-settings":
     gistId: "7af28eebcc8369e4ea5e"
     personalAccessToken: "d5a5c8984f8e241663ab948e75af543d28b8fee3"
+  tabs:
+    showIcons: false
   "terminal-panel":
     overrideLs: false
+  "terminal-plus":
+    core: {}
+    style:
+      animationSpeed: 0
+      defaultPanelHeight: "150px"
+    toggles:
+      autoClose: true
+  "tool-bar":
+    iconSize: "16px"
+    position: "Left"
   "tree-view": {}
   welcome:
     showOnStartup: false

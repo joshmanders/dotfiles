@@ -1,0 +1,8 @@
+function main () {
+  local url=${GRAPHQL_URL:="api.printerdash.dev"}
+  local token=${GRAPHQL_AUTH_TOKEN:="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjU1OWMzMTYyLTAwNDctNDM0Yy04NmQxLTAxOTM2YzI2OTNkOCIsImlhdCI6MTQ2NDk5MDgzMn0.2bDake2_aIp8hOjX9AglohddP1pczw_AjNdGU9WYTpw"}
+  local query="${1}"
+  http post "${url}" "X-Auth-Token: ${token}" query="${query}" --body
+}
+
+main "$@"

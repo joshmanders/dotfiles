@@ -9,10 +9,10 @@ Host weblog.sh
   User josh
   Port 2222
 
-Host joshmanders.com
-  HostName 159.203.112.203
-  User core
+Host jarvis
+  HostName 104.236.46.121
+  User josh
 
-Host europa.printerdash.com
-  HostName 107.170.148.64
+Host nibbler
+  HostName 104.131.99.141
   User josh

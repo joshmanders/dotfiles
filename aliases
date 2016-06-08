@@ -11,7 +11,7 @@ alias please="sudo"
 alias flushDNS="dscacheutil -flushcache"
 
 # Clean up pesky .DS_Store all over.
-alias cleanupDS="find . -type f -name '*.DS_Store' -ls -delete"
+alias cleanupDS="find $HOME -type f -name '*.DS_Store' -ls -delete"
 
 # Clean up multiple launch services.
 alias cleanupLS="/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -kill -r -domain local -domain system -domain user && killall Finder"
@@ -28,5 +28,8 @@ alias cask="brew cask"
 # Run remote commands over ssh.
 alias remote="ssh $1 -T $2"
 
-# Docker is a joy.
-alias docker="docker --tlsverify=false"
+# npm-as, a better npm.
+alias npm="npm-as"
+
+# Use my docker. It's better. :)
+alias docker="my-docker"

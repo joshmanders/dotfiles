@@ -1,6 +1,7 @@
 [user]
   name = Josh Manders
   email = josh@joshmanders.com
+	signingkey = 5D24F182
 [push]
   default = simple
 [filter "media"]
@@ -15,4 +16,5 @@
 	templatedir = ~/.files/git
 [github]
 	user = joshmanders
-	token = YOUR_TOKEN_HERE
+[rerere]
+	enabled = true
