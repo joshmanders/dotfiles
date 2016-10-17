@@ -1,20 +1,29 @@
 [user]
-  name = Josh Manders
-  email = josh@joshmanders.com
+	name = Josh Manders
+	email = josh@joshmanders.com
 	signingkey = 5D24F182
 [push]
-  default = simple
+	default = simple
+	followTags = true
 [filter "media"]
 	clean = git-media-clean %f
 	smudge = git-media-smudge %f
 [core]
 	editor = atom --wait
 	excludesfile = ~/.gitignore
+	ignorecase = false
 [http]
 	sslVerify = false
 [init]
 	templatedir = ~/.files/git
 [github]
 	user = joshmanders
+	token = ece66a9d89e3b7d3129d3f52b9a86ef260808f19
 [rerere]
 	enabled = true
+[branch]
+	autosetuprebase = always
+[help]
+	autocorrect = 1
+[tag]
+	gpgsign = true

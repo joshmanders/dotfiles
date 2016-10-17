@@ -10,22 +10,36 @@ export TZ=America/Chicago
 # Consistent default $PATH, nawm sayn.
 export PATH=`cat /etc/paths | tr "\\n" ":" | sed 's/:$//'`
 
+# Go-lang PATH.
+export GOPATH="${HOME}/.go"
+
 # Now lets add our own to $PATH.
-export PATH="${DOTFILES}/bin:${PATH}"
+export PATH="${PATH}:/usr/local/sbin:${DOTFILES}/bin:${GOPATH}/bin:${HOME}/.yarn-cache/.global/node_modules/.bin"
 
 # Cask needs to keep all applications together.
 export HOMEBREW_CASK_OPTS="--appdir=/Applications"
 
 # Docker is life.
-export DOCKER_MACHINE="default"
-if docker-machine status $DOCKER_MACHINE | grep "Running" &> /dev/null; then
-  eval "$(docker-machine env $DOCKER_MACHINE)"
+# export DOCKER_MACHINE="default"
+# if docker-machine status $DOCKER_MACHINE | grep "Running" &> /dev/null; then
+#   eval "$(docker-machine env $DOCKER_MACHINE)"
+# else
+#   docker-machine start $DOCKER_MACHINE && eval "$(docker-machine env $DOCKER_MACHINE)"
+# fi
+
+# Automatic GPG signing.
+if [ -f ~/.gnupg/.gpg-agent-info ] && [ -n "$(pgrep gpg-agent)" ]; then
+    source ~/.gnupg/.gpg-agent-info
+    export GPG_AGENT_INFO
 else
-  docker-machine start $DOCKER_MACHINE && eval "$(docker-machine env $DOCKER_MACHINE)"
+    eval $(gpg-agent --daemon --write-env-file ~/.gnupg/.gpg-agent-info)
 fi
 
+# NPM, yo.
+export NPM_TOKEN=$(cat $HOME/.npm-as/default)
+
 # Android Emulation.
-export ANDROID_HOME=/usr/local/opt/android-sdk
+export ANDROID_HOME="$HOME/Library/Android/sdk"
 
 # For historical purposes.
 export HISTSIZE=10000
@@ -72,6 +86,3 @@ setopt nocorrectall
 
 # Load aliases.
 source ${DOTFILES}/aliases
-
-# Load functions.
-source ${DOTFILES}/functions

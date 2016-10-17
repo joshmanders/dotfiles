@@ -1,0 +1,18 @@
+#! /usr/bin/env bash
+
+function main () {
+  local files=("${@}")
+  local length=${#files[@]}
+  local message=${files[$(($length - 1))]}
+  unset files[${#files[@]}-1]
+
+  if [ ${#files[@]} -eq 0 ]; then
+    git add -A
+    git commit -m "${message}"
+  else
+    git add ${files[@]}
+    git commit -m "${message}"
+  fi
+}
+
+main "$@"

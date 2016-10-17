@@ -9,10 +9,10 @@ Host weblog.sh
   User josh
   Port 2222
 
-Host jarvis
+Host niftyco
   HostName 104.236.46.121
   User josh
 
-Host nibbler
+Host printerdash
   HostName 104.131.99.141
   User josh

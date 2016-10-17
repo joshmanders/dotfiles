@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+dotfiles () {
+  shift
+  local args=("$@")
+  "${EDITOR}" "${DOTFILES}/${args[@]}"
+}
+
+main () {
+  local args=("$@")
+
+  case "$1" in
+    dotfiles) dotfiles "${args[@]}" ;;
+    *) "${EDITOR}" "${args[@]}" ;;
+  esac
+}
+
+main "$@"

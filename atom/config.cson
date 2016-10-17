@@ -6,6 +6,9 @@
     XExperimentEnableForceLinking: true
   "auto-update-packages":
     intervalMinutes: 60
+  "autocomplete-plus":
+    backspaceTriggersAutocomplete: true
+    confirmCompletion: "tab"
   "bottom-dock": {}
   core:
     audioBeep: false
@@ -31,6 +34,7 @@
       "package-generator"
       "release-notes"
       "welcome"
+      "linter-js-standard-engine"
     ]
     ignoredNames: [
       ".git"
@@ -50,24 +54,26 @@
     ]
   docblockr: {}
   editor:
-    fontSize: 17
+    fontSize: 18
     invisibles: {}
     lineHeight: 2
     tabType: "soft"
   "exception-reporting":
     userId: "4c0a8964-75e3-df56-9b62-cd8d0b555513"
+  "file-icons":
+    coloured: false
+    forceShow: true
   "flex-tool-bar": {}
   "git-control": {}
   linter:
-    errorPanelHeight: 25
+    errorPanelHeight: 22
     ignoreMatchedFiles: "dist/**/**"
-    showErrorInline: false
     underlineIssues: false
   "linter-js-standard":
     checkStyleDevDependencies: true
     honorStyleSettings: true
-    lintMarkdownFiles: true
     showEslintRules: true
+    style: "@niftyco/standard"
   "markdown-preview":
     useGitHubStyle: true
   "merge-conflicts": {}
@@ -79,17 +85,35 @@
   "standard-formatter":
     checkStyleDevDependencies: true
   "sync-settings":
-    gistId: "7af28eebcc8369e4ea5e"
-    personalAccessToken: "d5a5c8984f8e241663ab948e75af543d28b8fee3"
+    _analyticsUserId: "2291dfdf-fddc-4e17-92e5-8bce1fb0378d"
+    _lastBackupHash: "e92e19a11ab740760439a78891bc40280804274e"
+    analytics: false
+    gistId: "192c4f9287cc1502d860624bfe14b042"
+    personalAccessToken: "9baa3154655c0bd10f6af79ff00d501268366fa1"
+    quietUpdateCheck: true
   tabs:
-    showIcons: false
+    addNewTabsAtEnd: true
+    enableVcsColoring: true
   "terminal-panel":
     overrideLs: false
   "terminal-plus":
-    core: {}
+    ansiColors:
+      normal:
+        blue: "#6272a4"
+        cyan: "#8ae9fd"
+        green: "#4efa7b"
+        magenta: "#ff79c6"
+        red: "#ff5655"
+        white: "#f8f8f2"
+        yellow: "#f1fb8c"
+    core:
+      mapTerminalsTo: "Folder"
+    iconColors:
+      purple: "#bd93f9"
     style:
       animationSpeed: 0
-      defaultPanelHeight: "150px"
+      defaultPanelHeight: "500px"
+      theme: "dracula"
     toggles:
       autoClose: true
   "tool-bar":
@@ -98,3 +122,5 @@
   "tree-view": {}
   welcome:
     showOnStartup: false
+  whitespace:
+    ignoreWhitespaceOnCurrentLine: false

@@ -1,3 +1,8 @@
+#!/usr/bin/env bash
+
+# Jump to dotfiles.
+alias dotfiles="cd ${DOTFILES}"
+
 # Hack to auto expand aliases in sudo.
 alias sudo="sudo "
 
@@ -7,29 +12,17 @@ alias fucking="sudo"
 # And sometimes you gotta be nice.
 alias please="sudo"
 
-# Flush out the DNS cache.
-alias flushDNS="dscacheutil -flushcache"
-
-# Clean up pesky .DS_Store all over.
-alias cleanupDS="find $HOME -type f -name '*.DS_Store' -ls -delete"
-
-# Clean up multiple launch services.
-alias cleanupLS="/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -kill -r -domain local -domain system -domain user && killall Finder"
-
-# Clean up terminal log files.
-alias cleanupLogs="sudo rm -f /private/var/log/asl/*.asl"
-
 # Get my IP Address.
 alias ip="curl -s ip.appspot.com; echo"
-
-# Typing `brew cask` repeatedly gets old.
-alias cask="brew cask"
 
 # Run remote commands over ssh.
 alias remote="ssh $1 -T $2"
 
-# npm-as, a better npm.
+# Use my npm. It's better. :)
 alias npm="npm-as"
 
 # Use my docker. It's better. :)
 alias docker="my-docker"
+
+# MacVim > terminal Vim.
+alias vim="mvim"

@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+
+readonly local caskroom="/usr/local/Caskroom"
+
+upgrade () {
+  casks=($(brew cask list))
+
+  for cask in ${casks[@]}; do
+    current="$(brew cask info ${cask} | sed -n '1p' | sed -n 's/^.*: \(.*\)$/\1/p')"
+    installed=($(ls ${caskroom}/${cask}))
+    if (! [[ " ${installed[@]} " == *" ${current} "* ]]); then
+      echo "Upgrading ${cask} to v${current}."
+      (set -x; brew cask install ${cask} --force; rm -rf ${caskroom}/${cask}/${installed[@]})
+    else
+      echo "${cask}@${current} already installed."
+    fi
+  done
+}
+
+
+main () {
+  local args=("$@")
+
+  case "$1" in
+    upgrade) upgrade "${args[@]}" ;;
+    *) brew cask "${args[@]}" ;;
+  esac
+}
+
+main "$@"

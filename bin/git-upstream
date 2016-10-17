@@ -2,8 +2,8 @@
 
 function main () {
   local remote="${1-origin}"
-  local current=$(git symbolic-ref HEAD 2>/dev/null | cut -d"/" -f 3)
-  git push --set-upstream $remote $branch
+  local branch=$(git rev-parse --abbrev-ref HEAD)
+  git push -u $remote $branch
 }
 
 main "$@"
