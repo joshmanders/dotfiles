@@ -14,7 +14,7 @@ export PATH=`cat /etc/paths | tr "\\n" ":" | sed 's/:$//'`
 export GOPATH="${HOME}/.go"
 
 # Now lets add our own to $PATH.
-export PATH="${PATH}:/usr/local/sbin:${DOTFILES}/bin:${GOPATH}/bin:${HOME}/.yarn-cache/.global/node_modules/.bin"
+export PATH="${PATH}:/usr/local/sbin:${DOTFILES}/bin:${GOPATH}/bin:${HOME}/.yarn-config/global/node_modules/.bin"
 
 # Cask needs to keep all applications together.
 export HOMEBREW_CASK_OPTS="--appdir=/Applications"
