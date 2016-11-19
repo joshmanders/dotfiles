@@ -59,7 +59,7 @@ COMPLETION_WAITING_DOTS="true"
 antigen use oh-my-zsh
 
 # Use my custom theme.
-antigen theme joshmanders/zsh-theme
+antigen theme https://gist.github.com/joshmanders/3d6a1fae12cafb52b9346c4ace705db9 joshmanders
 
 # Lets load up some bundles.
 antigen bundle git
