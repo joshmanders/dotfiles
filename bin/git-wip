@@ -1,8 +1,7 @@
 #! /usr/bin/env bash
 
 function main () {
-  git reset --hard HEAD
-  git clean -df
+  git stash save --include-untracked;
 }
 
 main "$@"

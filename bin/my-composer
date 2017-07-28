@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+run () {
+  shift
+  local args=("${@:1}")
+  composer run-script "${args[@]}"
+}
+
+test () {
+  shift
+  local args=("${@:1}")
+  vendor/bin/phpunit "${args[@]}"
+}
+
+main () {
+  local args=("$@")
+
+  case "$1" in
+    run) run "${args[@]}" ;;
+    test) test "${args[@]}" ;;
+    *) composer "${args[@]}" ;;
+  esac
+}
+
+main "$@"

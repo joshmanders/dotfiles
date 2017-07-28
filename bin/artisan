@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+main () {
+  local args=("$@")
+
+  if [ -f "$PWD/artisan" ]; then
+    php artisan "${args[@]}"
+  else
+    echo "Artisan not found."
+    exit 1
+  fi
+}
+
+main "$@"

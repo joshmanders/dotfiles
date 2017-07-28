@@ -27,3 +27,17 @@
 	autocorrect = 1
 [tag]
 	gpgsign = true
+[gpg]
+	program = gpg
+[commit]
+	gpgsign = false
+[clubhouse]
+	token = 58d42bbb-cc7c-4318-a2b3-2ebfcbb20b32
+[diff]
+  tool = icdiff
+[difftool]
+  prompt = false
+[difftool "icdiff"]
+  cmd = /usr/local/bin/icdiff --line-numbers $LOCAL $REMOTE
+[alias]
+	ch = clubhouse

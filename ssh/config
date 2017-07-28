@@ -4,6 +4,9 @@ Host 192.168.*.*
   StrictHostKeyChecking no
   UserKnownHostsFile /dev/null
 
+  Host *.dev
+    StrictHostKeyChecking no
+
 Host weblog.sh
   Hostname weblog.sh
   User josh

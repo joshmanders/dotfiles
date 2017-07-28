@@ -17,11 +17,29 @@ upgrade () {
   done
 }
 
+update () {
+  casks=($(brew cask list))
+  updates=""
+
+  echo "Fetching updates..."
+  for cask in ${casks[@]}; do
+    current="$(brew cask info ${cask} | sed -n '1p' | sed -n 's/^.*: \(.*\)$/\1/p')"
+    installed=($(ls ${caskroom}/${cask}))
+    if (! [[ " ${installed[@]} " == *" ${current} "* ]]); then
+      updates="${updates}, ${cask} ${current}"
+    fi
+  done
+
+  echo "Upgrading the following casks:"
+  echo "${updates}"
+}
+
 
 main () {
   local args=("$@")
 
   case "$1" in
+    update) update "${args[@]}" ;;
     upgrade) upgrade "${args[@]}" ;;
     *) brew cask "${args[@]}" ;;
   esac

@@ -9,12 +9,31 @@ export TZ=America/Chicago
 
 # Consistent default $PATH, nawm sayn.
 export PATH=`cat /etc/paths | tr "\\n" ":" | sed 's/:$//'`
+export PATH="/usr/local/sbin:${PATH}"
 
 # Go-lang PATH.
 export GOPATH="${HOME}/.go"
 
+# Yarn global bin prefix.
+export PREFIX="/usr/local"
+
+# Global Composer bin.
+export GLOBAL_COMPOSER_BIN="${HOME}/.composer/vendor/bin"
+
+# Local Node Modules bin.
+export LOCAL_NODE_MODULES_BIN="./node_modules/.bin"
+
+# Local Composer bin.
+export LOCAL_COMPOSER_BIN="./vendor/bin"
+
 # Now lets add our own to $PATH.
-export PATH="${PATH}:/usr/local/sbin:${DOTFILES}/bin:${GOPATH}/bin:${HOME}/.yarn-config/global/node_modules/.bin"
+export PATH="${PATH}:${GOPATH}"
+export PATH="${PATH}:${DOTFILES}/bin"
+export PATH="${PATH}:${GLOBAL_COMPOSER_BIN}"
+export PATH="${PATH}:${LOCAL_COMPOSER_BIN}"
+export PATH="${PATH}:${LOCAL_NODE_MODULES_BIN}"
+export PATH="${PATH}:${ANDROID_HOME}/tools"
+export PATH="${PATH}:${ANDROID_HOME}/platform-tools"
 
 # Cask needs to keep all applications together.
 export HOMEBREW_CASK_OPTS="--appdir=/Applications"
@@ -58,9 +77,14 @@ source ${HOME}/.antigen/antigen.zsh
 COMPLETION_WAITING_DOTS="true"
 antigen use oh-my-zsh
 
-# Use my custom theme.
-antigen theme https://gist.github.com/joshmanders/3d6a1fae12cafb52b9346c4ace705db9 joshmanders
-
+# Load themes.
+if [ "$TERM_PROGRAM" = "Hyper" ]; then
+  antigen theme https://gist.github.com/joshmanders/3d6a1fae12cafb52b9346c4ace705db9 hypster
+elif [ "$TERM_PROGRAM" = "platformio-ide-terminal" ]; then
+  antigen theme https://gist.github.com/joshmanders/3d6a1fae12cafb52b9346c4ace705db9 hypster
+else
+  antigen theme https://gist.github.com/joshmanders/3d6a1fae12cafb52b9346c4ace705db9 gitster
+fi
 # Lets load up some bundles.
 antigen bundle git
 antigen bundle zsh-users/zsh-syntax-highlighting
@@ -77,6 +101,9 @@ bindkey "$terminfo[kcud1]" history-substring-search-down
 # Magnificent app which corrects your previous console command.
 # https://github.com/nvbn/thefuck
 antigen bundle robbyrussell/oh-my-zsh plugins/thefuck
+
+# WakaTime
+antigen bundle wbinglee/zsh-wakatime
 
 # Apply that shizzle!
 antigen apply

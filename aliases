@@ -18,11 +18,11 @@ alias ip="curl -s ip.appspot.com; echo"
 # Run remote commands over ssh.
 alias remote="ssh $1 -T $2"
 
-# Use my npm. It's better. :)
-alias npm="npm-as"
-
 # Use my docker. It's better. :)
 alias docker="my-docker"
 
+# Set some helpers on composer.
+alias composer="my-composer"
+
 # MacVim > terminal Vim.
-alias vim="mvim"
+# alias vim="mvim"

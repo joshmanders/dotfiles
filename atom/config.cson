@@ -57,6 +57,8 @@
     fontSize: 18
     invisibles: {}
     lineHeight: 2
+    scrollPastEnd: true
+    showIndentGuide: true
     tabType: "soft"
   "exception-reporting":
     userId: "4c0a8964-75e3-df56-9b62-cd8d0b555513"
@@ -80,6 +82,12 @@
   minimap: {}
   "one-dark-ui": {}
   "one-light-ui": {}
+  "platformio-ide-terminal":
+    style:
+      defaultPanelHeight: "400px"
+      theme: "dracula"
+    toggles:
+      autoClose: true
   react:
     enabledForAllJavascriptFiles: true
   "standard-formatter":
