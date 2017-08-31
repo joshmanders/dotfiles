@@ -12,10 +12,29 @@ Host weblog.sh
   User josh
   Port 2222
 
-Host niftyco
-  HostName 104.236.46.121
+Host jarvis
+  HostName 198.58.103.74
   User josh
 
-Host printerdash
-  HostName 104.131.99.141
-  User josh
+Host niftyco
+  HostName 45.33.20.96
+  user stackforge
+
+Host stackforge
+  HostName 45.79.203.38
+  user stackforge
+
+
+Host envisiontees
+  HostName 159.203.156.11
+  User dokku
+
+Host hdforms-staging
+  HostName 54.201.153.249
+  User ubuntu
+  IdentityFile ~/projects/harley/h-dforms.pem
+
+Host hdforms
+  HostName 54.201.218.220
+  User ubuntu
+  IdentityFile ~/projects/harley/h-dforms.pem

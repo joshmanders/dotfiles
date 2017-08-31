@@ -27,7 +27,7 @@ export LOCAL_NODE_MODULES_BIN="./node_modules/.bin"
 export LOCAL_COMPOSER_BIN="./vendor/bin"
 
 # Now lets add our own to $PATH.
-export PATH="${PATH}:${GOPATH}"
+export PATH="${PATH}:${GOPATH}/bin"
 export PATH="${PATH}:${DOTFILES}/bin"
 export PATH="${PATH}:${GLOBAL_COMPOSER_BIN}"
 export PATH="${PATH}:${LOCAL_COMPOSER_BIN}"
