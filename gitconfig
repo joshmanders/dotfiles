@@ -9,16 +9,13 @@
 	clean = git-media-clean %f
 	smudge = git-media-smudge %f
 [core]
-	editor = atom --wait
+	editor = code --wait
 	excludesfile = ~/.gitignore
 	ignorecase = false
 [http]
 	sslVerify = false
 [init]
 	templatedir = ~/.files/git
-[github]
-	user = joshmanders
-	token = ece66a9d89e3b7d3129d3f52b9a86ef260808f19
 [rerere]
 	enabled = true
 [branch]
@@ -31,8 +28,6 @@
 	program = gpg
 [commit]
 	gpgsign = false
-[clubhouse]
-	token = 58d42bbb-cc7c-4318-a2b3-2ebfcbb20b32
 [diff]
   tool = icdiff
 [difftool]

@@ -1,7 +1,7 @@
 #! /usr/bin/env bash
 
 function main () {
-  git commit -a --amend
+  git stash pop;
 }
 
 main "$@"

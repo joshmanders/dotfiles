@@ -69,3 +69,6 @@ node_modules
 
 # php
 vendor
+
+# vscode
+.vscode

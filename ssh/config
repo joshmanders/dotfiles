@@ -7,34 +7,15 @@ Host 192.168.*.*
   Host *.dev
     StrictHostKeyChecking no
 
-Host weblog.sh
-  Hostname weblog.sh
-  User josh
-  Port 2222
-
-Host jarvis
+Host jarvis.joshmanders.com
   HostName 198.58.103.74
   User josh
 
-Host niftyco
-  HostName 45.33.20.96
-  user stackforge
+Host vipautodbq.com
+  HostName 96.126.108.207
+  user josh
 
-Host stackforge
-  HostName 45.79.203.38
-  user stackforge
-
-
-Host envisiontees
+Host timeclock.envisiontees.com
   HostName 159.203.156.11
   User dokku
 
-Host hdforms-staging
-  HostName 54.201.153.249
-  User ubuntu
-  IdentityFile ~/projects/harley/h-dforms.pem
-
-Host hdforms
-  HostName 54.201.218.220
-  User ubuntu
-  IdentityFile ~/projects/harley/h-dforms.pem

@@ -13,16 +13,10 @@ alias fucking="sudo"
 alias please="sudo"
 
 # Get my IP Address.
-alias ip="curl -s ip.appspot.com; echo"
+alias ip="curl ifconfig.co"
 
 # Run remote commands over ssh.
 alias remote="ssh $1 -T $2"
 
-# Use my docker. It's better. :)
-alias docker="my-docker"
-
-# Set some helpers on composer.
-alias composer="my-composer"
-
-# MacVim > terminal Vim.
-# alias vim="mvim"
+# Use hub over git.
+alias git="hub"
