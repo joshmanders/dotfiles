@@ -22,7 +22,7 @@ export GLOBAL_COMPOSER_BIN="${HOME}/.composer/vendor/bin"
 
 # Global yarn bin.
 YARN_GLOBAL_DIR=`yarn global dir`
-export GLOBAL_COMPOSER_BIN="${YARN_GLOBAL_DIR}/node_modules/.bin"
+export GLOBAL_YARN_BIN="${YARN_GLOBAL_DIR}/node_modules/.bin"
 
 # Local Node Modules bin.
 export LOCAL_NODE_MODULES_BIN="./node_modules/.bin"
@@ -35,7 +35,7 @@ export PATH="${PATH}:${GOPATH}/bin"
 export PATH="${PATH}:${DOTFILES}/bin"
 export PATH="${PATH}:${GLOBAL_COMPOSER_BIN}"
 export PATH="${PATH}:${LOCAL_COMPOSER_BIN}"
-export PATH="${PATH}:${GLOBAL_YARN_NODE_MODULES_BIN}"
+export PATH="${PATH}:${GLOBAL_YARN_BIN}"
 export PATH="${PATH}:${LOCAL_NODE_MODULES_BIN}"
 export PATH="${PATH}:${ANDROID_HOME}/tools"
 export PATH="${PATH}:${ANDROID_HOME}/platform-tools"
