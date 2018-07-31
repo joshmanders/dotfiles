@@ -6,12 +6,22 @@ dotfiles () {
   "${EDITOR}" "${DOTFILES}/${args[@]}"
 }
 
+edit () {
+  local args=("$@")
+
+  if [ "$#" -gt "0" ]; then
+  "${EDITOR}" "${args[@]}"
+  else
+    "${EDITOR}" .
+  fi
+}
+
 main () {
   local args=("$@")
 
   case "$1" in
     dotfiles) dotfiles "${args[@]}" ;;
-    *) "${EDITOR}" "${args[@]}" ;;
+    *) edit "${args[@]}" ;;
   esac
 }
 

@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+main () {
+  local message=$(curl -s http://whatthecommit.com/index.txt)
+
+  git save "$message"
+}
+
+main "$@"

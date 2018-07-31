@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+# Alias to obliterate because sometimes I like to be cheeky when removing files from git histroy
+git obliterate "$@"

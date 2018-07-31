@@ -14,8 +14,6 @@
 	ignorecase = false
 [http]
 	sslVerify = false
-[init]
-	templatedir = ~/.files/git
 [rerere]
 	enabled = true
 [branch]

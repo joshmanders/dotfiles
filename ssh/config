@@ -11,11 +11,20 @@ Host jarvis.joshmanders.com
   HostName 198.58.103.74
   User josh
 
-Host vipautodbq.com
-  HostName 96.126.108.207
-  user josh
+Host eileen.aniftyco.com
+  HostName 159.65.181.76
+  User root
+
+Host evolution.harley-davidson.com
+  HostName 18.188.60.250
+  User ubuntu
+  IdentityFile ~/Public/burntcow/hd-forms.pem
+
+Host s-evolution.harley-davidson.com
+  HostName 18.188.227.148
+  User ubuntu
+  IdentityFile ~/Public/burntcow/hd-forms.pem
 
 Host timeclock.envisiontees.com
   HostName 159.203.156.11
   User dokku
-

@@ -67,9 +67,9 @@ antigen use oh-my-zsh
 antigen theme https://gist.github.com/joshmanders/3d6a1fae12cafb52b9346c4ace705db9 bos-style
 # Lets load up some bundles.
 antigen bundle git
-antigen bundle zsh-users/zsh-syntax-highlighting
 antigen bundle zsh-users/zsh-history-substring-search
 antigen bundle rupa/z
+antigen bundle zsh-users/zsh-syntax-highlighting
 
 # bind UP and DOWN arrow keys.
 zmodload zsh/terminfo
@@ -81,6 +81,9 @@ antigen apply
 
 # Not sure what this is, yet.
 setopt nocorrectall
+
+# Auto suggestions, woohoo!
+source /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 
 # Load aliases.
 source ${DOTFILES}/aliases
