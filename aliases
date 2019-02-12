@@ -19,4 +19,4 @@ alias ip="curl ifconfig.co"
 alias remote="ssh $1 -T $2"
 
 # Use hub over git.
-alias git="hub"
+# alias git="hub"
