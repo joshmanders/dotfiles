@@ -87,3 +87,6 @@ source /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 
 # Load aliases.
 source ${DOTFILES}/aliases
+
+# Use direnv
+eval "$(direnv hook zsh)"
