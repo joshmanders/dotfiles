@@ -7,10 +7,10 @@ Host 192.168.*.*
   Host *.wip
     StrictHostKeyChecking no
 
-Host eileen.aniftyco.com
-  HostName 159.65.181.76
+Host eileen
+  HostName 157.230.199.159
   User root
 
-Host timeclock.envisiontees.com
-  HostName 159.203.156.11
-  User dokku
+Host gemini
+  HostName 159.89.222.125
+  User root

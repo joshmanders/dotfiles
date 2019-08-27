@@ -1,0 +1,23 @@
+#! /usr/bin/env bash
+
+# Compliments of Brandon Slinkard (https://github.com/slinkardbrandon)
+
+function main () {
+  local message="${1}"
+  local branch=$(git branch | grep \* | cut -d ' ' -f2);
+
+  git sync;
+  git checkout $branch;
+  git reset --soft develop;
+  git save $message;
+
+#   git fetch;
+#   git checkout develop
+#   git pull;
+#   git checkout $GIT_BRANCH;
+#   git reset --soft develop;
+#   git add .;
+#   git commit -m $@;
+}
+
+main "$@"

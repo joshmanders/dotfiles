@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+main () {
+  docker rm -f $(docker ps -a -q)
+  docker system prune -a -f
+}
+
+main "$@"
