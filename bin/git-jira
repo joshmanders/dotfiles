@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+checkout () {
+    local prefix="$1"
+    local key="$2"
+    local slug="$3"
+
+    git checkout "$prefix/$key-$slug";
+}
+
+main () {
+    local sessionId=$(git config jira.sessionid)
+    local json=$(http --body https://jira.cl.glhec.org/rest/api/latest/issue/$1 Cookie:JSESSIONID=$sessionId)
+    local type=$(echo $json | jq -r '.fields.issuetype.name')
+    local key=$(echo $json | jq -r '.key')
+    local title=$(echo $json | jq -r '.fields.summary' | xargs)
+    local slug=$(echo $title | tr " " "-" | tr '[:upper:]' '[:lower:]')
+
+    case $type in
+        Story) checkout feature $key $slug;;
+        Bug) checkout bugfix $key $slug;;
+        *) echo "cannot determine branch prefix for \"$type\" on ticket $key ($title)"; exit 1;;
+    esac
+}
+
+main "$@"
