@@ -5,7 +5,7 @@ checkout () {
     local key="$2"
     local slug="$3"
 
-    git checkout "$prefix/$key-$slug";
+    git checkout -b "$prefix/$key-$slug";
 }
 
 main () {
