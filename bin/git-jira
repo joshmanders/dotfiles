@@ -9,7 +9,7 @@ checkout () {
 }
 
 main () {
-    local sessionId=$(git config jira.sessionid)
+    local sessionId=$(git config --global --get jira.sessionid)
     local json=$(http --body https://jira.cl.glhec.org/rest/api/latest/issue/$1 Cookie:JSESSIONID=$sessionId)
     local type=$(echo $json | jq -r '.fields.issuetype.name')
     local key=$(echo $json | jq -r '.key')
