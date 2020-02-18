@@ -20,10 +20,6 @@
 	autosetuprebase = always
 [help]
 	autocorrect = 1
-[tag]
-	gpgsign = true
-[gpg]
-	program = gpg
 [commit]
 	gpgsign = false
 [diff]
