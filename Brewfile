@@ -5,16 +5,16 @@ tap "homebrew/cask-versions"
 tap "homebrew/core"
 tap "homebrew/services"
 brew "cloc"
-brew "dnsmasq"
+brew "dnsmasq", restart_service: true
 brew "fish"
 brew "git"
 brew "httpie"
 brew "jq"
 brew "mas"
-brew "nginx"
-brew "node@12", link: true
-brew "postgresql"
-brew "redis"
+brew "nginx", restart_service: true
+brew "node@12"
+brew "postgresql", restart_service: true
+brew "redis", restart_service: true
 brew "watchman"
 brew "yarn"
 cask "brave-browser"
@@ -34,16 +34,15 @@ cask "microsoft-edge-dev"
 cask "mosaic"
 cask "obs"
 cask "postman"
+cask "ringcentral"
 cask "slack"
-cask "stay"
 cask "tableplus"
 cask "telegram"
 cask "textual"
 cask "timing"
-cask "vanilla"
 cask "virtualbox"
 cask "visual-studio-code"
-cask "vlc"
 cask "zoomus"
+mas "Fantastical", id: 975937182
 mas "Sip", id: 507257563
 mas "Spark", id: 1176895641
