@@ -8,9 +8,17 @@ Host 192.168.*.*
     StrictHostKeyChecking no
 
 Host eileen
-  HostName 157.230.199.159
+  HostName eileen.aniftyco.com
   User root
 
 Host gemini
-  HostName 159.89.222.125
+  HostName gemini.aniftyco.com
+  User root
+
+Host greene
+  HostName greene.aniftyco.com
+  User root
+
+Host rancher
+  HostName rancher.aniftyco.com
   User root
