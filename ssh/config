@@ -6,19 +6,3 @@ Host 192.168.*.*
 
   Host *.wip
     StrictHostKeyChecking no
-
-Host eileen
-  HostName eileen.aniftyco.com
-  User root
-
-Host gemini
-  HostName gemini.aniftyco.com
-  User root
-
-Host greene
-  HostName greene.aniftyco.com
-  User root
-
-Host rancher
-  HostName rancher.aniftyco.com
-  User root
