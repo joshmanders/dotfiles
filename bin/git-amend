@@ -1,7 +1,7 @@
 #! /usr/bin/env bash
 
 function main () {
-  git commit -a --amend
+  git commit -a --amend --no-edit
 }
 
 main "$@"
