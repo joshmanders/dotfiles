@@ -38,6 +38,7 @@ cask "font-fira-code"
 cask "font-hack-nerd-font"
 cask "google-chrome"
 cask "kap"
+cask "lens"
 cask "microsoft-edge"
 cask "mosaic"
 cask "postman"
@@ -51,3 +52,11 @@ cask "telegram"
 cask "virtualbox"
 cask "visual-studio-code"
 cask "zoomus"
+mas "Dato", id: 1470584107
+mas "Developer", id: 640199958
+mas "Focus To-Do", id: 1258530160
+mas "NextDNS", id: 1464122853
+mas "Numbers", id: 409203825
+mas "Sip", id: 507257563
+mas "TweetDeck", id: 485812721
+mas "Xcode", id: 497799835
