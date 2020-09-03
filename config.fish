@@ -40,3 +40,7 @@ alias ip="curl ifconfig.co"
 
 # Run remote commands over ssh.
 alias remote="ssh $1 -T $2"
+
+# LOL don't be Jamon.
+# https://twitter.com/jamonholmgren/status/967548502648668161
+alias rm="trash"
