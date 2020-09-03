@@ -25,3 +25,18 @@ set -U fish_user_paths $fish_user_paths /usr/local/sbin
 
 # Add local node modules to $PATH
 set -U fish_user_paths $fish_user_paths ./node_modules/.bin
+
+# Hack to auto expand aliases in sudo.
+alias sudo="sudo "
+
+# Because sometimes you gotta be harsh.
+alias fucking="sudo"
+
+# And sometimes you gotta be nice.
+alias please="sudo"
+
+# Get my IP Address.
+alias ip="curl ifconfig.co"
+
+# Run remote commands over ssh.
+alias remote="ssh $1 -T $2"
