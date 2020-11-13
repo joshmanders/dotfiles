@@ -1,7 +1,7 @@
 #! /usr/bin/env bash
 
 function main () {
-  local branch="${1-$(git branch | grep \* | cut -d ' ' -f2)}"
+  local branch="${1-master}"
   local remote="${2-origin}"
   git fetch
   git checkout "${branch}"
