@@ -1,4 +1,5 @@
 tap "buildpacks/tap"
+tap "heroku/brew"
 tap "homebrew/bundle"
 tap "homebrew/cask"
 tap "homebrew/cask-fonts"
@@ -9,6 +10,7 @@ tap "nektos/tap"
 brew "openssl@1.1"
 brew "awscli"
 brew "caddy", args: ["HEAD"], restart_service: true
+brew "deno"
 brew "dnsmasq", restart_service: true
 brew "doctl"
 brew "fish"
@@ -28,6 +30,7 @@ brew "watchman"
 brew "wget"
 brew "yarn"
 brew "buildpacks/tap/pack"
+brew "heroku/brew/heroku"
 brew "nektos/tap/act"
 cask "avibrazil-rdm"
 cask "brave-browser"
@@ -42,6 +45,8 @@ cask "kap"
 cask "lens"
 cask "microsoft-edge"
 cask "mosaic"
+cask "ngrok"
+cask "parallels"
 cask "postman"
 cask "ringcentral-meetings"
 cask "ringcentral-phone"
@@ -50,14 +55,16 @@ cask "stay"
 cask "streamlabs-obs"
 cask "tableplus"
 cask "telegram"
+cask "unite"
 cask "virtualbox"
 cask "visual-studio-code"
 cask "zoomus"
+mas "Black Out", id: 1319884285
 mas "Dato", id: 1470584107
 mas "Developer", id: 640199958
-mas "Focus To-Do", id: 1258530160
 mas "NextDNS", id: 1464122853
 mas "Numbers", id: 409203825
+mas "Pages", id: 409201541
 mas "Sip", id: 507257563
-mas "TweetDeck", id: 485812721
+mas "Spark", id: 1176895641
 mas "Xcode", id: 497799835
