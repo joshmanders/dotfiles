@@ -6,65 +6,59 @@ tap "homebrew/cask-fonts"
 tap "homebrew/cask-versions"
 tap "homebrew/core"
 tap "homebrew/services"
+tap "nats-io/nats-tools"
 tap "nektos/tap"
-brew "openssl@1.1"
 brew "awscli"
-brew "caddy", args: ["HEAD"], restart_service: true
+brew "caddy", restart_service: true
+brew "cloc"
 brew "deno"
 brew "dnsmasq", restart_service: true
 brew "doctl"
 brew "fish"
 brew "git"
+brew "gnupg"
 brew "go"
 brew "helm"
 brew "httpie"
 brew "hub"
 brew "jq"
 brew "mas"
-brew "node"
+brew "node@14", link: true
 brew "nss"
+brew "openjdk"
+brew "pinentry-mac"
 brew "postgresql", restart_service: true
 brew "redis", restart_service: true
 brew "trash"
 brew "watchman"
 brew "wget"
-brew "yarn"
 brew "buildpacks/tap/pack"
 brew "heroku/brew/heroku"
+brew "nats-io/nats-tools/nats"
 brew "nektos/tap/act"
+cask "android-studio"
 cask "avibrazil-rdm"
 cask "brave-browser"
 cask "cleanmymac"
 cask "docker"
 cask "figma"
 cask "firefox"
+cask "fliqlo"
 cask "font-fira-code"
 cask "font-hack-nerd-font"
 cask "google-chrome"
 cask "kap"
-cask "lens"
 cask "microsoft-edge"
 cask "mosaic"
 cask "ngrok"
 cask "parallels"
 cask "postman"
-cask "ringcentral-meetings"
-cask "ringcentral-phone"
+cask "ringcentral"
+cask "safari-technology-preview"
 cask "slack"
 cask "stay"
 cask "streamlabs-obs"
 cask "tableplus"
-cask "telegram"
 cask "unite"
-cask "virtualbox"
 cask "visual-studio-code"
-cask "zoomus"
-mas "Black Out", id: 1319884285
-mas "Dato", id: 1470584107
-mas "Developer", id: 640199958
-mas "NextDNS", id: 1464122853
-mas "Numbers", id: 409203825
-mas "Pages", id: 409201541
-mas "Sip", id: 507257563
-mas "Spark", id: 1176895641
-mas "Xcode", id: 497799835
+cask "zoom"
