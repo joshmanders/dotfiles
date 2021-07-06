@@ -7,10 +7,10 @@ function main () {
   git checkout "${branch}"
   git pull "${2-origin}" "${branch}"
   git tidy
-  if [[ $(git remote get-url upstream 2>&1) != *"fatal"* ]]; then
-    git fetch upstream
-    git rebase upstream/master
-  fi
+  # if [[ $(git remote get-url upstream 2>&1) != *"fatal"* ]]; then
+  #   git fetch upstream
+  #   git rebase upstream/master
+  # fi
 }
 
 main "$@"
