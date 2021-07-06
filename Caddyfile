@@ -1,0 +1,12 @@
+primcloud.local, www.primcloud.local {
+	reverse_proxy 0.0.0.0:63000
+}
+
+api.primcloud.local {
+	reverse_proxy {
+		to 0.0.0.0:63002
+		header_up X-Forwarded-For  173.30.188.213
+		header_up X-Forwarded-Host 173.30.188.213
+		header_up X-Real-IP	   173.30.188.213
+	}
+}
