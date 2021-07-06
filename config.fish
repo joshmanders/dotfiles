@@ -17,6 +17,9 @@ set -Ux EDITOR code
 # Central timezone, what's up?
 set -Ux TZ America/Chicago
 
+# GPG Signing
+set -Ux GPG_TTY (tty)
+
 # Add dotfiles bin to $PATH
 set -U fish_user_paths $fish_user_paths $DOTFILES/bin
 

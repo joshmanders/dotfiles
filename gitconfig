@@ -1,7 +1,7 @@
 [user]
 	name = Josh Manders
 	email = josh@joshmanders.com
-	signingkey = 5D24F182
+	signingkey = E185112892584284
 [push]
 	default = simple
 	followTags = true
@@ -21,7 +21,7 @@
 [help]
 	autocorrect = 1
 [commit]
-	gpgsign = false
+	gpgsign = true
 [diff]
   tool = icdiff
 [difftool]
