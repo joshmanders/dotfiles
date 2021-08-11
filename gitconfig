@@ -30,3 +30,5 @@
   cmd = /usr/local/bin/icdiff --line-numbers $LOCAL $REMOTE
 [alias]
 	ch = clubhouse
+[tag]
+	gpgsign = true
