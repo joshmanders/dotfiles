@@ -1,0 +1,17 @@
+#! /usr/bin/env bash
+
+# For this to work, you have to have 2 global config items set for shortcut in git.
+# git config --global shortcut.user <your shortcut username>
+# git config --global shortcut.api-token <your shortcut api token>
+function main () {
+  local id="$1"
+  local user=$(git config --global --get shortcut.user)
+  local token=$(git config --global --get shortcut.api-token)
+  local story=$(curl -s -X GET -H "Content-Type: application/json" -H "Shortcut-Token: ${token}" "https://api.app.shortcut.com/api/v3/stories/${id}")
+  local name=$(echo "${story}" | jq -r '.name')
+  local description=$(echo "${name}" | sed -e 's/[[:space:]]*$//' | iconv -t ascii//TRANSLIT | sed -E s/[^a-zA-Z0-9]+/-/g | sed -E s/^-+\|-+$//g | tr A-Z a-z)
+
+  git checkout -b "${user}/sc-${id}/${description}"
+}
+
+main "$@"
