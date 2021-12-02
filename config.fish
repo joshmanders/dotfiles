@@ -20,14 +20,18 @@ set -Ux TZ America/Chicago
 # GPG Signing
 set -Ux GPG_TTY (tty)
 
+# Reset $PATH
+set -g fish_user_paths
+
 # Add dotfiles bin to $PATH
-set -U fish_user_paths $fish_user_paths $DOTFILES/bin
+fish_add_path $DOTFILES/bin
+
+# Add Homebrews bin to $PATH
+fish_add_path /opt/homebrew/bin
 
 # Add Homebrew's sbin to $PATH
-set -U fish_user_paths $fish_user_paths /usr/local/sbin
+fish_add_path /opt/homebrew/sbin
 
-# Add local node modules to $PATH
-set -U fish_user_paths $fish_user_paths ./node_modules/.bin
 
 # Hack to auto expand aliases in sudo.
 alias sudo="sudo "
