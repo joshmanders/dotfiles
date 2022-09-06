@@ -1,0 +1,8 @@
+#! /usr/bin/env bash
+
+function main () {
+  local message=("${@}")
+  git commit --allow-empty -m "${message}"
+}
+
+main "$@"
