@@ -12,6 +12,7 @@ function main () {
   local description=$(echo "${name}" | sed -e 's/[[:space:]]*$//' | iconv -t ascii//TRANSLIT | sed -E s/[^a-zA-Z0-9]+/-/g | sed -E s/^-+\|-+$//g | tr A-Z a-z)
 
   git checkout -b "${user}/sc-${id}/${description}"
+  git empty "${name}"
 }
 
 main "$@"
