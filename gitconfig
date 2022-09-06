@@ -32,3 +32,8 @@
 	ch = clubhouse
 [tag]
 	gpgsign = true
+[shortcut]
+	api-token = 
+	user = joshmanders
+[includeIf "gitdir:~/Code/onarchipelago/**"]
+	path = ~/Code/onarchipelago/.gitconfig
