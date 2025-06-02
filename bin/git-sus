@@ -1,0 +1,58 @@
+#! /usr/bin/env bash
+
+function main () {
+  local since="yesterday.midnight"
+  local until="midnight"
+  local author_email
+  local branch=""
+  local arg
+
+  for arg in "$@"; do
+    case "$arg" in
+      --since=*)
+        since="${arg#*=}"
+        ;;
+      --until=*)
+        until="${arg#*=}"
+        ;;
+      --branch=*)
+        branch="${arg#*=}"
+        ;;
+      *)
+        echo "Unknown option: $arg"
+        exit 1
+        ;;
+    esac
+  done
+
+  if [[ -n "$until" && -z "$since" ]]; then
+    echo "Error: --until requires --since to be set."
+    exit 1
+  fi
+
+  author_email=$(git config user.email)
+  if [[ -z "$author_email" ]]; then
+    echo "Error: No Git user email configured."
+    exit 1
+  fi
+
+  local cmd="git log"
+
+  if [[ -n "$branch" ]]; then
+    cmd+=" $branch"
+  else
+    cmd+=" --all"
+  fi
+  cmd+=" --no-merges --oneline --author=\"$author_email\""
+
+  if [[ -n "$since" ]]; then
+    cmd+=" --since=\"$since\""
+    if [[ -n "$until" ]]; then
+      cmd+=" --until=\"$until\""
+    fi
+  fi
+
+  eval "$cmd"
+}
+
+main "$@"
