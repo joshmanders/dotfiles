@@ -1,0 +1,11 @@
+#! /usr/bin/env bash
+
+function main () {
+  local DIR=$(pwd)
+  while [ ! -z "$DIR" ] && [ ! -f "$DIR/artisan" ]; do
+      DIR="${DIR%\/*}"
+  done
+  exec php $DIR/artisan "$@"
+}
+
+main "$@"
