@@ -32,8 +32,7 @@
 	ch = clubhouse
 [tag]
 	gpgsign = true
-[shortcut]
-	api-token = 
-	user = joshmanders
-[includeIf "gitdir:~/Code/onarchipelago/**"]
-	path = ~/Code/onarchipelago/.gitconfig
+[github]
+	api-token = ghp_XXXXXXXXXXXXXXXXXXXXXX
+[init]
+	defaultBranch = master
