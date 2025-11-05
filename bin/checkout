@@ -1,0 +1,13 @@
+#! /usr/bin/env bash
+
+function main () {
+  if ([ "$#" -eq 0 ]); then
+    git checkout -
+  
+  else
+    git checkout $@
+  fi
+
+}
+
+main "$@"
