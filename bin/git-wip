@@ -1,7 +1,0 @@
-#! /usr/bin/env bash
-
-function main () {
-  git stash save --include-untracked;
-}
-
-main "$@"
