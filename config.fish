@@ -23,15 +23,23 @@ set -Ux GPG_TTY (tty)
 # Reset $PATH
 set -g fish_user_paths
 
-# Add dotfiles bin to $PATH
-fish_add_path $DOTFILES/bin
-
 # Add Homebrews bin to $PATH
 fish_add_path /opt/homebrew/bin
 
 # Add Homebrew's sbin to $PATH
 fish_add_path /opt/homebrew/sbin
 
+# Add Composer global bin to $PATH
+fish_add_path $HOME/.composer/vendor/bin
+
+# Setup Android Studio
+set -Ux JAVA_HOME /Library/Java/JavaVirtualMachines/zulu-17.jdk/Contents/Home
+set -Ux ANDROID_HOME $HOME/Library/Android/sdk
+fish_add_path $ANDROID_HOME/emulator
+fish_add_path $ANDROID_HOME/platform-tools
+
+# Add dotfiles bin to $PATH
+fish_add_path $DOTFILES/bin
 
 # Hack to auto expand aliases in sudo.
 alias sudo="sudo "
@@ -51,3 +59,27 @@ alias remote="ssh $1 -T $2"
 # LOL don't be Jamon.
 # https://twitter.com/jamonholmgren/status/967548502648668161
 alias rm="trash"
+
+# Kubernetes helper
+alias k="kubectl"
+
+# Laravel Artisan helpers
+alias art="artisan"
+alias tinker="artisan tinker"
+alias fresh="artisan migrate:fresh --seed"
+alias migrate="artisan migrate"
+alias rollback="artisan migrate:rollback"
+alias solo="artisan solo"
+
+# Git helpers
+alias wip="git save \"WIP\""
+alias push="git push"
+
+# I use neovim, btw
+alias neovim="vscode"
+alias nvim=neovim
+
+# uWu big papi
+function vscode
+    eval $EDITOR;
+end
