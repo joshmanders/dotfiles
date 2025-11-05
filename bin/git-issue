@@ -1,0 +1,21 @@
+#! /usr/bin/env bash
+
+# For this to work, you have to have a global config set for github in git.
+# git config --global github.api-token <your github api token>
+function main () {
+  local id="$1"
+  local origin=$(git config --get remote.origin.url)
+  local repo=$(echo "${origin}" | sed -E 's/git@github.com\:(.*)\.git/\1/')
+  local token=$(git config --global --get github.api-token)
+  local url="https://api.github.com/repos/${repo}/issues/${id}"
+  local issue=$(curl -s -X GET -H "Authorization: Bearer ${token}" "${url}")
+  local title=$(echo "${issue}" | jq -r '.title')
+  local type=$(echo "${issue}" | jq -r '.type.name')
+  local branch="$(echo "${type}" | tr '[:upper:]' '[:lower:]')-${id}"
+  # local description=$(echo "${name}" | sed -e 's/[[:space:]]*$//' | iconv -t ascii//TRANSLIT | sed -E s/[^a-zA-Z0-9]+/-/g | sed -E s/^-+\|-+$//g | tr A-Z a-z)
+
+  git checkout -b "${branch}";
+  git empty "${type} ${id} - ${title}"
+}
+
+main "$@"
