@@ -1,16 +1,35 @@
 #! /usr/bin/env bash
 
 function main () {
-  local branch="${1-master}"
+  local default_branch=$(git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@');
+  local branch="${1-$default_branch}"
   local remote="${2-origin}"
   git fetch
   git checkout "${branch}"
   git pull "${2-origin}" "${branch}"
   git tidy
-  # if [[ $(git remote get-url upstream 2>&1) != *"fatal"* ]]; then
-  #   git fetch upstream
-  #   git rebase upstream/master
-  # fi
+  if git remote | grep -q '^upstream$'; then
+    echo "Fetching from upstream..."
+    git fetch upstream
+
+    # determine upstream's default branch (not assume "main")
+    upstream_main=$(git symbolic-ref refs/remotes/upstream/HEAD 2>/dev/null | sed 's@^refs/remotes/upstream/@@')
+    if [ -z "$upstream_main" ]; then
+      upstream_main=$(git ls-remote --symref upstream HEAD 2>/dev/null | awk '/^ref:/ { sub("refs/heads/","",$2); print $2; exit }')
+    fi
+    if [ -z "$upstream_main" ]; then
+      if git ls-remote --heads upstream main | grep -q .; then
+        upstream_main=main
+      elif git ls-remote --heads upstream master | grep -q .; then
+        upstream_main=master
+      else
+        upstream_main=master
+      fi
+    fi
+
+    echo "Rebasing onto upstream/${upstream_main}..."
+    git rebase "upstream/${upstream_main}"
+  fi
 }
 
 main "$@"
