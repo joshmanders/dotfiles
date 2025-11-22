@@ -66,7 +66,7 @@ alias k="kubectl"
 # Laravel Artisan helpers
 alias art="artisan"
 alias tinker="artisan tinker"
-alias fresh="artisan migrate:fresh --seed"
+alias fresh="artisan migrate:fresh"
 alias migrate="artisan migrate"
 alias rollback="artisan migrate:rollback"
 alias solo="artisan solo"
