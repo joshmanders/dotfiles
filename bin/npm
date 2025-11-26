@@ -28,6 +28,11 @@ main() {
   local sanitized_path=$(sanitize_path) || exit 127
   export PATH="$sanitized_path"
 
+  if [[ -n "${NPM_CMD:-}" ]]; then
+    command npm "$@"
+    return
+  fi
+
   if [[ "$#" -gt 0 && "$1" == "install" ]]; then
     if [[ "$#" -eq 1 ]]; then
       command npm ci
