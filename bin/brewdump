@@ -1,0 +1,549 @@
+#!/usr/bin/env bash
+set -euo pipefail
+# -e : exit on first error
+# -u : error on unset variables
+# -o pipefail : pipeline fails if any command fails
+
+###############################################
+# Interactive Homebrew cleaner + Brewfile dump
+#
+# High-level behavior:
+# - Finds "leaf top-level" formulae:
+#     * Installed explicitly (installed_on_request == true)
+#     * Not marked as installed_as_dependency
+#     * Present in `brew leaves` (nothing else depends on them)
+# - Finds "top-level" casks based on installed_on_request / heuristics.
+# - Lets you review each candidate and choose:
+#     * k: keep
+#     * r: mark for removal
+#     * s: skip the rest (treat all remaining as keep)
+# - At the end:
+#     * Optionally batch-uninstalls all marked formulae and casks.
+#     * Optionally runs `brew autoremove` to clean unused dependencies.
+#     * In non-dry-run mode, can dump a clean Brewfile of what remains.
+###############################################
+
+DRY_RUN=false
+# If the first argument is "--dry-run", enable simulation mode:
+# - No uninstall commands are executed.
+# - No Brewfile is generated.
+# - `brew autoremove` is not actually run; commands are just printed.
+if [[ "${1:-}" == "--dry-run" ]]; then
+  DRY_RUN=true
+  echo ">>> DRY RUN ENABLED — no changes will be made."
+  echo
+fi
+
+# Ensure Homebrew is available; abort early with a clear message if not.
+if ! command -v brew >/dev/null 2>&1; then
+  echo "Error: Homebrew (brew) not found. Install Homebrew first."
+  exit 1
+fi
+
+# Ensure jq is available; required to parse `brew info --json`.
+if ! command -v jq >/dev/null 2>&1; then
+  echo "Error: jq is required for this script."
+  echo "Install it with: brew install jq"
+  exit 1
+fi
+
+# Print a horizontal divider line across the terminal for readability.
+divider() {
+  printf '%*s\n' "${COLUMNS:-80}" '' | tr ' ' '-'
+}
+
+# Ask a yes/no question.
+# Arguments:
+#   $1: question text
+#   $2: "default_yes" or "default_no"
+# Behavior:
+#   - Shows [Y/n] if default_yes, [y/N] if default_no.
+#   - Returns 0 for yes, 1 for no.
+prompt_yes_no() {
+  local question="$1"
+  local default="$2"
+  local prompt
+
+  if [[ "$default" == "default_yes" ]]; then
+    prompt=" [Y/n] "
+  else
+    prompt=" [y/N] "
+  fi
+
+  while true; do
+    read -r -p "$question$prompt" reply
+    case "$reply" in
+      [Yy]* ) return 0 ;;  # explicit yes
+      [Nn]* ) return 1 ;;  # explicit no
+      "" )                 # user just hit Enter
+        if [[ "$default" == "default_yes" ]]; then
+          return 0
+        else
+          return 1
+        fi
+        ;;
+      * )
+        echo "Please answer y or n."
+        ;;
+    esac
+  done
+}
+
+# Arrays to track which formulae and casks the user has chosen to remove.
+declare -a REMOVED_FORMULAE=()
+declare -a REMOVED_CASKS=()
+
+# Flag to stop further prompting:
+#   0 = normal (keep prompting),
+#   1 = user chose [s]kip rest (treat all remaining as keep).
+SKIP_REST=0
+
+###############################################
+# inspect_formula
+#   Show details for a single formula and ask:
+#     [k]eep / [r]emove / [s]kip rest
+#   - name (arg 1) is the formula name.
+###############################################
+inspect_formula() {
+  local name="$1"
+
+  # Get formula info in JSON form. Abort this formula if info fails.
+  local json
+  if ! json="$(brew info --json=v2 "$name" 2>/dev/null)"; then
+    echo "Failed to get info for formula $name"
+    return
+  fi
+
+  # Extract relevant fields from JSON.
+  local desc homepage installed_on_request installed_as_dependency deps opt_deps build_deps uses
+
+  desc="$(echo "$json" | jq -r '.formulae[0].desc // "No description available."')"
+  homepage="$(echo "$json" | jq -r '.formulae[0].homepage // "No homepage"')"
+
+  # installed_on_request: did you explicitly install this formula?
+  # installed_as_dependency: was it recorded as being installed as a dependency?
+  # We defensively check that `.installed` is an array with at least one entry.
+  installed_on_request="$(
+    echo "$json" |
+      jq -r '.formulae[0].installed
+              | if (type == "array" and length > 0)
+                then .[0].installed_on_request // false
+                else false
+                end'
+  )"
+
+  installed_as_dependency="$(
+    echo "$json" |
+      jq -r '.formulae[0].installed
+              | if (type == "array" and length > 0)
+                then .[0].installed_as_dependency // false
+                else false
+                end'
+  )"
+
+  # Dependency lists (for information only; we don't act on them directly).
+  deps="$(echo "$json" | jq -r '.formulae[0].dependencies | join(", ") // ""')"
+  opt_deps="$(echo "$json" | jq -r '.formulae[0].optional_dependencies | join(", ") // ""')"
+  build_deps="$(echo "$json" | jq -r '.formulae[0].build_dependencies | join(", ") // ""')"
+
+  # Reverse dependencies: which installed formulae depend on this one?
+  # This is informational; the "leaf-ness" is handled earlier via `brew leaves`.
+  uses="$(brew uses --installed "$name" 2>/dev/null | tr '\n' ' ')"
+
+  # Present a summary to the user.
+  divider
+  echo "FORMULA: $name"
+  echo "Description : $desc"
+  echo "Homepage    : $homepage"
+  echo
+  echo "Reasoning:"
+  echo "  - Installed on request?    $installed_on_request"
+  echo "  - Installed as dependency? $installed_as_dependency"
+  echo
+  echo "Dependencies:"
+  echo "  - Required: ${deps:-<none>}"
+  echo "  - Optional: ${opt_deps:-<none>}"
+  echo "  - Build:    ${build_deps:-<none>}"
+  echo
+  echo "Other packages that depend on this:"
+  echo "  - ${uses:-<none>}"
+  echo
+
+  # Interactive decision: keep, remove, or skip the rest.
+  while true; do
+    read -r -p "Keep this formula? [k]eep / [r]emove / [s]kip rest  (default: keep) " answer
+    case "$answer" in
+      ""|"k"|"K")
+        # Default or explicit keep: do nothing, move on.
+        echo "Keeping $name"
+        return 0
+        ;;
+      "r"|"R")
+        # Mark formula for removal; actual uninstall happens later in batch.
+        echo "Marking formula '$name' for removal..."
+        REMOVED_FORMULAE+=("$name")
+        return 0
+        ;;
+      "s"|"S")
+        # Skip rest: stop prompting for any further items.
+        # This item is treated as "keep".
+        echo "Skipping remaining items. Treating the rest as keep."
+        SKIP_REST=1
+        echo "Keeping $name"
+        return 0
+        ;;
+      *)
+        echo "Please type k, r, or s."
+        ;;
+    esac
+  done
+}
+
+###############################################
+# inspect_cask
+#   Show details for a single cask and ask:
+#     [k]eep / [r]emove / [s]kip rest
+#   - name (arg 1) is the cask token.
+###############################################
+inspect_cask() {
+  local name="$1"
+
+  # Get cask info in JSON form. Abort this cask if info fails.
+  local json
+  if ! json="$(brew info --cask --json=v2 "$name" 2>/dev/null)"; then
+    echo "Failed to get info for cask $name"
+    return
+  fi
+
+  # Extract fields from cask JSON.
+  local desc homepage depends_on_formula depends_on_cask installed_on_request
+
+  desc="$(echo "$json" | jq -r '.casks[0].desc // "No description available."')"
+  homepage="$(echo "$json" | jq -r '.casks[0].homepage // "No homepage"')"
+  depends_on_formula="$(echo "$json" | jq -r '.casks[0].depends_on.formula // [] | join(", ")')"
+  depends_on_cask="$(echo "$json" | jq -r '.casks[0].depends_on.cask // [] | join(", ")')"
+
+  # installed_on_request is not always tracked for casks;
+  # if it's missing, we assume it was explicitly installed.
+  installed_on_request="$(
+    echo "$json" |
+      jq -r '.casks[0].installed
+              | if (type == "array" and length > 0 and .[0].installed_on_request != null)
+                then .[0].installed_on_request
+                else true
+                end'
+  )"
+
+  # Present a summary to the user.
+  divider
+  echo "CASK: $name"
+  echo "Description : $desc"
+  echo "Homepage    : $homepage"
+  echo
+  echo "Reasoning:"
+  echo "  - Installed on request? $installed_on_request"
+  echo
+  echo "Dependencies:"
+  echo "  - Formulae: ${depends_on_formula:-<none>}"
+  echo "  - Casks:    ${depends_on_cask:-<none>}"
+  echo
+
+  # Interactive decision: keep, remove, or skip the rest.
+  while true; do
+    read -r -p "Keep this cask? [k]eep / [r]emove / [s]kip rest  (default: keep) " answer
+    case "$answer" in
+      ""|"k"|"K")
+        # Default or explicit keep.
+        echo "Keeping $name"
+        return 0
+        ;;
+      "r"|"R")
+        # Mark cask for removal; actual uninstall is done in batch at the end.
+        echo "Marking cask '$name' for removal..."
+        REMOVED_CASKS+=("$name")
+        return 0
+        ;;
+      "s"|"S")
+        # Skip rest: don't ask about the remaining items.
+        echo "Skipping remaining items. Treating the rest as keep."
+        SKIP_REST=1
+        echo "Keeping $name"
+        return 0
+        ;;
+      *)
+        echo "Please type k, r, or s."
+        ;;
+    esac
+  done
+}
+
+echo "Collecting installed Homebrew packages (leaf top-level only)..."
+
+###############################################
+# Determine which formulae to present for review
+#
+# Strategy:
+#   1) Use `brew leaves` to get formulae that nothing else depends on.
+#   2) Use `brew info --installed --json=v2` to find formulae that were:
+#        - installed_on_request == true
+#        - installed_as_dependency != true
+#   3) Take the intersection of (1) and (2).
+#
+# This yields "leaf top-level" formulae:
+#   - explicitly installed by you,
+#   - not primarily dependencies,
+#   - not depended on by any other formula.
+###############################################
+
+# Step 1: get leaf formulae = no other formula depends on them.
+LEAVES_RAW="$(brew leaves 2>/dev/null || echo '')"
+declare -a LEAVES=()
+while IFS= read -r line; do
+  [[ -n "$line" ]] && LEAVES+=("$line")
+done <<< "$LEAVES_RAW"
+
+# Step 2: get info for all installed formulae in JSON.
+FORMULA_INFO_JSON="$(brew info --installed --json=v2 2>/dev/null || echo '')"
+
+# Step 3: extract top-level candidates from JSON based on installed flags.
+TOPLEVEL_CANDIDATES_RAW="$(
+  echo "$FORMULA_INFO_JSON" | jq -r '
+    .formulae[]? as $f
+    | $f.installed as $inst
+    | if ($inst | type == "array" and length > 0
+          and $inst[0].installed_on_request == true
+          and ($inst[0].installed_as_dependency != true))
+      then $f.name
+      else empty
+      end
+  '
+)"
+
+# Step 4: intersect candidates with leaves to get "leaf top-level formulae".
+declare -a TOP_LEVEL_FORMULAE=()
+while IFS= read -r name; do
+  [[ -z "$name" ]] && continue
+  # Check if this name appears in the LEAVES array (exact match).
+  if printf '%s\n' "${LEAVES[@]}" | grep -qx "$name"; then
+    TOP_LEVEL_FORMULAE+=("$name")
+  fi
+done <<< "$TOPLEVEL_CANDIDATES_RAW"
+
+###############################################
+# Determine which casks to present for review
+#
+# There is no `brew leaves` equivalent for casks,
+# so we use a simpler heuristic:
+#   - If .installed is missing or not an array, treat as top-level.
+#   - If installed_on_request is true or null, treat as top-level.
+#   - Otherwise, skip it.
+###############################################
+
+CASK_INFO_JSON="$(brew info --cask --json=v2 --installed 2>/dev/null || echo '')"
+
+declare -a TOP_LEVEL_CASKS=()
+while IFS= read -r line; do
+  [[ -n "$line" ]] && TOP_LEVEL_CASKS+=("$line")
+done < <(
+  echo "$CASK_INFO_JSON" | jq -r '
+    .casks[]? as $c
+    | $c.installed as $inst
+    | if ($inst | type != "array" or length == 0)
+      then $c.token
+      elif ($inst[0].installed_on_request == true or $inst[0].installed_on_request == null)
+      then $c.token
+      else empty
+      end
+  '
+)
+
+# Count how many items we will present to the user.
+FORMULA_COUNT=${#TOP_LEVEL_FORMULAE[@]}
+CASK_COUNT=${#TOP_LEVEL_CASKS[@]}
+
+echo
+echo "Leaf top-level items (for review):"
+echo "  - $FORMULA_COUNT formulae"
+echo "  - $CASK_COUNT casks"
+echo
+
+###############################################
+# Decide whether to process formulae, casks, or both.
+#
+# Prompt:
+#   [f] : only formulae
+#   [c] : only casks
+#   [b] or Enter : both
+###############################################
+
+PROCESS_FORMULAE=true
+PROCESS_CASKS=true
+
+while true; do
+  read -r -p "Process [f]ormulae, [c]asks, or [b]oth? (default: both) " mode
+  case "$mode" in
+    ""|"b"|"B")
+      # Default: process both.
+      break
+      ;;
+    "f"|"F")
+      # Only formulae.
+      PROCESS_CASKS=false
+      break
+      ;;
+    "c"|"C")
+      # Only casks.
+      PROCESS_FORMULAE=false
+      break
+      ;;
+    *)
+      echo "Choose f, c, or b."
+      ;;
+  esac
+done
+
+###############################################
+# Iterate through formulae and prompt the user
+# for each leaf top-level formula.
+###############################################
+
+if $PROCESS_FORMULAE && (( ${#TOP_LEVEL_FORMULAE[@]} > 0 )); then
+  echo
+  echo "===== Processing leaf top-level formulae ====="
+  for f in "${TOP_LEVEL_FORMULAE[@]}"; do
+    # If user chose [s]kip rest earlier, stop prompting.
+    [[ $SKIP_REST -eq 1 ]] && break
+    inspect_formula "$f" || true
+  done
+elif $PROCESS_FORMULAE; then
+  echo "No leaf top-level formulae found."
+fi
+
+###############################################
+# Iterate through casks and prompt the user
+# for each top-level cask.
+###############################################
+
+if $PROCESS_CASKS && [[ $SKIP_REST -eq 0 ]]; then
+  if (( ${#TOP_LEVEL_CASKS[@]} > 0 )); then
+    echo
+    echo "===== Processing top-level casks ====="
+    for c in "${TOP_LEVEL_CASKS[@]}"; do
+      # Again, respect [s]kip rest if set.
+      [[ $SKIP_REST -eq 1 ]] && break
+      inspect_cask "$c" || true
+    done
+  else
+    echo "No top-level casks found."
+  fi
+fi
+
+###############################################
+# Summary and batch uninstall
+#
+# At this point, REMOVED_FORMULAE and REMOVED_CASKS
+# contain all the items the user marked for removal.
+# We show a summary and then, if confirmed, run:
+#   brew uninstall <formulae...>
+#   brew uninstall --cask <casks...>
+# (or print the commands in dry-run mode).
+###############################################
+
+divider
+echo "Summary of selections:"
+echo "  Formulae marked for removal: ${REMOVED_FORMULAE[*]:-<none>}"
+echo "  Casks marked for removal:    ${REMOVED_CASKS[*]:-<none>}"
+echo
+
+if ((${#REMOVED_FORMULAE[@]} > 0)) || ((${#REMOVED_CASKS[@]} > 0)); then
+  echo "About to remove:"
+  ((${#REMOVED_FORMULAE[@]} > 0)) && echo "  Formulae: ${REMOVED_FORMULAE[*]}"
+  ((${#REMOVED_CASKS[@]} > 0)) && echo "  Casks:    ${REMOVED_CASKS[*]}"
+  echo
+
+  # Confirm batch removal.
+  if prompt_yes_no "Proceed with these removals?" default_yes; then
+    # Handle formulae.
+    if ((${#REMOVED_FORMULAE[@]} > 0)); then
+      if $DRY_RUN; then
+        # Dry-run: just show the command that would be run.
+        echo ">>> DRY RUN: brew uninstall ${REMOVED_FORMULAE[*]}"
+      else
+        # Real mode: uninstall all selected formulae at once.
+        echo "Running: brew uninstall ${REMOVED_FORMULAE[*]}"
+        brew uninstall "${REMOVED_FORMULAE[@]}"
+      fi
+    fi
+
+    # Handle casks.
+    if ((${#REMOVED_CASKS[@]} > 0)); then
+      if $DRY_RUN; then
+        # Dry-run: just show the command.
+        echo ">>> DRY RUN: brew uninstall --cask ${REMOVED_CASKS[*]}"
+      else
+        # Real mode: uninstall all selected casks at once.
+        echo "Running: brew uninstall --cask ${REMOVED_CASKS[*]}"
+        brew uninstall --cask "${REMOVED_CASKS[@]}"
+      fi
+    fi
+  else
+    echo "Removals cancelled. No uninstall commands run."
+  fi
+else
+  echo "Nothing was marked for removal."
+fi
+
+echo
+
+###############################################
+# Autoremove step
+#
+# Ask whether to run:
+#   brew autoremove
+# to clean up now-unused dependencies. In dry-run mode
+# we just show the command and do nothing.
+###############################################
+
+if prompt_yes_no "Run 'brew autoremove' to remove unused dependencies?" default_yes; then
+  if $DRY_RUN; then
+    echo ">>> DRY RUN: brew autoremove"
+  else
+    brew autoremove
+  fi
+else
+  echo "Skipping autoremove."
+fi
+
+echo
+
+###############################################
+# Brewfile generation
+#
+# In non-dry-run mode, offer to generate a clean Brewfile
+# describing the current installed state after all removals:
+#   brew bundle dump --file=Brewfile.clean --force
+#
+# In dry-run mode, we skip this to avoid confusing the
+# simulated state with reality.
+###############################################
+
+if $DRY_RUN; then
+  echo "Dry run: skipping Brewfile generation (no actual changes made)."
+else
+  if prompt_yes_no "Generate clean Brewfile (remaining packages only) in ./Brewfile.clean?" default_yes; then
+    # Ensure the `brew bundle` command is available.
+    if ! brew help bundle >/dev/null 2>&1; then
+      echo "Error: 'brew bundle' is not available. You may need:"
+      echo "  brew tap Homebrew/bundle"
+      exit 1
+    fi
+    # Dump a Brewfile of everything still installed.
+    brew bundle dump --file=Brewfile.clean --force
+    echo "Clean Brewfile written to ./Brewfile.clean"
+  else
+    echo "Skipping Brewfile generation."
+  fi
+fi
+
+echo
+echo "Done."
