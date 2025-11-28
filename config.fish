@@ -17,6 +17,8 @@ set -Ux EDITOR code
 # Pacific timezone, what's up?
 set -Ux TZ America/Los_Angeles
 
+# Disable Homebrew auto update
+set -Ux HOMEBREW_NO_AUTO_UPDATE 1
 
 # GPG Signing
 set -Ux GPG_TTY (tty)
