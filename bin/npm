@@ -34,7 +34,7 @@ main() {
   fi
 
   if [[ "$#" -gt 0 && "$1" == "install" ]]; then
-    if [[ "$#" -eq 1 ]]; then
+    if [[ "$#" -eq 1 && -f package-lock.json ]]; then
       command npm ci
     else
       command npm "$@"
