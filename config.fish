@@ -14,8 +14,9 @@ set -Ux DOTFILES $HOME/.files
 # I like to use VSCode; for now.
 set -Ux EDITOR code
 
-# Central timezone, what's up?
-set -Ux TZ America/Chicago
+# Pacific timezone, what's up?
+set -Ux TZ America/Los_Angeles
+
 
 # GPG Signing
 set -Ux GPG_TTY (tty)
