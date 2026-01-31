@@ -80,3 +80,5 @@ _.msp
 # vscode
 
 .vscode
+
+.claude/settings.local.json
