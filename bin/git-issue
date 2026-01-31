@@ -11,8 +11,7 @@ function main () {
   local issue=$(curl -s -X GET -H "Authorization: Bearer ${token}" "${url}")
   local title=$(echo "${issue}" | jq -r '.title')
   local type=$(echo "${issue}" | jq -r '.type.name')
-  local branch="$(echo "${type}" | tr '[:upper:]' '[:lower:]')-${id}"
-  # local description=$(echo "${name}" | sed -e 's/[[:space:]]*$//' | iconv -t ascii//TRANSLIT | sed -E s/[^a-zA-Z0-9]+/-/g | sed -E s/^-+\|-+$//g | tr A-Z a-z)
+  local branch="$(echo "${type}" | tr '[:lower:]' '[:upper:]')-${id}"
 
   git checkout -b "${branch}";
   git empty "${type} ${id} - ${title}"
