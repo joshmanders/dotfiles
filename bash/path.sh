@@ -21,8 +21,4 @@ PATH="${PATH}:${ANDROID_HOME}/platform-tools"
 # Dotfiles bin scripts
 PATH="${PATH}:${DOTFILES}/bin"
 
-# Local project bins (convenience for npm/composer projects)
-PATH="${PATH}:./node_modules/.bin"
-PATH="${PATH}:./vendor/bin"
-
 export PATH
