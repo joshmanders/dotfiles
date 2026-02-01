@@ -45,7 +45,8 @@ This will:
    description: When to use this skill
    ---
    ```
-3. Re-run install: `bash claude/install.sh`
+
+Skills are automatically available since the folder is symlinked.
 
 ### Edit instructions
 
