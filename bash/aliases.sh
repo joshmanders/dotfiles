@@ -35,8 +35,3 @@ alias solo='artisan solo'
 # Git shortcuts
 alias wip='git save "WIP"'
 alias push='git push'
-alias g='git'
-alias gs='git status'
-alias gd='git diff'
-alias gl='git log --oneline -20'
-
