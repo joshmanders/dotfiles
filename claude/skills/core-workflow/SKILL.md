@@ -107,21 +107,22 @@ Remove all of these:
 
 **Match the project's existing style.** Check `git log --oneline -10` first.
 
-If using Conventional Commits:
-
-- `feat:` — New feature
-- `fix:` — Bug fix
-- `task:` — Chores, refactoring
-- `docs:` — Documentation
-- `test:` — Tests
-
-**Always add co-author footer:**
+**Structure:** Subject line + blank line + footer. No body text.
 
 ```
 feat: add bandwidth endpoint
 
 Co-Authored-By: Claude Code <noreply@anthropic.com>
 ```
+
+Common prefixes (lowercase):
+
+- `add:` — New feature or file
+- `fix:` — Bug fix
+- `remove:` — Removing files or features
+- `refactor:` — Code restructuring
+- `docs:` — Documentation
+- `test:` — Tests
 
 **Exception:** No co-author footer in `patientprism` projects.
 
