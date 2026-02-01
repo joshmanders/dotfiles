@@ -124,7 +124,7 @@ Common prefixes (lowercase):
 - `docs:` — Documentation
 - `test:` — Tests
 
-**Exception:** No co-author footer in `patientprism` projects.
+**Exception:** Some work repos may not want co-author footers. Check project conventions.
 
 ### Atomic Commits
 

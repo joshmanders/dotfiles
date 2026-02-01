@@ -95,17 +95,6 @@ Include ~/.orbstack/ssh/config
 
 - `ServerAliveInterval 60` - Keeps connections alive
 
-### Host Configurations
-
-**quasirc** - Local QEMU/Docker container:
-
-```
-Host quasirc
-    HostName 127.0.0.1
-    User joshmanders
-    Port 2222
-```
-
 ## Adding New Hosts
 
 Edit `config`:
