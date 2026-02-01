@@ -126,7 +126,7 @@ brew "stripe/stripe-cli/stripe"
 # Shell enhancements (fish-like experience in bash)
 brew "bash"
 brew "bash-completion@2"
-brew "starship"
+brew "oh-my-posh"
 brew "fzf"
 brew "zoxide"
 
