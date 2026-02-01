@@ -6,11 +6,9 @@
 # Can be run standalone or sourced from the main install.sh.
 #
 # What it does:
-#   1. Installs ble.sh for syntax highlighting and autosuggestions
-#   2. Runs fzf install for keybindings
-#   3. Symlinks bashrc to ~/.bashrc and ~/.bash_profile
-#   4. Symlinks starship.toml to ~/.config/starship.toml
-#   5. Sets Homebrew bash as default shell
+#   1. Runs fzf install for keybindings
+#   2. Symlinks bashrc to ~/.bashrc and ~/.bash_profile
+#   3. Sets Homebrew bash as default shell
 #
 # Usage:
 #   bash bash/install.sh
@@ -25,15 +23,6 @@ echo ""
 echo "=== Bash Shell Setup ==="
 echo ""
 
-# Install ble.sh for syntax highlighting and autosuggestions
-BLESH_DIR="${HOME}/.local/share/blesh"
-if [[ ! -d "${BLESH_DIR}" ]]; then
-    run "Install ble.sh (syntax highlighting + autosuggestions)" \
-        bash -c 'git clone --recursive --depth 1 --shallow-submodules https://github.com/akinomyoga/ble.sh.git /tmp/ble.sh && make -C /tmp/ble.sh install PREFIX="${HOME}/.local" && rm -rf /tmp/ble.sh'
-else
-    echo "Skip: ble.sh already installed"
-fi
-
 # Run fzf install for keybindings
 if command -v fzf &>/dev/null && [[ ! -f "${HOME}/.fzf.bash" ]]; then
     run "Install fzf keybindings" \
@@ -45,9 +34,6 @@ fi
 # Create symlinks
 symlink "$DOTFILES/bash/bashrc" "$HOME/.bashrc"
 symlink "$DOTFILES/bash/bashrc" "$HOME/.bash_profile"
-
-mkdir -p "$HOME/.config"
-symlink "$DOTFILES/bash/starship.toml" "$HOME/.config/starship.toml"
 
 # Set Homebrew bash as default shell
 BASH_PATH="$(brew --prefix)/bin/bash"
