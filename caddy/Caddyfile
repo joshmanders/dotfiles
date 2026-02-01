@@ -1,0 +1,22 @@
+# --------
+# Local Certificate Authority
+# --------
+{
+	persist_config off
+
+	pki {
+		ca {
+			intermediate_lifetime 1800d
+		}
+	}
+	servers {
+		trusted_proxies static private_ranges
+		client_ip_headers X-Forwarded-For X-Real-IP
+	}
+}
+
+# Load snippets (laravel, etc.)
+import /opt/homebrew/etc/caddy/snippets/*
+
+# Load site configurations
+import /opt/homebrew/etc/caddy/sites/*
