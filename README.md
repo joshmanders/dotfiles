@@ -121,3 +121,11 @@ Each directory has its own README with detailed documentation:
 | `git save "msg"` | Quick commit                      |
 | `git sync`       | Fetch and rebase on upstream      |
 | `git undo`       | Undo last commit                  |
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+
+## License
+
+[MIT](LICENSE)
