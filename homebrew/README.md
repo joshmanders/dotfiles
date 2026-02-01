@@ -67,7 +67,7 @@ brew bundle dump --file="$DOTFILES/homebrew/bundle" --force
 | ------------------- | --------------------------------- |
 | `bash`              | Modern bash 5.x (macOS ships 3.2) |
 | `bash-completion@2` | Tab completions                   |
-| `starship`          | Cross-shell prompt                |
+| `oh-my-posh`        | Customizable prompt               |
 | `fzf`               | Fuzzy finder                      |
 | `zoxide`            | Smart directory jumping           |
 

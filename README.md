@@ -26,10 +26,9 @@ bash ~/.files/install.sh
 
 ### Shell (Bash)
 
-Fish-like experience in bash with syntax highlighting, autosuggestions, and a modern prompt.
+Modern bash setup with a customizable prompt and enhanced navigation.
 
-- **ble.sh** - Syntax highlighting and autosuggestions
-- **Starship** - Fast, customizable prompt
+- **oh-my-posh** - Customizable prompt with git status
 - **fzf** - Fuzzy finder for history (Ctrl+R)
 - **zoxide** - Smart directory jumping (`z`)
 
