@@ -6,6 +6,9 @@
 # Sourced by bashrc.
 
 # fzf - fuzzy finder (better Ctrl+R)
+if [[ -f "${DOTFILES}/fzf/config.sh" ]]; then
+    source "${DOTFILES}/fzf/config.sh"
+fi
 if [[ -f "${HOME}/.fzf.bash" ]]; then
     source "${HOME}/.fzf.bash"
 fi

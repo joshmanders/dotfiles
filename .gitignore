@@ -1,5 +1,5 @@
 # Personal configuration (copy from config.sh.example)
-config.sh
+/config.sh
 
 # Homebrew lock file
 Brewfile.lock.json
