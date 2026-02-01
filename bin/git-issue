@@ -1,20 +1,17 @@
 #! /usr/bin/env bash
 
-# For this to work, you have to have a global config set for github in git.
-# git config --global github.api-token <your github api token>
+# Requires DOTFILES_GITHUB_USERNAME set and gh auth for that user
 function main () {
   local id="$1"
   local origin=$(git config --get remote.origin.url)
   local repo=$(echo "${origin}" | sed -E 's/git@github.com\:(.*)\.git/\1/')
-  local token=$(git config --global --get github.api-token)
-  local url="https://api.github.com/repos/${repo}/issues/${id}"
-  local issue=$(curl -s -X GET -H "Authorization: Bearer ${token}" "${url}")
+  local issue=$(GH_TOKEN=$(gh auth token --user "$DOTFILES_GITHUB_USERNAME") gh api "repos/${repo}/issues/${id}")
   local title=$(echo "${issue}" | jq -r '.title')
   local type=$(echo "${issue}" | jq -r '.type.name')
   local branch="$(echo "${type}" | tr '[:lower:]' '[:upper:]')-${id}"
 
   git checkout -b "${branch}";
-  git empty "${type} ${id} - ${title}"
+  # git empty "${type} ${id} - ${title}"
 }
 
 main "$@"
