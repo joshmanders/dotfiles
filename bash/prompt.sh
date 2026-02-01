@@ -2,9 +2,9 @@
 #
 # prompt.sh - Prompt configuration
 #
-# This file initializes the shell prompt using Starship.
+# This file initializes the shell prompt using oh-my-posh.
 # Sourced by bashrc.
 
-if command -v starship &>/dev/null; then
-    eval "$(starship init bash)"
+if command -v oh-my-posh &>/dev/null; then
+    eval "$(oh-my-posh init bash --config "${DOTFILES}/bash/theme.omp.json")"
 fi
