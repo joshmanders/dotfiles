@@ -30,7 +30,8 @@
           "background_templates": [
             "{{ if or (.Working.Changed) (.Staging.Changed) }}#e60000{{ end }}"
           ],
-          "foreground": "white",
+          "foreground": "#ffffff",
+          "foreground_templates": ["#ffffff"],
           "powerline_symbol": "\ue0b0",
           "style": "powerline",
           "template": " <b>{{ .HEAD }}</b> ",
