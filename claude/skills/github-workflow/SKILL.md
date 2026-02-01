@@ -22,7 +22,7 @@ description: GitHub Issues and project management. Use when creating issues, tra
 
 ### Setting Issue Type via GraphQL
 
-```bash
+````bash
 gh api graphql -f query='
 mutation {
   updateIssue(input: {
@@ -32,13 +32,13 @@ mutation {
     issue { title issueType { name } }
   }
 }'
-```
+````
 
 ### Getting Issue Node ID
 
-```bash
+````bash
 gh issue view <num> --repo primcloud/<repo> --json id --jq '.id'
-```
+````
 
 ---
 
@@ -54,7 +54,7 @@ gh issue view <num> --repo primcloud/<repo> --json id --jq '.id'
 
 ### Standard Issue
 
-```bash
+````bash
 gh issue create \
   --repo primcloud/<repo> \
   --title "Short description" \
@@ -65,7 +65,7 @@ What and why.
 - [ ] First requirement
 - [ ] Second requirement" \
   --project "Primcloud"
-```
+````
 
 After creating, set the issue type (Task or Bug) via GraphQL. See "Issue Types" section above.
 
@@ -73,7 +73,7 @@ After creating, set the issue type (Task or Bug) via GraphQL. See "Issue Types" 
 
 ## Project Operations
 
-```bash
+````bash
 # Add issue to project
 gh project item-add 6 --owner primcloud \
   --url https://github.com/primcloud/<repo>/issues/<number>
@@ -89,7 +89,7 @@ gh search issues --owner primcloud "search terms"
 
 # View issue
 gh issue view <number> --repo primcloud/<repo>
-```
+````
 
 ---
 
@@ -111,9 +111,9 @@ gh issue view <number> --repo primcloud/<repo>
 
 **Always include in PR body:**
 
-```
+````
 Closes #123
-```
+````
 
 Other keywords: `Fixes #123`, `Resolves #123`
 
@@ -125,7 +125,7 @@ Reference without closing: `Related to #123`
 
 ## Complete Workflow
 
-```
+````
 1. Create issue (or find existing)
    → gh issue create --repo primcloud/<repo> ...
 
@@ -142,7 +142,7 @@ Reference without closing: `Related to #123`
 
 6. Merge
    → Status auto-moves to "Done"
-```
+````
 
 ---
 

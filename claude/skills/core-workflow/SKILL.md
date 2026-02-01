@@ -22,7 +22,7 @@ description: Foundational workflow and code standards. ALWAYS ACTIVE on every ta
 
 ## Task Lifecycle
 
-```
+````
 1. Understand the ask
 2. Read nearby code to learn patterns
 3. Implement following those patterns
@@ -32,7 +32,7 @@ description: Foundational workflow and code standards. ALWAYS ACTIVE on every ta
 7. STOP — wait for review
 8. Iterate if needed
 9. Commit ONLY when explicitly asked to finalize/commit
-```
+````
 
 **Critical:** Steps 7-9 are gated. Never skip to commit.
 
@@ -82,26 +82,26 @@ Remove all of these:
 
 1. Run formatters:
 
-   ```bash
+   ````bash
    # JS/TS/CSS/JSON/MD files
    npx prettier --write .
 
    # PHP files
    cpx pint
-   ```
+   ````
 
 2. Run tests:
 
-   ```bash
+   ````bash
    npm test        # or project equivalent
-   ```
+   ````
 
 3. Review changes:
-   ```bash
+   ````bash
    git status
    git diff
    git log --oneline -5  # check commit style
-   ```
+   ````
 
 ### Commit Format
 
@@ -109,11 +109,11 @@ Remove all of these:
 
 **Structure:** Subject line + blank line + footer. No body text.
 
-```
+````
 feat: add bandwidth endpoint
 
 Co-Authored-By: Claude Code <noreply@anthropic.com>
-```
+````
 
 Common prefixes (lowercase):
 
@@ -157,17 +157,17 @@ When work is complete on a feature branch:
 
 **Title:**
 
-```
+````
 feat: short description
-```
+````
 
 **Summary:**
 
-```
+````
 Brief description of what and why.
 
 Closes #123
-```
+````
 
 ---
 

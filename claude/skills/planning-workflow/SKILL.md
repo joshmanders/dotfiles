@@ -22,18 +22,30 @@ description: Work tracking through GitHub issues. Every session has one issue. T
 
 ## Session Flow
 
-```
+### Planning Phase (plan mode active)
+
+````
 1. Understand the work
-2. Create issue with full context (wait for approval)
-3. Track issue internally as session context
-4. Do the work (core-workflow)
-5. If scope expands → STOP, ask about new issue
-6. Finalize → PR closes the issue
-```
+2. Draft issue content (do NOT create yet)
+3. Include issue draft in plan file
+4. Exit plan mode for approval
+````
+
+### Execution Phase (after plan approval)
+
+````
+5. Create the issue (first step after approval)
+6. Track issue as session context
+7. Do the work (core-workflow)
+8. If scope expands → STOP, ask about new issue
+9. Finalize → PR closes the issue
+````
 
 ---
 
 ## Creating the Issue
+
+> **Plan Mode:** During planning, draft the issue content and include it in your plan file. Do NOT run `gh issue create` until after plan approval.
 
 ### Before Creating
 
@@ -45,12 +57,22 @@ Gather all context needed to do the work:
 - What files/areas will be touched?
 - Any risks or open questions?
 
+### Issue Titles
+
+Use brief noun phrases describing the need, not imperative actions:
+
+| ✅ Good                    | ❌ Bad                          |
+| -------------------------- | ------------------------------- |
+| "API rate limiting"        | "Add rate limiting to API"      |
+| "User authentication flow" | "Fix authentication flow"       |
+| "Dashboard performance"    | "Improve dashboard performance" |
+
 ### Issue Format
 
-```bash
+````bash
 gh issue create \
   --repo primcloud/<repo> \
-  --title "Clear, specific title" \
+  --title "Brief noun phrase" \
   --body "## Summary
 What we're doing and why.
 
@@ -72,9 +94,10 @@ How we'll implement this.
 ## Notes
 Any additional context, decisions, risks." \
   --project "Primcloud"
-```
+````
 
-**Wait for approval before creating.**
+**In plan mode:** Include this draft in your plan file and exit plan mode.
+**After approval:** Run `gh issue create` as the first execution step.
 
 ### After Creating
 
@@ -88,7 +111,7 @@ Any additional context, decisions, risks." \
 
 After creating an issue, set its type:
 
-```bash
+````bash
 # Get issue node ID
 ISSUE_ID=$(gh issue view <num> --repo primcloud/<repo> --json id --jq '.id')
 
@@ -113,7 +136,7 @@ mutation {
     issue { title issueType { name } }
   }
 }"
-```
+````
 
 | Type | ID                    | Use                               |
 | ---- | --------------------- | --------------------------------- |
@@ -126,10 +149,10 @@ mutation {
 
 Once an issue is created, track it as session context:
 
-```
+````
 Active Issue: #123 - Add bandwidth tracking endpoint
 Repo: primcloud/platform
-```
+````
 
 **GitHub Identity:** You operate as `aniftybot`. Comments, issues, and PRs from that account are your previous work.
 
@@ -141,11 +164,50 @@ This context should be referenced:
 
 If context compaction occurs, the issue contains the full context. Fetch it:
 
-```bash
+````bash
 gh issue view 123 --repo primcloud/<repo>
-```
+````
 
 **Note:** Comments from `aniftybot` are your previous notes. Use them to restore context.
+
+---
+
+## Planning Multiple Issues
+
+Sometimes planning reveals work that should be split into multiple issues.
+
+### When to Split
+
+- Distinct deliverables that could merge independently
+- Different areas of the codebase with no dependencies
+- Work that benefits from separate review cycles
+
+### How to Handle
+
+1. Draft all issues in the plan file
+2. Note dependencies/order if any
+3. Get approval on the full set
+4. After approval: create all issues, pick one to start
+5. Other issues become backlog (or parallel work if independent)
+
+### Plan File Format
+
+````markdown
+## Issue Drafts
+
+### Issue 1: API rate limiting
+
+Summary, approach, acceptance criteria...
+
+### Issue 2: Rate limit dashboard
+
+Summary, approach, acceptance criteria...
+
+## Execution Order
+
+1. Start with Issue 1 (no dependencies)
+2. Issue 2 depends on Issue 1
+````
 
 ---
 
@@ -157,7 +219,7 @@ gh issue view 123 --repo primcloud/<repo>
 2. **Assess** — Is this part of the current issue or separate?
 3. **Ask:**
 
-   ```
+   ````
    I've discovered we also need to [X]. This seems outside the scope of #123.
 
    Options:
@@ -166,28 +228,28 @@ gh issue view 123 --repo primcloud/<repo>
    3. Note it and skip for now
 
    How do you want to handle this?
-   ```
+   ````
 
 4. **If new issue:** Create it, but don't work on it this session
 5. **If adding to current:** Update the issue body with new scope
 
 ### Updating Current Issue
 
-```bash
+````bash
 # View current body
 gh issue view 123 --repo primcloud/<repo>
 
 # Edit to add scope (opens editor)
 gh issue edit 123 --repo primcloud/<repo>
-```
+````
 
 Or add a comment:
 
-```bash
+````bash
 gh issue comment 123 --repo primcloud/<repo> \
   --body "## Scope Update
 Adding [X] to this work because [reason]."
-```
+````
 
 ---
 
@@ -197,7 +259,7 @@ When work is complete and approved for commit:
 
 ### 1. Create PR with Issue Reference
 
-```bash
+````bash
 gh pr create \
   --repo primcloud/<repo> \
   --title "feat: clear description" \
@@ -213,13 +275,13 @@ What was done.
 - [ ] Manual testing done
 
 Closes #123"
-```
+````
 
 ### 2. Provide PR Summary
 
 When presenting the PR:
 
-```
+````
 PR ready to create:
 
 Title: feat: add bandwidth tracking endpoint
@@ -235,7 +297,7 @@ Implemented bandwidth tracking endpoint for ingress metrics.
 - Added feature tests
 
 Closes #123
-```
+````
 
 The `Closes #123` automatically:
 
@@ -262,37 +324,51 @@ The `Closes #123` automatically:
 
 ## Examples
 
-### Starting a Session
+### Starting a Session (Plan Mode)
 
 **Josh:** "Let's add rate limiting to the API"
 
-**Response:**
+**Response (in plan file):**
 
-```
-I'll create an issue to track this work.
+````markdown
+# Plan: API Rate Limiting
+
+## Issue Draft
+
+**Title:** API rate limiting
+
+**Body:**
 
 ## Summary
-Add rate limiting to API endpoints to prevent abuse.
+
+Rate limiting for API endpoints to prevent abuse.
 
 ## Approach
+
 - Use Laravel's built-in rate limiter
 - Configure limits in RouteServiceProvider
 - Add rate limit headers to responses
 - Add tests for rate limit behavior
 
 ## Acceptance Criteria
+
 - [ ] Rate limits applied to auth endpoints
 - [ ] Rate limits applied to API endpoints
 - [ ] Headers show remaining requests
 - [ ] Tests cover rate limit scenarios
 
 ## Files/Areas
+
 - `app/Providers/RouteServiceProvider.php`
 - `routes/api.php`
 - `tests/Feature/RateLimitTest.php`
+````
 
-Should I create this issue?
-```
+_Exit plan mode for approval._
+
+### After Plan Approval
+
+**First step:** Create the issue with `gh issue create`, then begin work.
 
 ### Scope Creep
 
@@ -300,7 +376,7 @@ Should I create this issue?
 
 **Response:**
 
-```
+````
 I've found that the auth middleware needs changes to support rate limiting properly. This seems related but expands the scope.
 
 Options:
@@ -309,7 +385,7 @@ Options:
 3. Note it for later and keep current scope
 
 How do you want to handle this?
-```
+````
 
 ### Finalization
 
@@ -317,7 +393,7 @@ How do you want to handle this?
 
 **Response:**
 
-```
+````
 PR ready:
 
 Title: feat: add rate limiting to API
@@ -337,15 +413,16 @@ Added rate limiting to prevent API abuse.
 - Manually verified rate limit headers
 
 Closes #123
-```
+````
 
 ---
 
 ## Don't
 
 - ❌ Start work without an issue
-- ❌ Create issue without approval
+- ❌ Create issue during plan mode (draft only, create after approval)
 - ❌ Expand scope without asking
 - ❌ Create PR without `Closes #N`
 - ❌ Work on multiple issues in one session
 - ❌ Forget to track the active issue
+- ❌ Amend commits unless explicitly told to
