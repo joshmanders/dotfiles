@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+#
+# cpx - Composer Package Executor
+#
+# Like npx but for PHP/Composer projects.
+# Traverses up looking for vendor/bin/<cmd>, falls back to composer run-script.
+# Stops at git repo boundary.
+#
+# Usage:
+#   cpx pint          # runs vendor/bin/pint
+#   cpx dev           # runs composer run-script dev
+#   cpx pint --dirty  # passes args to the command
+
+set -euo pipefail
+
+if [[ $# -eq 0 ]]; then
+    echo "Usage: cpx <command> [args...]"
+    exit 1
+fi
+
+cmd="$1"
+shift
+
+# Find git repo root (our boundary)
+repo_root="$(git rev-parse --show-toplevel 2>/dev/null)" || {
+    echo "cpx: not in a git repository" >&2
+    exit 1
+}
+
+# Traverse up looking for vendor/bin/<cmd>
+dir="$PWD"
+while [[ "$dir" == "$repo_root"* ]]; do
+    if [[ -x "$dir/vendor/bin/$cmd" ]]; then
+        exec "$dir/vendor/bin/$cmd" "$@"
+    fi
+    [[ "$dir" == "$repo_root" ]] && break
+    dir="$(dirname "$dir")"
+done
+
+# No binary found - check for composer.json at repo root
+if [[ -f "$repo_root/composer.json" ]]; then
+    exec composer --working-dir="$repo_root" run-script "$cmd" -- "$@"
+fi
+
+echo "cpx: no vendor/bin/$cmd or composer.json found in $repo_root" >&2
+exit 1
