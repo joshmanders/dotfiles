@@ -23,6 +23,7 @@
 #   bash ssh/install.sh         # SSH configuration
 #   bash dnsmasq/install.sh     # DNS resolver
 #   bash caddy/install.sh       # Web server
+#   bash claude/install.sh      # Claude Code config
 
 set -euo pipefail
 
@@ -68,6 +69,7 @@ source "$DOTFILES/git/install.sh"
 source "$DOTFILES/ssh/install.sh"
 source "$DOTFILES/dnsmasq/install.sh"
 source "$DOTFILES/caddy/install.sh"
+source "$DOTFILES/claude/install.sh"
 
 echo ""
 echo "╔═══════════════════════════════════════════════════════════════════╗"

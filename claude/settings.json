@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "defaultMode": "default"
+  },
+  "enabledPlugins": {
+    "ralph-wiggum@claude-plugins-official": true,
+    "superpowers@superpowers-marketplace": true
+  }
+}
