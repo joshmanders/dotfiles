@@ -34,6 +34,7 @@ fi
 # Create symlinks
 symlink "$DOTFILES/bash/bashrc" "$HOME/.bashrc"
 symlink "$DOTFILES/bash/bashrc" "$HOME/.bash_profile"
+symlink "$DOTFILES/bash/hushlogin" "$HOME/.hushlogin"
 
 # Set Homebrew bash as default shell
 BASH_PATH="$(brew --prefix)/bin/bash"

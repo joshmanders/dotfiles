@@ -5,8 +5,12 @@
 # This file sets up the PATH environment variable.
 # Sourced by bashrc.
 
-# Start with Homebrew paths
-HOMEBREW_PREFIX="$(brew --prefix)"
+# Determine Homebrew prefix by checking known locations
+if [[ -x "/opt/homebrew/bin/brew" ]]; then
+    HOMEBREW_PREFIX="/opt/homebrew"
+elif [[ -x "/usr/local/bin/brew" ]]; then
+    HOMEBREW_PREFIX="/usr/local"
+fi
 PATH="${HOMEBREW_PREFIX}/bin:${HOMEBREW_PREFIX}/sbin"
 
 # System paths
