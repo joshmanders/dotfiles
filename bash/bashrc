@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+#
+# bashrc - Main bash configuration
+#
+# This file is symlinked to ~/.bashrc and ~/.bash_profile.
+# It sources modular configuration files for a clean, maintainable setup.
+
+# Exit early for non-interactive shells
+[[ $- != *i* ]] && return
+
+# Define dotfiles location
+export DOTFILES="${HOME}/.files"
+
+# Source modular configuration files
+source "${DOTFILES}/bash/exports.sh"
+source "${DOTFILES}/bash/path.sh"
+source "${DOTFILES}/bash/aliases.sh"
+source "${DOTFILES}/bash/plugins.sh"
+source "${DOTFILES}/bash/completion.sh"
+source "${DOTFILES}/bash/prompt.sh"
