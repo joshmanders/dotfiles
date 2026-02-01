@@ -44,8 +44,8 @@ run() {
     echo "Purpose: $description"
 
     # Handle non-interactive mode
-    if [[ -n "$DOTFILES_NON_INTERACTIVE" ]]; then
-        if [[ -n "$DOTFILES_ALLOW" ]]; then
+    if [[ -n "${DOTFILES_NON_INTERACTIVE:-}" ]]; then
+        if [[ -n "${DOTFILES_ALLOW:-}" ]]; then
             echo "Running (--allow)..."
             "${cmd[@]}"
             return $?

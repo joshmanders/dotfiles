@@ -80,8 +80,8 @@ symlink() {
     fi
 
     # Handle conflict
-    if [[ -n "$DOTFILES_NON_INTERACTIVE" ]]; then
-        if [[ -n "$DOTFILES_OVERWRITE" ]]; then
+    if [[ -n "${DOTFILES_NON_INTERACTIVE:-}" ]]; then
+        if [[ -n "${DOTFILES_OVERWRITE:-}" ]]; then
             rm -rf "$dest"
             ln -s "$src" "$dest"
             echo "Overwritten: $dest -> $src"
