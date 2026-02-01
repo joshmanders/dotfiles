@@ -1,0 +1,239 @@
+#!/usr/bin/env bash
+#
+# concierge - Local development site manager
+#
+# Manages Caddy site configurations for Laravel development.
+#
+# Usage:
+#   concierge add [name] [path] [--ip <address>]   Add a site
+#   concierge remove <name>                         Remove a site
+#   concierge list                                  List all sites
+#
+# Examples:
+#   concierge add                          # Uses basename of cwd as name, cwd as path
+#   concierge add mysite                   # Uses mysite as name, cwd as path
+#   concierge add mysite ~/Code/project    # Uses mysite as name, specified path
+#   concierge add --ip 1.2.3.4             # Add with IP forwarding headers
+#   concierge remove mysite                # Removes mysite
+#   concierge list                         # Lists all configured sites
+
+set -euo pipefail
+
+DOTFILES="${DOTFILES:-$HOME/.files}"
+SITES_DIR="$DOTFILES/caddy/sites"
+CADDYFILE="$(brew --prefix)/etc/Caddyfile"
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+info() { echo -e "${BLUE}→${NC} $*"; }
+success() { echo -e "${GREEN}✓${NC} $*"; }
+warn() { echo -e "${YELLOW}!${NC} $*"; }
+error() { echo -e "${RED}✗${NC} $*" >&2; }
+
+reload_caddy() {
+    info "Reloading Caddy configuration..."
+    if caddy reload --config "$CADDYFILE" 2>/dev/null; then
+        success "Caddy reloaded"
+    else
+        warn "Caddy reload failed (is Caddy running?)"
+        warn "Try: brew services start caddy"
+    fi
+}
+
+cmd_add() {
+    local name=""
+    local path=""
+    local ip=""
+
+    # Parse arguments
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            --ip)
+                if [[ -z "${2:-}" ]]; then
+                    error "--ip requires an IP address"
+                    exit 1
+                fi
+                ip="$2"
+                shift 2
+                ;;
+            *)
+                if [[ -z "$name" ]]; then
+                    name="$1"
+                elif [[ -z "$path" ]]; then
+                    path="$1"
+                fi
+                shift
+                ;;
+        esac
+    done
+
+    # Default path to current directory
+    if [[ -z "$path" ]]; then
+        path="$PWD"
+    fi
+
+    # Default name to basename of path
+    if [[ -z "$name" ]]; then
+        name="$(basename "$path")"
+    fi
+
+    # Resolve to absolute path
+    path="$(cd "$path" && pwd)"
+
+    # Validate path exists
+    if [[ ! -d "$path" ]]; then
+        error "Directory does not exist: $path"
+        exit 1
+    fi
+
+    # Check if public directory exists (Laravel structure)
+    if [[ ! -d "$path/public" ]]; then
+        warn "No public/ directory found in $path"
+        warn "This may not be a Laravel project"
+    fi
+
+    # Create site file
+    local site_file="$SITES_DIR/$name"
+
+    if [[ -f "$site_file" ]]; then
+        warn "Site '$name' already exists"
+        read -r -p "Overwrite? [y/n] " response
+        if [[ ! "$response" =~ ^[yY] ]]; then
+            info "Cancelled"
+            exit 0
+        fi
+    fi
+
+    # Write site config (use laravel-ip snippet if --ip provided)
+    if [[ -n "$ip" ]]; then
+        echo "import laravel-ip $name $path $ip" > "$site_file"
+        success "Created site: $name (with IP forwarding: $ip)"
+    else
+        echo "import laravel $name $path" > "$site_file"
+        success "Created site: $name"
+    fi
+
+    info "  URL: https://$name.dev.local"
+    info "  Path: $path"
+
+    reload_caddy
+}
+
+cmd_remove() {
+    local name="${1:-}"
+
+    if [[ -z "$name" ]]; then
+        error "Usage: concierge remove <name>"
+        exit 1
+    fi
+
+    local site_file="$SITES_DIR/$name"
+
+    if [[ ! -f "$site_file" ]]; then
+        error "Site '$name' does not exist"
+        exit 1
+    fi
+
+    rm "$site_file"
+    success "Removed site: $name"
+
+    reload_caddy
+}
+
+cmd_list() {
+    if [[ ! -d "$SITES_DIR" ]] || [[ -z "$(ls -A "$SITES_DIR" 2>/dev/null)" ]]; then
+        info "No sites configured"
+        info "Add one with: concierge add [name] [path]"
+        exit 0
+    fi
+
+    echo ""
+    echo "Configured sites:"
+    echo ""
+
+    for site_file in "$SITES_DIR"/*; do
+        if [[ -f "$site_file" ]]; then
+            local name
+            local path
+            local config
+            name="$(basename "$site_file")"
+            config="$(cat "$site_file")"
+            # Extract path from site file (import laravel[-ip] <name> <path> [ip])
+            path="$(echo "$config" | awk '{print $4}')"
+            echo -e "  ${GREEN}$name${NC}"
+            echo -e "    URL:  https://$name.dev.local"
+            echo -e "    Path: $path"
+            # Show if using IP forwarding
+            if [[ "$config" == *"laravel-ip"* ]]; then
+                local ip
+                ip="$(echo "$config" | awk '{print $5}')"
+                echo -e "    IP:   $ip (forwarding enabled)"
+            fi
+            echo ""
+        fi
+    done
+}
+
+cmd_help() {
+    cat <<EOF
+concierge - Local development site manager
+
+Usage:
+  concierge add [name] [path] [--ip <address>]   Add a site
+  concierge remove <name>                         Remove a site
+  concierge list                                  List all sites
+  concierge help                                  Show this help
+
+Arguments:
+  name    Site name (defaults to basename of path)
+  path    Project path (defaults to current directory)
+
+Options:
+  --ip <address>   Set X-Forwarded-For and X-Real-IP headers to this IP
+                   (useful for rate limiting, geo-location, etc.)
+
+Examples:
+  concierge add                          # Add current directory
+  concierge add mysite                   # Add current directory as 'mysite'
+  concierge add mysite ~/Code/project    # Add specific path
+  concierge add --ip 73.93.46.100        # Add with IP forwarding
+  concierge add mysite --ip 1.2.3.4      # Add named site with IP forwarding
+  concierge remove mysite                # Remove site
+  concierge list                         # List all sites
+
+After adding a site, access it at:
+  https://<name>.dev.local
+EOF
+}
+
+# Ensure sites directory exists
+mkdir -p "$SITES_DIR"
+
+# Parse command
+case "${1:-help}" in
+    add)
+        shift
+        cmd_add "$@"
+        ;;
+    remove|rm|delete)
+        shift
+        cmd_remove "$@"
+        ;;
+    list|ls)
+        cmd_list
+        ;;
+    help|--help|-h)
+        cmd_help
+        ;;
+    *)
+        error "Unknown command: $1"
+        echo ""
+        cmd_help
+        exit 1
+        ;;
+esac
