@@ -50,7 +50,7 @@ Gather all context needed to do the work:
 ```bash
 gh issue create \
   --repo primcloud/<repo> \
-  --title "[Feature] Clear, specific title" \
+  --title "Clear, specific title" \
   --body "## Summary
 What we're doing and why.
 
@@ -71,7 +71,6 @@ How we'll implement this.
 
 ## Notes
 Any additional context, decisions, risks." \
-  --label "feature" \
   --project "Primcloud"
 ```
 
