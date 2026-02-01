@@ -11,6 +11,9 @@ export DOTFILES_NAME=
 # Your email (used in git commits and SSH key)
 export DOTFILES_EMAIL=
 
+# GitHub username (used for scoped gh cli actions)
+export DOTFILES_GITHUB_USERNAME=
+
 # Timezone
 export DOTFILES_TZ="America/Los_Angeles"
 
