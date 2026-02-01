@@ -27,6 +27,3 @@ export DOTFILES_EMAIL="you@example.com"
 
 # Editor (default: code)
 # export DOTFILES_EDITOR="vim"
-
-# GitHub username (for scripts that need it)
-# export DOTFILES_GITHUB_USER="yourusername"
