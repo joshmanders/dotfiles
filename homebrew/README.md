@@ -2,9 +2,9 @@
 
 Package management for macOS.
 
-## Brewfile
+## bundle
 
-The `Brewfile` contains all packages to install:
+The `bundle` contains all packages to install:
 
 - **Taps**: Third-party repositories
 - **Brews**: Command-line tools
@@ -27,7 +27,7 @@ bash homebrew/install.sh --non-interactive --allow
 
 ### Add a package
 
-Edit `Brewfile` and add:
+Edit `bundle` and add:
 
 ```ruby
 brew "package-name"           # CLI tool
@@ -39,12 +39,12 @@ vscode "publisher.extension"  # VS Code extension
 Then run:
 
 ```bash
-brew bundle --file="$DOTFILES/homebrew/Brewfile"
+brew bundle --file="$DOTFILES/homebrew/bundle"
 ```
 
 ### Remove a package
 
-1. Remove the line from `Brewfile`
+1. Remove the line from `bundle`
 2. Uninstall manually: `brew uninstall package-name`
 
 ### Update packages
@@ -53,10 +53,10 @@ brew bundle --file="$DOTFILES/homebrew/Brewfile"
 brew update && brew upgrade
 ```
 
-### Generate Brewfile from installed packages
+### Generate bundle from installed packages
 
 ```bash
-brew bundle dump --file="$DOTFILES/homebrew/Brewfile" --force
+brew bundle dump --file="$DOTFILES/homebrew/bundle" --force
 ```
 
 ## Key Packages

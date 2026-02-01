@@ -24,7 +24,7 @@
 #   DOTFILES_DENY             If set with non-interactive, skip all commands
 #
 # Examples:
-#   run "Install Homebrew packages" brew bundle --file="$DOTFILES/homebrew/Brewfile"
+#   run "Install Homebrew packages" brew bundle --file="$DOTFILES/homebrew/bundle"
 #   run "Set default shell to bash" chsh -s /opt/homebrew/bin/bash
 #   run "Start Caddy service" brew services start caddy
 
