@@ -19,7 +19,7 @@ export VISUAL="${DOTFILES_EDITOR}"
 export TZ="${DOTFILES_TZ}"
 
 # Homebrew
-export HOMEBREW_NO_AUTO_UPDATE=1
+export HOMEBREW_NO_AUTO_UPDATE="${DOTFILES_HOMEBREW_NO_AUTOUPDATE}"
 
 # Android SDK
 export JAVA_HOME="/Library/Java/JavaVirtualMachines/zulu-17.jdk/Contents/Home"
@@ -29,8 +29,8 @@ export ANDROID_HOME="${HOME}/Library/Android/sdk"
 export RIPGREP_CONFIG_PATH="${DOTFILES}/ripgrep/config"
 
 # History configuration (fish-like behavior)
-export HISTSIZE=50000
-export HISTFILESIZE=50000
+export HISTSIZE="${DOTFILES_HISTSIZE}"
+export HISTFILESIZE="${DOTFILES_HISTSIZE}"
 export HISTCONTROL=ignoreboth:erasedups
 export HISTIGNORE="ls:cd:cd -:pwd:exit:date:* --help"
 shopt -s histappend

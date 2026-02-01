@@ -37,10 +37,15 @@ while [[ "$dir" == "$repo_root"* ]]; do
     dir="$(dirname "$dir")"
 done
 
-# No binary found - check for composer.json at repo root
+# No binary found - try composer run-script
 if [[ -f "$repo_root/composer.json" ]]; then
     exec composer --working-dir="$repo_root" run-script "$cmd" -- "$@"
 fi
 
-echo "cpx: no vendor/bin/$cmd or composer.json found in $repo_root" >&2
+# Fall back to global composer bin
+if [[ -x "$HOME/.composer/vendor/bin/$cmd" ]]; then
+    exec "$HOME/.composer/vendor/bin/$cmd" "$@"
+fi
+
+echo "cpx: no vendor/bin/$cmd found" >&2
 exit 1

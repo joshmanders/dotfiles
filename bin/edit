@@ -21,8 +21,6 @@ main () {
 
   case "$1" in
     dotfiles) dotfiles "${args[@]}" ;;
-    caddy) vim /opt/homebrew/etc/sites-enabled/default ;;
-    caddyfile) vim /opt/homebrew/etc/Caddyfile ;;
     *) edit "${args[@]}" ;;
   esac
 }
