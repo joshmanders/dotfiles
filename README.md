@@ -12,7 +12,7 @@ My dotfiles, without me, are useless. Without my dotfiles, I am useless. I must 
 
 ```bash
 # Clone the repo
-git clone https://github.com/joshmanders/.files ~/.files
+git clone https://github.com/YOUR_USERNAME/.files ~/.files
 
 # Create your config file
 cp ~/.files/config.sh.example ~/.files/config.sh
@@ -37,7 +37,7 @@ Modern bash setup with a customizable prompt and enhanced navigation.
 - SSH commit signing (simpler than GPG)
 - macOS Keychain credential storage
 - Custom diff tool (icdiff)
-- 36+ utility scripts in `bin/`
+- 37 utility scripts in `bin/`
 
 ### Local Development
 
@@ -60,6 +60,7 @@ concierge add
 ├── bash/              # Shell configuration
 ├── bin/               # Custom scripts (37 total)
 ├── caddy/             # Web server config
+├── claude/            # Claude Code config and skills
 ├── dnsmasq/           # DNS resolver config
 ├── git/               # Git configuration
 ├── homebrew/          # Package management
@@ -92,6 +93,7 @@ bash git/install.sh         # Just git config
 bash ssh/install.sh         # Just SSH config
 bash dnsmasq/install.sh     # Just DNS setup
 bash caddy/install.sh       # Just web server
+bash claude/install.sh      # Just Claude Code config
 ```
 
 ## Documentation
@@ -101,6 +103,7 @@ Each directory has its own README with detailed documentation:
 - [bash/README.md](bash/README.md) - Shell configuration
 - [bin/README.md](bin/README.md) - Custom scripts
 - [caddy/README.md](caddy/README.md) - Web server
+- [claude/README.md](claude/README.md) - Claude Code config
 - [dnsmasq/README.md](dnsmasq/README.md) - DNS resolver
 - [git/README.md](git/README.md) - Git configuration
 - [homebrew/README.md](homebrew/README.md) - Package management

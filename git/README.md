@@ -19,8 +19,8 @@ bash git/install.sh
 
 ### User
 
-- Name: Josh Manders
-- Email: josh@joshmanders.com
+- Name: Set via `config.sh` → `DOTFILES_NAME`
+- Email: Set via `config.sh` → `DOTFILES_EMAIL`
 - Signing key: `~/.ssh/id_ed25519.pub`
 
 ### Commit Signing
@@ -58,15 +58,6 @@ Uses `icdiff` for side-by-side colored diffs:
 
 ```bash
 git difftool <file>
-```
-
-### Project-specific Config
-
-The `includeIf` directive loads project-specific config:
-
-```ini
-[includeIf "gitdir:~/Code/patientprism/"]
-    path = ~/Code/patientprism/.gitconfig
 ```
 
 ## Customization
