@@ -37,7 +37,7 @@ Modern bash setup with a customizable prompt and enhanced navigation.
 - SSH commit signing (simpler than GPG)
 - macOS Keychain credential storage
 - Custom diff tool (icdiff)
-- 37 utility scripts in `bin/`
+- 40 utility scripts in `bin/`
 
 ### Local Development
 

@@ -34,6 +34,7 @@ PATH="${PATH}:${DOTFILES}/bin"
 | `git-feature`  | Create a feature branch         |
 | `git-refactor` | Create a refactor branch        |
 | `git-issue`    | Create branch from GitHub issue |
+| `git-merge-pr` | Merge PR locally via rebase     |
 | `git-publish`  | Push and set upstream           |
 
 #### Committing
