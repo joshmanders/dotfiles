@@ -1,15 +1,17 @@
+# Note: user.name and user.email are set by git/install.sh from config.sh
+
 [user]
+	signingkey = ~/.ssh/id_ed25519.pub
 	name = Josh Manders
 	email = josh@joshmanders.com
-	signingkey = E185112892584284
+[gpg]
+	format = ssh
+[gpg "ssh"]
+	allowedSignersFile = ~/.ssh/allowed_signers
 [push]
 	default = simple
 	followTags = true
-[filter "media"]
-	clean = git-media-clean %f
-	smudge = git-media-smudge %f
 [core]
-	editor = code --wait
 	excludesfile = ~/.gitignore
 	ignorecase = false
 [http]
@@ -23,16 +25,14 @@
 [commit]
 	gpgsign = true
 [diff]
-  tool = icdiff
+	tool = icdiff
 [difftool]
-  prompt = false
+	prompt = false
 [difftool "icdiff"]
-  cmd = /usr/local/bin/icdiff --line-numbers $LOCAL $REMOTE
-[alias]
-	ch = clubhouse
+	cmd = icdiff --line-numbers $LOCAL $REMOTE
 [tag]
 	gpgsign = true
-[github]
-	api-token = ghp_XXXXXXXXXXXXXXXXXXXXXX
 [init]
 	defaultBranch = master
+[credential]
+	helper = osxkeychain
