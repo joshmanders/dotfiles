@@ -27,8 +27,12 @@ if ! command -v brew &>/dev/null; then
     run "Install Homebrew" \
         /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
-    # Add Homebrew to PATH for this session
-    eval "$(/opt/homebrew/bin/brew shellenv)"
+    # Add Homebrew to PATH for this session (detect architecture)
+    if [[ -f /opt/homebrew/bin/brew ]]; then
+        eval "$(/opt/homebrew/bin/brew shellenv)"
+    elif [[ -f /usr/local/bin/brew ]]; then
+        eval "$(/usr/local/bin/brew shellenv)"
+    fi
 else
     echo "Skip: Homebrew already installed"
 fi

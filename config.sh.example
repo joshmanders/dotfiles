@@ -16,3 +16,9 @@ export DOTFILES_TZ="America/Los_Angeles"
 
 # Editor
 export DOTFILES_EDITOR="code"
+
+# Disable Homebrew auto-update (1 = disabled)
+export DOTFILES_HOMEBREW_NO_AUTOUPDATE="1"
+
+# Shell history size
+export DOTFILES_HISTSIZE="50000"
