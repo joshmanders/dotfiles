@@ -33,12 +33,8 @@ export DOTFILES="$SCRIPT_DIR"
 # Source library utilities (handles flag parsing)
 source "$DOTFILES/lib/index.sh"
 
-# Ensure config.sh exists before proceeding
+# Ensure config.sh exists (runs setup wizard if not)
 ensure_config
-
-# Validate required config (prompts if not set in config.sh)
-env_require "DOTFILES_NAME" "Your name"
-env_require "DOTFILES_EMAIL" "Your email"
 
 echo ""
 echo "╔═══════════════════════════════════════════════════════════════════╗"
