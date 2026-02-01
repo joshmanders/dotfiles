@@ -26,12 +26,11 @@
           "type": "path"
         },
         {
-          "background": "#00b300",
+          "background": "#007700",
           "background_templates": [
             "{{ if or (.Working.Changed) (.Staging.Changed) }}#e60000{{ end }}"
           ],
           "foreground": "#ffffff",
-          "foreground_templates": ["#ffffff"],
           "powerline_symbol": "\ue0b0",
           "style": "powerline",
           "template": " <b>{{ .HEAD }}</b> ",
