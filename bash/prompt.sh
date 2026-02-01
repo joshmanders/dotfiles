@@ -6,5 +6,5 @@
 # Sourced by bashrc.
 
 if command -v oh-my-posh &>/dev/null; then
-    eval "$(oh-my-posh init bash --config "${DOTFILES}/bash/theme.omp.json")"
+    eval "$(oh-my-posh init bash --config "${DOTFILES}/bash/theme.json")"
 fi
