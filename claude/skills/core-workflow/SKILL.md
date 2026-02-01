@@ -87,7 +87,7 @@ Remove all of these:
    npx prettier --write .
 
    # PHP files
-   ./vendor/bin/pint
+   cpx pint
    ```
 
 2. Run tests:
