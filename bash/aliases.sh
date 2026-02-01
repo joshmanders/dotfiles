@@ -5,17 +5,20 @@
 # This file defines shell aliases.
 # Sourced by bashrc.
 
-# Sudo helpers
-# Trailing space allows alias expansion after sudo
+# Hack to auto expand aliases in sudo.
 alias sudo='sudo '
+
+# Because sometimes you gotta be harsh.
 alias fucking='sudo'
+
+# And sometimes you gotta be nice.
 alias please='sudo'
 
 # LOL don't be Jamon.
 # https://twitter.com/jamonholmgren/status/967548502648668161
 alias rm='trash'
 
-# Utilities
+# Get my IP Address.
 alias ip='curl -s ifconfig.co'
 
 # Kubernetes
@@ -37,9 +40,3 @@ alias gs='git status'
 alias gd='git diff'
 alias gl='git log --oneline -20'
 
-# Editor
-alias code.='code .'
-
-# Modern replacements (if installed)
-command -v eza &>/dev/null && alias ls='eza'
-command -v bat &>/dev/null && alias cat='bat'
