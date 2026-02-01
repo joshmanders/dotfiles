@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+#
+# config.sh - Personal configuration
+#
+# Copy this file to config.sh and customize the values:
+#   cp config.sh.example config.sh
+#
+# This file is gitignored - your personal settings stay local.
+#
+
+# ============================================================================
+# Required Configuration
+# ============================================================================
+
+# Your name (used in git commits)
+export DOTFILES_NAME="Your Name"
+
+# Your email (used in git commits and SSH key)
+export DOTFILES_EMAIL="you@example.com"
+
+# ============================================================================
+# Optional Configuration
+# ============================================================================
+
+# Timezone (default: America/Los_Angeles)
+# export DOTFILES_TZ="America/New_York"
+
+# Editor (default: code)
+# export DOTFILES_EDITOR="vim"
+
+# GitHub username (for scripts that need it)
+# export DOTFILES_GITHUB_USER="yourusername"

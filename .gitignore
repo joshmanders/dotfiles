@@ -1,0 +1,12 @@
+# Personal configuration (copy from config.sh.example)
+config.sh
+
+# Homebrew lock file
+Brewfile.lock.json
+
+# macOS
+.DS_Store
+
+# Caddy sites (machine-specific)
+caddy/sites/*
+!caddy/sites/.gitkeep
