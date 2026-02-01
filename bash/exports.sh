@@ -28,6 +28,9 @@ export GPG_TTY=$(tty)
 export JAVA_HOME="/Library/Java/JavaVirtualMachines/zulu-17.jdk/Contents/Home"
 export ANDROID_HOME="${HOME}/Library/Android/sdk"
 
+# ripgrep config
+export RIPGREP_CONFIG_PATH="${DOTFILES}/ripgrep/config"
+
 # History configuration (fish-like behavior)
 export HISTSIZE=50000
 export HISTFILESIZE=50000

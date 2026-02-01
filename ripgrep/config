@@ -1,0 +1,24 @@
+# ripgrep configuration
+
+# Smart case (case-insensitive unless uppercase used)
+--smart-case
+
+# Follow symlinks
+--follow
+
+# Add colors
+--colors=line:fg:yellow
+--colors=line:style:bold
+--colors=path:fg:green
+--colors=path:style:bold
+--colors=match:fg:black
+--colors=match:bg:yellow
+
+# Ignore patterns
+--glob=!.git/*
+--glob=!node_modules/*
+--glob=!vendor/*
+--glob=!*.min.js
+--glob=!*.min.css
+--glob=!package-lock.json
+--glob=!composer.lock
