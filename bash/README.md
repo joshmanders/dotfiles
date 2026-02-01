@@ -73,7 +73,7 @@ bash bash/install.sh --non-interactive --skip --allow
 
 ## Dependencies
 
-Installed via Homebrew (see `homebrew/Brewfile`):
+Installed via Homebrew (see `homebrew/bundle`):
 
 - `bash` - Modern bash 5.x (macOS ships with 3.2)
 - `bash-completion@2` - Tab completions

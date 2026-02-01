@@ -35,7 +35,7 @@ fi
 
 # Run brew bundle
 run "Install Homebrew packages" \
-    brew bundle --file="$DOTFILES/homebrew/Brewfile"
+    brew bundle --file="$DOTFILES/homebrew/bundle"
 
 echo ""
 echo "Homebrew setup complete!"
