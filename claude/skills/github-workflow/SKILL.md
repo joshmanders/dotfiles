@@ -57,29 +57,17 @@ gh issue view <num> --repo primcloud/<repo> --json id --jq '.id'
 ```bash
 gh issue create \
   --repo primcloud/<repo> \
-  --title "[Feature] Short description" \
+  --title "Short description" \
   --body "## Summary
 What and why.
 
 ## Acceptance Criteria
 - [ ] First requirement
 - [ ] Second requirement" \
-  --label "feature" \
   --project "Primcloud"
 ```
 
-### Title Format
-
-| Prefix      | Use                            |
-| ----------- | ------------------------------ |
-| `[Feature]` | New functionality              |
-| `[Bug]`     | Something broken               |
-| `[Task]`    | Maintenance, refactoring, docs |
-| `[Epic]`    | Large initiative with subtasks |
-
-### Labels
-
-`feature`, `bug`, `task`, `epic`, `priority:high`, `priority:medium`, `priority:low`
+After creating, set the issue type (Task or Bug) via GraphQL. See "Issue Types" section above.
 
 ---
 
@@ -155,30 +143,6 @@ Reference without closing: `Related to #123`
 6. Merge
    → Status auto-moves to "Done"
 ```
-
----
-
-## Epic Structure
-
-```bash
-gh issue create \
-  --repo primcloud/<repo> \
-  --title "[Epic] Initiative Name" \
-  --body "## Overview
-High-level description.
-
-## Tasks
-- [ ] #__ - First task
-- [ ] #__ - Second task
-- [ ] #__ - Third task
-
-## Success Criteria
-- Measurable outcome 1
-- Measurable outcome 2" \
-  --label "epic"
-```
-
-Create task issues first, then reference their numbers in the epic.
 
 ---
 
