@@ -18,6 +18,7 @@ PATH="${PATH}:${DOTFILES}/bin"
 | ----------- | ------------------------------------------------------ |
 | `concierge` | Manage local dev sites (Caddy/dnsmasq)                 |
 | `artisan`   | Laravel artisan wrapper (finds artisan in parent dirs) |
+| `cpx`       | Composer package executor (like npx for PHP)           |
 | `brewdump`  | Interactive Homebrew cleaner and Brewfile generator    |
 | `killport`  | Kill process on a specified port                       |
 | `hiroshima` | Aggressive cleanup script                              |
