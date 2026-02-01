@@ -1,0 +1,5 @@
+background = 000000
+font-family = "Hack Nerd Font Mono"
+font-size = 16
+adjust-cell-height = 20%
+keybind = shift+enter=text:\x1b\r
