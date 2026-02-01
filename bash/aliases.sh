@@ -11,7 +11,8 @@ alias sudo='sudo '
 alias fucking='sudo'
 alias please='sudo'
 
-# Safety - use trash instead of rm
+# LOL don't be Jamon.
+# https://twitter.com/jamonholmgren/status/967548502648668161
 alias rm='trash'
 
 # Utilities
