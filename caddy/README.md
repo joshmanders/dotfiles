@@ -29,20 +29,41 @@ bash caddy/install.sh
 Use the `concierge` command to manage sites:
 
 ```bash
-# Add a site (from project directory)
+concierge add [name] [path] [--ip <address>]   # Add a site
+concierge remove <name>                         # Remove a site
+concierge list                                  # List all sites
+concierge help                                  # Show help
+```
+
+### Adding Sites
+
+```bash
+# Add current directory (uses basename as name)
 cd ~/Code/myproject
 concierge add
 
-# Add a site with custom name
+# Add with custom name
 concierge add mysite
 
-# Add a site with custom path
+# Add with custom name and path
 concierge add mysite ~/Code/myproject
 
-# List all sites
-concierge list
+# Add with IP forwarding (uses `ip` alias to get public IP)
+concierge add --ip "$(ip)"
+concierge add mysite --ip "$(ip)"
+```
 
-# Remove a site
+### Listing Sites
+
+```bash
+concierge list
+```
+
+Shows all configured sites with their URLs and paths.
+
+### Removing Sites
+
+```bash
 concierge remove mysite
 ```
 
@@ -85,18 +106,13 @@ concierge add
 
 ## Trusting the CA
 
-Caddy uses an internal CA. To trust it:
-
-1. Open Keychain Access
-2. Find "Caddy Local Authority"
-3. Double-click → Trust → Always Trust
-
-Or via command line:
+Caddy uses an internal CA. Trust it with:
 
 ```bash
-sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain \
-    ~/Library/Application\ Support/Caddy/pki/authorities/local/root.crt
+caddy trust
 ```
+
+This adds the Caddy root certificate to your system trust store.
 
 ## Troubleshooting
 
@@ -111,12 +127,12 @@ sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keyc
 2. Reload config:
 
    ```bash
-   caddy reload --config /opt/homebrew/etc/Caddyfile
+   caddy reload --config "$(brew --prefix)/etc/Caddyfile"
    ```
 
 3. Check logs:
    ```bash
-   tail -f /opt/homebrew/var/log/caddy.log
+   tail -f "$(brew --prefix)/var/log/caddy.log"
    ```
 
 ### PHP not working
