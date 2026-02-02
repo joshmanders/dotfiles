@@ -78,9 +78,7 @@ Covers: Task lifecycle, code standards, commit format, cleanup checklist, what n
 When working in any `primcloud/` repository:
 
 - **Org project:** https://github.com/orgs/primcloud/projects/6
-- **Issue title format:** `[Feature]`, `[Bug]`, `[Task]`, `[Epic]`
-- **Labels:** `feature`, `bug`, `task`, `epic`, `priority:high/medium/low`
-- **PR keywords:** `Closes #N`, `Fixes #N`, `Resolves #N`
+- **Issue title format:** Brief noun phrases (e.g., "API rate limiting", "User authentication flow") — not imperative actions
 
 ---
 

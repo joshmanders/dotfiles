@@ -243,14 +243,6 @@ gh issue view 123 --repo primcloud/<repo>
 gh issue edit 123 --repo primcloud/<repo>
 ````
 
-Or add a comment:
-
-````bash
-gh issue comment 123 --repo primcloud/<repo> \
-  --body "## Scope Update
-Adding [X] to this work because [reason]."
-````
-
 ---
 
 ## Finalization
