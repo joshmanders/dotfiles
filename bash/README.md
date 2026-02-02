@@ -22,6 +22,7 @@ Modern bash setup with a customizable prompt and enhanced navigation.
 | `completion.sh` | Tab completions (kubectl, gh, etc.)       |
 | `prompt.sh`     | oh-my-posh prompt initialization          |
 | `theme.json`    | Prompt theme configuration                |
+| `inputrc`       | Readline keybindings (history navigation) |
 | `install.sh`    | Installation script                       |
 
 ## Customization
@@ -52,10 +53,12 @@ PATH="${PATH}:/my/custom/path"
 
 ## Keybindings
 
-| Key    | Action                     |
-| ------ | -------------------------- |
-| Ctrl+R | Fuzzy history search (fzf) |
-| Tab    | Tab completion             |
+| Key    | Action                           |
+| ------ | -------------------------------- |
+| Ctrl+R | Fuzzy history search (fzf)       |
+| Up     | History search backward (prefix) |
+| Down   | History search forward (prefix)  |
+| Tab    | Tab completion                   |
 
 ## Installation
 

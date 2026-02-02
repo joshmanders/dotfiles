@@ -1,0 +1,12 @@
+# Readline configuration
+#
+# bash/inputrc - Keybindings for readline (bash line editing)
+
+# Up/down: search history by prefix
+# Type partial command, then up arrow cycles through matching history
+"\e[A": history-search-backward
+"\e[B": history-search-forward
+
+# Application/keypad mode (some terminals send these instead)
+"\eOA": history-search-backward
+"\eOB": history-search-forward
