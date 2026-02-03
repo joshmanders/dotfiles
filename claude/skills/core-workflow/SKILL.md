@@ -112,7 +112,7 @@ Remove all of these:
 ````
 feat: add bandwidth endpoint
 
-Co-Authored-By: Claude Code <noreply@anthropic.com>
+Co-Authored-By: Dunnbot <dunnbot@joshmanders.com>
 ````
 
 Common prefixes (lowercase):
