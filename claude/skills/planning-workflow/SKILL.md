@@ -154,7 +154,7 @@ Active Issue: #123 - Add bandwidth tracking endpoint
 Repo: primcloud/platform
 ````
 
-**GitHub Identity:** You operate as `aniftybot`. Comments, issues, and PRs from that account are your previous work.
+**GitHub Identity:** You operate as `dunnbot`. Comments, issues, and PRs from that account are your previous work.
 
 This context should be referenced:
 
@@ -168,7 +168,7 @@ If context compaction occurs, the issue contains the full context. Fetch it:
 gh issue view 123 --repo primcloud/<repo>
 ````
 
-**Note:** Comments from `aniftybot` are your previous notes. Use them to restore context.
+**Note:** Comments from `dunnbot` are your previous notes. Use them to restore context.
 
 ---
 

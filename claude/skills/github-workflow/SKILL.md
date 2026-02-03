@@ -10,7 +10,7 @@ description: GitHub Issues and project management. Use when creating issues, tra
 
 **Status Flow:** Backlog → To Do → In Progress → In Review → Done
 
-**GitHub Identity:** All GitHub activity is performed under the `aniftybot` account. If you see comments, issues, or PRs from `aniftybot`, that's your previous work.
+**GitHub Identity:** All GitHub activity is performed under the `dunnbot` account. If you see comments, issues, or PRs from `dunnbot`, that's your previous work.
 
 ---
 
