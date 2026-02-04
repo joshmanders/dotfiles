@@ -7,11 +7,18 @@ Shared Claude skills and rules for all primcloud projects.
 Install shared config into a project:
 
 ```bash
-./install.sh ~/Code/primcloud/platform
-./install.sh ~/Code/primcloud/ingress
-./install.sh ~/Code/primcloud/builder
-./install.sh ~/Code/primcloud/agent
+./install.sh                           # All projects
+./install.sh platform                  # Single project
+./install.sh platform,agent            # Multiple projects
 ```
+
+Projects: `platform`, `agent`, `ingress`, `builder`, `placeholder`
+
+## Configuration
+
+| Variable               | Default              | Description              |
+| ---------------------- | -------------------- | ------------------------ |
+| `DOTFILES_PRIMCLOUD_DIR` | `~/Code/primcloud` | Path to primcloud repos  |
 
 ## What's Here
 

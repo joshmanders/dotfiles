@@ -1,6 +1,6 @@
 ---
 name: github
-description: GitHub CLI patterns for issues, projects, and PRs. Invoke when: creating issues, linking PRs to issues, updating project status, or any GitHub project operations.
+description: "GitHub CLI patterns for issues, projects, and PRs. Invoke when: creating issues, linking PRs to issues, updating project status, or any GitHub project operations."
 ---
 
 # GitHub CLI Patterns

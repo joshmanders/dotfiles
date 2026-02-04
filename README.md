@@ -58,13 +58,20 @@ concierge add
 ```
 ~/.files/
 ├── bash/              # Shell configuration
-├── bin/               # Custom scripts (37 total)
+├── bin/               # Custom scripts
 ├── caddy/             # Web server config
-├── claude/            # Claude Code config and skills
+├── claude/            # Claude Code config, rules, and skills
 ├── dnsmasq/           # DNS resolver config
+├── fzf/               # Fuzzy finder config
+├── gh/                # GitHub CLI config
+├── ghostty/           # Ghostty terminal config
 ├── git/               # Git configuration
 ├── homebrew/          # Package management
+├── hyperkey/          # Hyperkey config
 ├── lib/               # Installer utilities
+├── npm/               # NPM configuration
+├── rectangle/         # Window manager config
+├── ripgrep/           # Ripgrep config
 ├── ssh/               # SSH configuration
 ├── config.sh.example  # Config template (copy to config.sh)
 ├── install.sh         # Main installer
@@ -105,9 +112,16 @@ Each directory has its own README with detailed documentation:
 - [caddy/README.md](caddy/README.md) - Web server
 - [claude/README.md](claude/README.md) - Claude Code config
 - [dnsmasq/README.md](dnsmasq/README.md) - DNS resolver
+- [fzf/README.md](fzf/README.md) - Fuzzy finder
+- [gh/README.md](gh/README.md) - GitHub CLI
+- [ghostty/README.md](ghostty/README.md) - Ghostty terminal
 - [git/README.md](git/README.md) - Git configuration
 - [homebrew/README.md](homebrew/README.md) - Package management
+- [hyperkey/README.md](hyperkey/README.md) - Hyperkey
 - [lib/README.md](lib/README.md) - Installer utilities
+- [npm/README.md](npm/README.md) - NPM configuration
+- [rectangle/README.md](rectangle/README.md) - Window manager
+- [ripgrep/README.md](ripgrep/README.md) - Ripgrep
 - [ssh/README.md](ssh/README.md) - SSH configuration
 
 ## Key Commands

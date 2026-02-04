@@ -1,6 +1,6 @@
 ---
 name: planning
-description: Work planning through GitHub issues. Invoke when: starting new work, planning a feature, or when asked "let's plan X". Every session = one issue = one PR.
+description: "Work planning through GitHub issues. Invoke when: starting new work, planning a feature, or when asked 'let's plan X'. Every session = one issue = one PR."
 ---
 
 # Planning Workflow
