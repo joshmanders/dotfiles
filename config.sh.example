@@ -25,3 +25,6 @@ export DOTFILES_HOMEBREW_NO_AUTOUPDATE="1"
 
 # Shell history size
 export DOTFILES_HISTSIZE="50000"
+
+# Primcloud projects directory
+export DOTFILES_PRIMCLOUD_DIR="$HOME/Code/primcloud"
