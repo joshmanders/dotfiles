@@ -7,9 +7,10 @@
 #
 # What it does:
 #   1. Symlinks CLAUDE.md to ~/.claude/CLAUDE.md
-#   2. Symlinks skills/ to ~/.claude/skills/
-#   3. Symlinks settings.json to ~/.claude/settings.json
-#   4. Symlinks keybindings.json to ~/.claude/keybindings.json
+#   2. Symlinks rules/ to ~/.claude/rules/
+#   3. Symlinks skills/ to ~/.claude/skills/
+#   4. Symlinks settings.json to ~/.claude/settings.json
+#   5. Symlinks keybindings.json to ~/.claude/keybindings.json
 #
 # Usage:
 #   bash claude/install.sh

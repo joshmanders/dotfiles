@@ -7,6 +7,7 @@ Claude Code settings and skills for consistent AI assistance.
 | File               | Purpose                                                |
 | ------------------ | ------------------------------------------------------ |
 | `CLAUDE.md`        | Main instructions (symlinked to `~/.claude/CLAUDE.md`) |
+| `rules/`           | Modular rules (symlinked to `~/.claude/rules/`)        |
 | `skills/`          | Custom skills (symlinked to `~/.claude/skills/`)       |
 | `settings.json`    | Permissions and plugins (symlinked to `~/.claude/`)    |
 | `keybindings.json` | Custom keybindings (symlinked to `~/.claude/`)         |
@@ -21,17 +22,33 @@ This will:
 
 1. Create `~/.claude` directory if needed
 2. Symlink `CLAUDE.md` to `~/.claude/CLAUDE.md`
-3. Symlink `skills/` to `~/.claude/skills/`
-4. Symlink `settings.json` to `~/.claude/settings.json`
-5. Symlink `keybindings.json` to `~/.claude/keybindings.json`
+3. Symlink `rules/` to `~/.claude/rules/`
+4. Symlink `skills/` to `~/.claude/skills/`
+5. Symlink `settings.json` to `~/.claude/settings.json`
+6. Symlink `keybindings.json` to `~/.claude/keybindings.json`
+
+## Rules
+
+Modular rules in `rules/` directory, auto-loaded by Claude Code:
+
+| Rule                | Purpose                                         |
+| ------------------- | ----------------------------------------------- |
+| `prime-directives`  | Non-negotiable rules (verify, test, don't push) |
+| `task-lifecycle`    | Step-by-step task workflow                      |
+| `code-standards`    | Before-writing checks, naming, errors           |
+| `boundaries`        | Decision authority, what to ask first           |
+| `leave-code-better` | Opportunistic refactoring while touching files  |
+| `documentation`     | Keep docs current as code changes               |
+| `committing`        | Commit format, co-author, prefixes              |
+| `cleanup`           | Debug code removal before presenting work       |
+| `pr-format`         | PR title, body, and final checklist             |
 
 ## Skills
 
-| Skill               | Purpose                                       |
-| ------------------- | --------------------------------------------- |
-| `core-workflow`     | Always active. Task lifecycle, commit format. |
-| `github-workflow`   | GitHub Issues and project management.         |
-| `planning-workflow` | Work tracking through GitHub issues.          |
+| Skill      | Purpose                              |
+| ---------- | ------------------------------------ |
+| `github`   | GitHub Issues and project management |
+| `planning` | Work planning through GitHub issues  |
 
 ## Customization
 
