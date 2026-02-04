@@ -21,72 +21,66 @@ PATH="${PATH}:${DOTFILES}/bin"
 | `cpx`       | Composer package executor (like npx for PHP)           |
 | `brewdump`  | Interactive Homebrew cleaner and Brewfile generator    |
 | `killport`  | Kill process on a specified port                       |
-| `hiroshima` | Aggressive cleanup script                              |
+| `hiroshima` | Nuke all Docker containers and prune system            |
 | `edit`      | Open files/configs in editor                           |
-| `checkout`  | Simplified git checkout helper                         |
 
 ### Git Workflow
 
 #### Branching
 
-| Script         | Description                     |
-| -------------- | ------------------------------- |
-| `git-feature`  | Create a feature branch         |
-| `git-refactor` | Create a refactor branch        |
-| `git-issue`    | Create branch from GitHub issue |
-| `git-merge-pr` | Merge PR locally via rebase     |
-| `git-publish`  | Push and set upstream           |
+| Script        | Description                     |
+| ------------- | ------------------------------- |
+| `git-issue`   | Create branch from GitHub issue |
+| `git-publish` | Push and set upstream           |
 
 #### Committing
 
-| Script       | Description               |
-| ------------ | ------------------------- |
-| `git-save`   | Quick commit with message |
-| `git-amend`  | Amend last commit         |
-| `git-empty`  | Create empty commit       |
-| `git-squash` | Squash commits            |
+| Script       | Description                                |
+| ------------ | ------------------------------------------ |
+| `git-save`   | Commit files with message                  |
+| `git-amend`  | Amend last commit (`-a --amend --no-edit`) |
+| `git-empty`  | Create empty commit                        |
+| `git-squash` | Interactive rebase to squash commits       |
 
 #### History
 
-| Script             | Description          |
-| ------------------ | -------------------- |
-| `git-history`      | Pretty log output    |
-| `git-tree`         | Tree view of commits |
-| `git-tail`         | Recent commits       |
-| `git-contributors` | List contributors    |
+| Script             | Description                         |
+| ------------------ | ----------------------------------- |
+| `git-history`      | Pretty log with graph               |
+| `git-tree`         | Full decorated graph (all branches) |
+| `git-tail`         | Branches sorted by recent commit    |
+| `git-contributors` | Commit counts by author             |
 
 #### Undoing
 
-| Script        | Description              |
-| ------------- | ------------------------ |
-| `git-undo`    | Undo last commit         |
-| `git-restore` | Restore file from commit |
-| `git-unstash` | Pop stash                |
-| `git-abort`   | Abort merge/rebase       |
+| Script        | Description                               |
+| ------------- | ----------------------------------------- |
+| `git-undo`    | Soft reset to previous commit             |
+| `git-restore` | Restore file to state before last commit  |
+| `git-unstash` | Pop stash                                 |
+| `git-abort`   | Hard reset HEAD and clean untracked files |
 
 #### Cleanup
 
-| Script           | Description              |
-| ---------------- | ------------------------ |
-| `git-delete`     | Delete branch            |
-| `git-tidy`       | Clean up branches        |
-| `git-obliterate` | Remove file from history |
-| `git-rekt`       | Hard reset               |
-| `git-yolo`       | Force push               |
+| Script           | Description                            |
+| ---------------- | -------------------------------------- |
+| `git-delete`     | Remove file from index (`rm --cached`) |
+| `git-tidy`       | Delete stale local branches            |
+| `git-obliterate` | Remove file from entire git history    |
+| `git-rekt`       | Alias for git-obliterate               |
+| `git-yolo`       | Commit with random message and push    |
 
 #### Utilities
 
-| Script          | Description                  |
-| --------------- | ---------------------------- |
-| `git-sync`      | Fetch and rebase on upstream |
-| `git-conflicts` | Show merge conflicts         |
-| `git-grep`      | Search in commits            |
-| `git-ignore`    | Generate gitignore           |
-| `git-io`        | Shorten GitHub URLs          |
-| `git-redate`    | Change commit dates          |
-| `git-repl`      | Interactive git shell        |
-| `git-shortcut`  | Run git shortcuts            |
-| `git-sus`       | Show suspicious changes      |
+| Script          | Description                        |
+| --------------- | ---------------------------------- |
+| `git-sync`      | Fetch, rebase on upstream, cleanup |
+| `git-conflicts` | List files with merge conflicts    |
+| `git-grep`      | Search tracked file names          |
+| `git-ignore`    | Mark file as assume-unchanged      |
+| `git-redate`    | Commit with custom date            |
+| `git-repl`      | Interactive git command shell      |
+| `git-sus`       | Show commits in date range by user |
 
 ## Adding Scripts
 
@@ -105,10 +99,13 @@ PATH="${PATH}:${DOTFILES}/bin"
    ```
 
 3. For git subcommands, prefix with `git-`:
+
    ```bash
    # bin/git-mycommand
    # Now callable as: git mycommand
    ```
+
+4. Update the `bin-scripts` skill if the script is useful for AI assistance.
 
 ## Concierge
 
