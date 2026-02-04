@@ -7,15 +7,15 @@
 
 ## New modules
 
-| Module | Purpose |
-|--------|---------|
-| name/ | Description |
+| Module | Purpose     |
+| ------ | ----------- |
+| name/  | Description |
 
 ## New scripts
 
-| Script | Purpose |
-|--------|---------|
-| name | Description |
+| Script | Purpose     |
+| ------ | ----------- |
+| name   | Description |
 
 ## Breaking changes
 
