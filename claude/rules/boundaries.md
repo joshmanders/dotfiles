@@ -18,6 +18,7 @@
 - Push to remote
 - Create branches
 - `git push`, `git push --force`
+- `git -C` or `git -c` flags (breaks permission handling)
 - `--no-verify` on commits
 - Interactive git commands (`-i` flag)
 - Rewrite pushed history
