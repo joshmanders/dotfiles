@@ -32,6 +32,7 @@ fi
 # Symlink config files
 symlink "$DOTFILES/claude/CLAUDE.md" "$HOME/.claude/CLAUDE.md"
 symlink "$DOTFILES/claude/skills" "$HOME/.claude/skills"
+symlink "$DOTFILES/claude/rules" "$HOME/.claude/rules"
 symlink "$DOTFILES/claude/settings.json" "$HOME/.claude/settings.json"
 symlink "$DOTFILES/claude/keybindings.json" "$HOME/.claude/keybindings.json"
 
