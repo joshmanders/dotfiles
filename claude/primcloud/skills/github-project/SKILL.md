@@ -181,6 +181,16 @@ How we'll implement this.
 
 ---
 
+## Cross-Repo Coordination
+
+Primcloud is a multi-repo project. Work often spans multiple repositories.
+
+1. **Base issue in platform** — Create the main tracking issue in `primcloud/platform`
+2. **Sub-issues in related repos** — Create issues in repos where work is needed
+3. **Link as sub-issues** — Use GitHub's native sub-issue feature (see `github` skill for CLI commands)
+
+---
+
 ## Project Operations
 
 ```bash

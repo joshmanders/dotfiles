@@ -177,6 +177,71 @@ Related to #123
 
 ---
 
+## Sub-Issues
+
+GitHub's native parent-child issue hierarchy for cross-repo coordination.
+
+### Adding Sub-Issues
+
+```bash
+# Get parent issue ID
+PARENT_ID=$(gh issue view <num> --repo <org>/<repo> --json id --jq '.id')
+
+# Add sub-issue by URL
+gh api graphql -f query="
+mutation {
+  addSubIssue(input: {
+    issueId: \"$PARENT_ID\"
+    subIssueUrl: \"https://github.com/<org>/<repo>/issues/<num>\"
+  }) {
+    issue { title }
+    subIssue { title url }
+  }
+}"
+```
+
+### Viewing Sub-Issues
+
+```bash
+gh api graphql -f query='
+query($url: URI!) {
+  resource(url: $url) {
+    ... on Issue {
+      title
+      subIssues(first: 10) {
+        nodes {
+          title
+          url
+          state
+        }
+      }
+    }
+  }
+}' -f url="https://github.com/<org>/<repo>/issues/<num>"
+```
+
+### Removing Sub-Issues
+
+```bash
+# Get both issue IDs
+PARENT_ID=$(gh issue view <parent-num> --repo <org>/<repo> --json id --jq '.id')
+SUB_ID=$(gh issue view <sub-num> --repo <org>/<repo> --json id --jq '.id')
+
+# Remove sub-issue
+gh api graphql -f query="
+mutation {
+  removeSubIssue(input: {
+    issueId: \"$PARENT_ID\"
+    subIssueId: \"$SUB_ID\"
+  }) {
+    issue { title }
+    subIssue { title }
+  }
+}"
+```
+
+---
+
 ## Quick Reference
 
 | Action         | Command                                       |
