@@ -64,19 +64,22 @@ Custom shell scripts in `~/.files/bin/` for common development workflows.
 
 ## Utilities
 
-| Script      | Usage                  | Purpose                            |
-| ----------- | ---------------------- | ---------------------------------- |
-| `killport`  | `killport 3000`        | Kill process listening on TCP port |
-| `concierge` | `concierge add mysite` | Manage local Caddy dev sites       |
-| `git-issue` | `git issue 123`        | Create branch from GitHub issue    |
+| Script      | Usage                  | Purpose                                      |
+| ----------- | ---------------------- | -------------------------------------------- |
+| `killport`  | `killport 3000`        | Kill process listening on TCP port           |
+| `concierge` | `concierge add mysite` | Manage local Caddy dev sites                 |
+| `git-issue` | `git issue 123`        | Create branch from GitHub issue              |
+| `brewdump`  | `brewdump`             | Interactive Homebrew cleanup + Brewfile dump |
 
 **git-issue requirements:** Needs `DOTFILES_GITHUB_USERNAME` env var. Creates branch like `FEATURE-123` or `BUG-123` based on issue labels.
 
 **concierge commands:** `add <name>`, `remove <name>`, `list`. Optional `--ip <addr>` for X-Forwarded-For testing.
+
+**brewdump:** Reviews leaf packages interactively, marks items for removal, runs `brew autoremove`, then dumps Brewfile to `$DOTFILES/homebrew/bundle`. Use `--dry-run` to preview.
 
 ## Not Documented
 
 Scripts excluded from this skill (niche, interactive, or dangerous):
 
 - `git-yolo`, `git-obliterate`, `git-rekt`, `git-squash` — Push or history rewriting
-- `hiroshima`, `git-redate`, `brewdump`, `git-repl`, `edit` — Niche or interactive
+- `hiroshima`, `git-redate`, `git-repl`, `edit` — Niche or interactive

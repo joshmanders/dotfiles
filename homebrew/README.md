@@ -56,8 +56,14 @@ brew update && brew upgrade
 ### Generate bundle from installed packages
 
 ```bash
+# Quick dump (overwrites bundle with current state)
 brew bundle dump --file="$DOTFILES/homebrew/bundle" --force
+
+# Interactive cleanup (review and remove unused packages first)
+brewdump
 ```
+
+The `brewdump` script walks through leaf packages interactively, letting you mark items for removal before generating a clean bundle. Use `brewdump --dry-run` to preview without changes.
 
 ## Key Packages
 

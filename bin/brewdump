@@ -527,10 +527,12 @@ echo
 # simulated state with reality.
 ###############################################
 
+BREWFILE="${DOTFILES:-$HOME/.files}/homebrew/bundle"
+
 if $DRY_RUN; then
   echo "Dry run: skipping Brewfile generation (no actual changes made)."
 else
-  if prompt_yes_no "Generate clean Brewfile (remaining packages only) in ./Brewfile.clean?" default_yes; then
+  if prompt_yes_no "Generate clean Brewfile (remaining packages only) in $BREWFILE?" default_yes; then
     # Ensure the `brew bundle` command is available.
     if ! brew help bundle >/dev/null 2>&1; then
       echo "Error: 'brew bundle' is not available. You may need:"
@@ -538,8 +540,8 @@ else
       exit 1
     fi
     # Dump a Brewfile of everything still installed.
-    brew bundle dump --file=Brewfile.clean --force
-    echo "Clean Brewfile written to ./Brewfile.clean"
+    brew bundle dump --file="$BREWFILE" --force
+    echo "Brewfile written to $BREWFILE"
   else
     echo "Skipping Brewfile generation."
   fi
