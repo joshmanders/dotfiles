@@ -4,7 +4,8 @@
     "pr": ""
   },
   "permissions": {
-    "defaultMode": "default"
+    "defaultMode": "default",
+    "allow": ["Bash(gh search:*)"]
   },
   "enabledPlugins": {}
 }
