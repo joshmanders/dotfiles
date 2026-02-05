@@ -9,6 +9,7 @@ Claude Code settings and skills for consistent AI assistance.
 | `CLAUDE.md`        | Main instructions (symlinked to `~/.claude/CLAUDE.md`) |
 | `rules/`           | Modular rules (symlinked to `~/.claude/rules/`)        |
 | `skills/`          | Custom skills (symlinked to `~/.claude/skills/`)       |
+| `agents/`          | Subagent definitions (symlinked to `~/.claude/agents/`)|
 | `settings.json`    | Permissions and plugins (symlinked to `~/.claude/`)    |
 | `keybindings.json` | Custom keybindings (symlinked to `~/.claude/`)         |
 
@@ -24,8 +25,9 @@ This will:
 2. Symlink `CLAUDE.md` to `~/.claude/CLAUDE.md`
 3. Symlink `rules/` to `~/.claude/rules/`
 4. Symlink `skills/` to `~/.claude/skills/`
-5. Symlink `settings.json` to `~/.claude/settings.json`
-6. Symlink `keybindings.json` to `~/.claude/keybindings.json`
+5. Symlink `agents/` to `~/.claude/agents/`
+6. Symlink `settings.json` to `~/.claude/settings.json`
+7. Symlink `keybindings.json` to `~/.claude/keybindings.json`
 
 ## Rules
 
@@ -46,13 +48,18 @@ Modular rules in `rules/` directory, auto-loaded by Claude Code:
 
 ## Skills
 
-| Skill         | Purpose                                |
-| ------------- | -------------------------------------- |
-| `github`      | GitHub CLI patterns for issues/PRs     |
-| `planning`    | Work planning through GitHub issues    |
-| `issue`       | Start work on a GitHub issue           |
-| `bin-scripts` | Custom shell scripts for dev workflows |
-| `test-audit`  | Audit test suites for real confidence  |
+| Skill                       | Purpose                                        |
+| --------------------------- | ---------------------------------------------- |
+| `brainstorming`             | Design before implementation                   |
+| `systematic-debugging`      | Root cause analysis for bugs/failures          |
+| `planning`                  | Work planning through GitHub issues            |
+| `github`                    | GitHub CLI patterns for issues/PRs             |
+| `issue`                     | Start work on a GitHub issue                   |
+| `requesting-code-review`    | Verify work before merging                     |
+| `receiving-code-review`     | Handle review feedback with rigor              |
+| `dispatch-parallel-agents`  | Run independent tasks concurrently             |
+| `bin-scripts`               | Custom shell scripts for dev workflows         |
+| `test-audit`                | Audit test suites for real confidence          |
 
 ## Customization
 
