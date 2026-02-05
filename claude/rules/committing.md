@@ -33,26 +33,14 @@
 
 ### Rules
 
-| Do                        | Don't                                    |
-| ------------------------- | ---------------------------------------- |
-| Subject line only         | Add body/explanation paragraphs          |
-| Use exact co-author below | Substitute "Claude Code" or other names  |
-| Include co-author always  | Omit unless project CLAUDE.md forbids it |
-
-### Co-Author (use exactly)
-
-```
-Co-Authored-By: Dunnbot <dunnbot@joshmanders.com>
-```
+| Do                | Don't                           |
+| ----------------- | ------------------------------- |
+| Subject line only | Add body/explanation paragraphs |
 
 ### Structure
 
-Subject + blank line + co-author. Nothing else.
-
 ```
 feat: add bandwidth endpoint
-
-Co-Authored-By: Dunnbot <dunnbot@joshmanders.com>
 ```
 
 ### Prefixes (lowercase)
@@ -63,8 +51,6 @@ Co-Authored-By: Dunnbot <dunnbot@joshmanders.com>
 - `refactor:` — Code restructuring
 - `docs:` — Documentation
 - `test:` — Tests
-
-**Exception:** Only omit co-author if the project's CLAUDE.md explicitly forbids it.
 
 ## Atomic Commits
 

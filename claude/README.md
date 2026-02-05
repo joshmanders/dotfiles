@@ -39,16 +39,20 @@ Modular rules in `rules/` directory, auto-loaded by Claude Code:
 | `boundaries`        | Decision authority, what to ask first           |
 | `leave-code-better` | Opportunistic refactoring while touching files  |
 | `documentation`     | Keep docs current as code changes               |
-| `committing`        | Commit format, co-author, prefixes              |
+| `committing`        | Commit format and prefixes                      |
 | `cleanup`           | Debug code removal before presenting work       |
 | `pr-format`         | PR title, body, and final checklist             |
+| `test-quality`      | Test assertions, determinism, signal            |
 
 ## Skills
 
-| Skill      | Purpose                              |
-| ---------- | ------------------------------------ |
-| `github`   | GitHub Issues and project management |
-| `planning` | Work planning through GitHub issues  |
+| Skill         | Purpose                                |
+| ------------- | -------------------------------------- |
+| `github`      | GitHub CLI patterns for issues/PRs     |
+| `planning`    | Work planning through GitHub issues    |
+| `issue`       | Start work on a GitHub issue           |
+| `bin-scripts` | Custom shell scripts for dev workflows |
+| `test-audit`  | Audit test suites for real confidence  |
 
 ## Customization
 

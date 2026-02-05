@@ -1,4 +1,8 @@
 {
+  "attribution": {
+    "commit": "Co-Authored-By: Dunnbot <dunnbot@joshmanders.com>",
+    "pr": ""
+  },
   "permissions": {
     "defaultMode": "default"
   },
