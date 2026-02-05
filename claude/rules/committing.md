@@ -39,8 +39,12 @@
 
 ### Structure
 
+Subject line + attribution (if `attribution.commit` is configured in settings).
+
 ```
 feat: add bandwidth endpoint
+
+Co-Authored-By: ...
 ```
 
 ### Prefixes (lowercase)
