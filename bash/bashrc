@@ -18,3 +18,7 @@ source "${DOTFILES}/bash/aliases.sh"
 source "${DOTFILES}/bash/plugins.sh"
 source "${DOTFILES}/bash/completion.sh"
 source "${DOTFILES}/bash/prompt.sh"
+
+# Added by OrbStack: command-line tools and integration
+# This won't be added again if you remove it.
+source ~/.orbstack/shell/init.bash 2>/dev/null || :
