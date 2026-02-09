@@ -1,6 +1,7 @@
 ---
 name: bin-scripts
 description: Use when performing git operations, running Laravel/Composer commands, managing local dev sites, or killing processes on ports. Custom scripts in ~/.files/bin/ provide shortcuts for common workflows.
+user-invocable: false
 ---
 
 # Bin Scripts

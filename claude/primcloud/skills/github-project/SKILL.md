@@ -1,6 +1,7 @@
 ---
 name: github-project
 description: "Primcloud GitHub project board config, IDs, and commands. Invoke when: working in any primcloud repository."
+user-invocable: false
 ---
 
 # Primcloud GitHub Project

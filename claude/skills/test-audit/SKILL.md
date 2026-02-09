@@ -1,6 +1,7 @@
 ---
 name: test-audit
 description: "Audit test suites for real confidence. Invoke when: reviewing test quality, assessing test coverage value, or analyzing test suite health."
+user-invocable: false
 ---
 
 # Test Audit Workflow

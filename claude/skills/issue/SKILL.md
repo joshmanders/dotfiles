@@ -2,6 +2,7 @@
 name: issue
 description: Start planning work on a GitHub issue
 argument-hint: "<issue-ref>"
+disable-model-invocation: true
 ---
 
 ## Task: Work on Issue $ARGUMENTS
