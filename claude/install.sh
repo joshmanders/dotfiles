@@ -10,8 +10,9 @@
 #   2. Symlinks rules/ to ~/.claude/rules/
 #   3. Symlinks skills/ to ~/.claude/skills/
 #   4. Symlinks agents/ to ~/.claude/agents/
-#   5. Symlinks settings.json to ~/.claude/settings.json
-#   6. Symlinks keybindings.json to ~/.claude/keybindings.json
+#   5. Symlinks hooks/ to ~/.claude/hooks/
+#   6. Symlinks settings.json to ~/.claude/settings.json
+#   7. Symlinks keybindings.json to ~/.claude/keybindings.json
 #
 # Usage:
 #   bash claude/install.sh
@@ -36,6 +37,7 @@ symlink "$DOTFILES/claude/CLAUDE.md" "$HOME/.claude/CLAUDE.md"
 symlink "$DOTFILES/claude/skills" "$HOME/.claude/skills"
 symlink "$DOTFILES/claude/agents" "$HOME/.claude/agents"
 symlink "$DOTFILES/claude/rules" "$HOME/.claude/rules"
+symlink "$DOTFILES/claude/hooks" "$HOME/.claude/hooks"
 symlink "$DOTFILES/claude/settings.json" "$HOME/.claude/settings.json"
 symlink "$DOTFILES/claude/keybindings.json" "$HOME/.claude/keybindings.json"
 

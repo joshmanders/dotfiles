@@ -4,8 +4,20 @@
     "pr": ""
   },
   "permissions": {
-    "defaultMode": "default",
-    "allow": ["Bash(gh search:*)"]
+    "defaultMode": "dangerously"
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$HOME/.files/claude/hooks/bash-guard.sh"
+          }
+        ]
+      }
+    ]
   },
   "enabledPlugins": {}
 }
