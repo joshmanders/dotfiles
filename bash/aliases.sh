@@ -19,7 +19,7 @@ alias please='sudo'
 alias rm='trash'
 
 # Get my IP Address.
-alias ip='curl -s ifconfig.co'
+alias ip='curl -s -4 icanhazip.com'
 
 # Kubernetes
 alias k='kubectl'
