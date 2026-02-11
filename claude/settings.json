@@ -13,7 +13,7 @@
       "Glob(**)",
       "Grep(**)",
       "LS(**)",
-      "TodoRead()",
+      "TodoRead",
       "TodoWrite(**)",
       "Task(**)",
 
@@ -523,7 +523,6 @@
       "Bash(for * in *; do *; done*)",
       "Bash(while *; do *; done*)",
       "Bash(if *; then *; fi*)",
-      "Bash(case * in *) *;; esac*)",
 
       "Bash(* | *)",
       "Bash(* > *)",
@@ -569,7 +568,6 @@
       "Bash(> /dev/disk*)",
       "Bash(cat /dev/urandom > *)",
 
-      "Bash(:(){ :|:& };:*)",
       "Bash(*fork*bomb*)",
 
       "Bash(curl * | sh*)",
