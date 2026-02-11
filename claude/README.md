@@ -10,7 +10,6 @@ Claude Code settings and skills for consistent AI assistance.
 | `rules/`           | Modular rules (symlinked to `~/.claude/rules/`)         |
 | `skills/`          | Custom skills (symlinked to `~/.claude/skills/`)        |
 | `agents/`          | Subagent definitions (symlinked to `~/.claude/agents/`) |
-| `hooks/`           | PreToolUse hooks (symlinked to `~/.claude/hooks/`)      |
 | `settings.json`    | Permissions and plugins (symlinked to `~/.claude/`)     |
 | `keybindings.json` | Custom keybindings (symlinked to `~/.claude/`)          |
 
@@ -27,9 +26,8 @@ This will:
 3. Symlink `rules/` to `~/.claude/rules/`
 4. Symlink `skills/` to `~/.claude/skills/`
 5. Symlink `agents/` to `~/.claude/agents/`
-6. Symlink `hooks/` to `~/.claude/hooks/`
-7. Symlink `settings.json` to `~/.claude/settings.json`
-8. Symlink `keybindings.json` to `~/.claude/keybindings.json`
+6. Symlink `settings.json` to `~/.claude/settings.json`
+7. Symlink `keybindings.json` to `~/.claude/keybindings.json`
 
 ## Rules
 
@@ -63,22 +61,6 @@ Modular rules in `rules/` directory, auto-loaded by Claude Code:
 | `bin-scripts`              | Custom shell scripts for dev workflows |
 | `test-audit`               | Audit test suites for real confidence  |
 
-## Hooks
-
-PreToolUse hooks in `hooks/` run before tool execution to enforce safety guardrails.
-
-### bash-guard.sh
-
-Intercepts Bash commands. Used with `dangerously` permission mode to auto-approve safe commands while guarding against destructive ones.
-
-| Decision  | Commands                                                                                                                           | Behavior                |
-| --------- | ---------------------------------------------------------------------------------------------------------------------------------- | ----------------------- |
-| **Deny**  | `git push`, `--no-verify`, interactive git `-i`, `npm run build`, `git commit --amend`                                             | Blocked, never executes |
-| **Ask**   | `rm -rf`, `git reset --hard`, `git checkout .`, `git clean`, `git branch -D`, `kill`, SQL destructive, `git rebase`, `git --force` | Prompts for approval    |
-| **Allow** | Everything else                                                                                                                    | Auto-approved silently  |
-
-Deny rules enforce `rules/boundaries.md` "Never Do" list. Ask rules catch destructive operations that may be intentional.
-
 ## Customization
 
 ### Add a new skill
@@ -110,4 +92,61 @@ Edit `keybindings.json`:
 
 ### Change settings
 
-Edit `settings.json` for permissions mode and enabled plugins.
+Edit `settings.json` for permissions and attribution.
+
+#### Permissions
+
+Uses `default` mode with explicit `allow`/`deny` lists. Anything not in either list prompts for approval.
+
+**Allow** — auto-approved without prompting:
+
+| Group             | Commands                                            |
+| ----------------- | --------------------------------------------------- |
+| Claude Code tools | Read, Edit, Write, Glob, Grep, LS, Todo, Task       |
+| Git               | status, log, diff, add, commit, push, pull, etc.    |
+| GitHub CLI        | gh repo, pr, issue, workflow, release               |
+| Docker            | ps, logs, exec, start/stop, inspect, volumes, etc.  |
+| Docker Compose    | up, down, ps, logs, build, restart, etc.            |
+| Kubernetes        | get, describe, apply, delete, exec, logs, etc.      |
+| Node.js           | npm, npx, node, bun, bunx                           |
+| Python            | python, python3, pip, pip3                          |
+| PHP               | php, composer                                       |
+| Rust              | cargo, rustc, rustup                                |
+| Go                | go build/run/test/mod/fmt/vet                       |
+| Make              | make                                                |
+| Filesystem        | ls, cat, cp, mv, rm, mkdir, touch, chmod, ln, etc.  |
+| Search & text     | grep, find, sed, awk, cut, sort, uniq, wc, tr, etc. |
+| JSON/YAML         | jq, yq                                              |
+| HTTP              | curl, wget                                          |
+| Processes         | ps, kill, pgrep, pkill, lsof, jobs, nohup           |
+| Networking        | ping, netstat, dig, nslookup, nc, traceroute        |
+| System info       | date, whoami, uname, which, df, du, top, uptime     |
+| Shell & env       | echo, printf, export, env, source                   |
+| Homebrew          | brew install/update/upgrade/list                    |
+| Crypto & hashing  | openssl, md5, shasum, uuidgen                       |
+| Archives          | tar, gzip, zip, unzip, 7z, bzip2, xz                |
+| Pipes & redirects | \|, >, >>, &&, \|\|, &, 2>&1                        |
+
+**Deny** — permanently blocked:
+
+| Category                | Examples                                                 |
+| ----------------------- | -------------------------------------------------------- |
+| Destructive filesystem  | `rm -rf /`, mass delete under `/home`, `/var`, `/opt`    |
+| Device destruction      | `dd` to `/dev/*`, `mkfs`, write to `/dev/disk*`          |
+| Remote code execution   | `curl \| sh`, `wget \| bash`, base64 decode to shell     |
+| Reverse shells          | `/dev/tcp`, socket-based shells in any language          |
+| Network listeners       | `nc -l`, `socat`, `nmap`, `masscan`                      |
+| Credential exfiltration | `cat ~/.aws/*`, `cat ~/.ssh/id_*`, env piped to base64   |
+| Git destructive         | Force-push to main/master, hard reset to origin          |
+| Privileged Docker       | `--privileged`, mount `/`, socket mount, `--cap-add=ALL` |
+| System power            | `shutdown`, `reboot`, `halt`, `poweroff`                 |
+| System tampering        | `passwd`, `chmod 777 /`, `sudo rm /etc/*`, `sysctl -w`   |
+| Privilege escalation    | `sudo su`, `sudo -i`, `export PATH=`, `gdb -p`           |
+| macOS injection         | `DYLD_INSERT_LIBRARIES`, `DYLD_LIBRARY_PATH`             |
+| Crypto mining           | xmrig, monero, bitcoin, ethereum, miner                  |
+| Cloud metadata          | `169.254.169.254`, `metadata.google.internal`            |
+| Log destruction         | `rm /var/log/*`, truncate logs                           |
+
+#### Attribution
+
+Configures co-author attribution appended to commits and PRs.
