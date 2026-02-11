@@ -137,7 +137,7 @@ Uses `default` mode with explicit `allow`/`deny` lists. Anything not in either l
 | Reverse shells          | `/dev/tcp`, socket-based shells in any language          |
 | Network listeners       | `nc -l`, `socat`, `nmap`, `masscan`                      |
 | Credential exfiltration | `cat ~/.aws/*`, `cat ~/.ssh/id_*`, env piped to base64   |
-| Git destructive         | Force-push to main/master, hard reset to origin          |
+| Git destructive         | `--amend`, force-push to main/master, hard reset to origin |
 | Privileged Docker       | `--privileged`, mount `/`, socket mount, `--cap-add=ALL` |
 | System power            | `shutdown`, `reboot`, `halt`, `poweroff`                 |
 | System tampering        | `passwd`, `chmod 777 /`, `sudo rm /etc/*`, `sysctl -w`   |

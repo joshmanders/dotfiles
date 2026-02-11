@@ -32,7 +32,6 @@
       "Bash(git add -u*)",
       "Bash(git commit -m *)",
       "Bash(git commit -am *)",
-      "Bash(git commit --amend*)",
       "Bash(git push*)",
       "Bash(git push origin *)",
       "Bash(git push -u origin *)",
@@ -617,6 +616,7 @@
       "Bash(find / -name *.key*)",
       "Bash(find / -name *.pem*)",
 
+      "Bash(git commit --amend*)",
       "Bash(git push --force origin master*)",
       "Bash(git push --force origin main*)",
       "Bash(git push -f origin master*)",
