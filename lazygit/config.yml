@@ -1,0 +1,7 @@
+gui:
+  screenMode: normal
+  expandFocusedSidePanel: true
+  expandedSidePanelWeight: 32
+  showCommandLog: false
+  showBottomLine: false
+  showPanelJumps: false
