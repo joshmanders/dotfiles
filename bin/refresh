@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+main () {
+  source "${HOME}/.bashrc"
+  echo "Shell refreshed."
+}
+
+main "$@"
