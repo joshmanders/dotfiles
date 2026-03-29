@@ -24,6 +24,7 @@
 #   bash dnsmasq/install.sh     # DNS resolver
 #   bash caddy/install.sh       # Web server
 #   bash claude/install.sh      # Claude Code config
+#   bash lazygit/install.sh     # Lazygit configuration
 
 set -euo pipefail
 
@@ -70,6 +71,8 @@ source "$DOTFILES/ssh/install.sh"
 source "$DOTFILES/dnsmasq/install.sh"
 source "$DOTFILES/caddy/install.sh"
 source "$DOTFILES/claude/install.sh"
+source "$DOTFILES/vscode/install.sh"
+source "$DOTFILES/lazygit/install.sh"
 
 echo ""
 echo "╔═══════════════════════════════════════════════════════════════════╗"

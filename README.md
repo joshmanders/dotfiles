@@ -73,6 +73,7 @@ concierge add
 ├── rectangle/         # Window manager config
 ├── ripgrep/           # Ripgrep config
 ├── ssh/               # SSH configuration
+├── vscode/            # VS Code settings
 ├── config.sh.example  # Config template (copy to config.sh)
 ├── install.sh         # Main installer
 └── README.md          # This file
@@ -101,6 +102,7 @@ bash ssh/install.sh         # Just SSH config
 bash dnsmasq/install.sh     # Just DNS setup
 bash caddy/install.sh       # Just web server
 bash claude/install.sh      # Just Claude Code config
+bash vscode/install.sh      # Just VS Code settings
 ```
 
 ## Documentation
@@ -123,6 +125,7 @@ Each directory has its own README with detailed documentation:
 - [rectangle/README.md](rectangle/README.md) - Window manager
 - [ripgrep/README.md](ripgrep/README.md) - Ripgrep
 - [ssh/README.md](ssh/README.md) - SSH configuration
+- [vscode/README.md](vscode/README.md) - VS Code settings
 
 ## Key Commands
 
