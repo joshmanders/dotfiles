@@ -11,7 +11,7 @@ if [[ -x "/opt/homebrew/bin/brew" ]]; then
 elif [[ -x "/usr/local/bin/brew" ]]; then
     HOMEBREW_PREFIX="/usr/local"
 fi
-PATH="${HOMEBREW_PREFIX}/bin:${HOMEBREW_PREFIX}/sbin"
+PATH="${DOTFILES}/bin:${HOMEBREW_PREFIX}/bin:${HOMEBREW_PREFIX}/sbin"
 
 # System paths
 PATH="${PATH}:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
@@ -20,7 +20,7 @@ PATH="${PATH}:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
 PATH="${PATH}:${ANDROID_HOME}/emulator"
 PATH="${PATH}:${ANDROID_HOME}/platform-tools"
 
-# Dotfiles bin scripts
-PATH="${PATH}:${DOTFILES}/bin"
+# Composer global
+PATH="${PATH}:${COMPOSER_HOME}/vendor/bin"
 
 export PATH
