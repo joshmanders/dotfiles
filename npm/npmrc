@@ -1,3 +1,2 @@
-# npm configuration
-# Auth tokens should be added manually or via `npm login`
-legacy-peer-deps=true
+//registry.npmjs.org/:_authToken=${DOTFILES_NPM_TOKEN}
+//npm.pkg.github.com/:_authToken=${DOTFILES_GITHUB_NPM_TOKEN}

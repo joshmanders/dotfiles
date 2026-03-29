@@ -26,5 +26,11 @@ export DOTFILES_HOMEBREW_NO_AUTOUPDATE="1"
 # Shell history size
 export DOTFILES_HISTSIZE="50000"
 
+# npm registry auth token
+export DOTFILES_NPM_TOKEN=
+
+# GitHub npm package registry auth token
+export DOTFILES_GITHUB_NPM_TOKEN=
+
 # Primcloud projects directory
 export DOTFILES_PRIMCLOUD_DIR="$HOME/Code/primcloud"
