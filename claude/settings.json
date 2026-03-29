@@ -1,10 +1,12 @@
 {
+  "env": {
+    "BASH_ENV": "${HOME}/.files/bash/bashrc"
+  },
   "attribution": {
     "commit": "Co-Authored-By: Dunnbot <dunnbot@joshmanders.com>",
     "pr": ""
   },
   "permissions": {
-    "defaultMode": "default",
     "allow": [
       "Read(**)",
       "Edit(**)",
@@ -16,7 +18,6 @@
       "TodoRead",
       "TodoWrite(**)",
       "Task(**)",
-
       "Bash(git status*)",
       "Bash(git log*)",
       "Bash(git log --oneline*)",
@@ -60,7 +61,6 @@
       "Bash(git config *)",
       "Bash(git clone *)",
       "Bash(git init*)",
-
       "Bash(gh *)",
       "Bash(gh auth *)",
       "Bash(gh auth login*)",
@@ -77,7 +77,6 @@
       "Bash(gh issue *)",
       "Bash(gh workflow *)",
       "Bash(gh release *)",
-
       "Bash(docker ps*)",
       "Bash(docker ps -a*)",
       "Bash(docker ps --format*)",
@@ -127,7 +126,6 @@
       "Bash(docker system *)",
       "Bash(docker info*)",
       "Bash(docker version*)",
-
       "Bash(docker compose *)",
       "Bash(docker compose up*)",
       "Bash(docker compose up -d*)",
@@ -144,7 +142,6 @@
       "Bash(docker compose exec*)",
       "Bash(docker compose rm*)",
       "Bash(docker-compose *)",
-
       "Bash(kubectl *)",
       "Bash(kubectl get *)",
       "Bash(kubectl describe *)",
@@ -172,7 +169,6 @@
       "Bash(kubectl explain *)",
       "Bash(kubectl auth *)",
       "Bash(kubectl version*)",
-
       "Bash(npm *)",
       "Bash(npm install*)",
       "Bash(npm install --save*)",
@@ -210,14 +206,12 @@
       "Bash(bun test*)",
       "Bash(bun build*)",
       "Bash(bunx *)",
-
       "Bash(python *)",
       "Bash(python3 *)",
       "Bash(python -m *)",
       "Bash(python3 -m *)",
       "Bash(pip *)",
       "Bash(pip3 *)",
-
       "Bash(php *)",
       "Bash(php -r *)",
       "Bash(php -v*)",
@@ -225,7 +219,7 @@
       "Bash(composer install*)",
       "Bash(composer update*)",
       "Bash(composer require*)",
-
+      "Bash(cpx *)",
       "Bash(cargo *)",
       "Bash(cargo build*)",
       "Bash(cargo run*)",
@@ -235,7 +229,6 @@
       "Bash(cargo clippy*)",
       "Bash(rustc *)",
       "Bash(rustup *)",
-
       "Bash(go *)",
       "Bash(go build*)",
       "Bash(go run*)",
@@ -244,9 +237,7 @@
       "Bash(go mod*)",
       "Bash(go fmt*)",
       "Bash(go vet*)",
-
       "Bash(make *)",
-
       "Bash(ls*)",
       "Bash(ls -l*)",
       "Bash(ls -a*)",
@@ -297,7 +288,6 @@
       "Bash(tree *)",
       "Bash(ln *)",
       "Bash(ln -s *)",
-
       "Bash(grep *)",
       "Bash(grep -r *)",
       "Bash(grep -i *)",
@@ -330,7 +320,6 @@
       "Bash(csplit *)",
       "Bash(tee *)",
       "Bash(xargs *)",
-
       "Bash(jq *)",
       "Bash(jq .*)",
       "Bash(jq -r *)",
@@ -347,7 +336,6 @@
       "Bash(yq eval *)",
       "Bash(yq -i *)",
       "Bash(* | yq*)",
-
       "Bash(curl *)",
       "Bash(curl -s *)",
       "Bash(curl -S *)",
@@ -382,7 +370,6 @@
       "Bash(curl * | head*)",
       "Bash(curl * | tail*)",
       "Bash(wget *)",
-
       "Bash(ps *)",
       "Bash(ps aux*)",
       "Bash(ps -ef*)",
@@ -404,7 +391,6 @@
       "Bash(nohup *)",
       "Bash(sleep *)",
       "Bash(wait*)",
-
       "Bash(ping *)",
       "Bash(netstat *)",
       "Bash(netstat -an | grep *)",
@@ -416,7 +402,6 @@
       "Bash(telnet *)",
       "Bash(traceroute *)",
       "Bash(ifconfig*)",
-
       "Bash(date*)",
       "Bash(date +*)",
       "Bash(whoami*)",
@@ -437,7 +422,6 @@
       "Bash(history*)",
       "Bash(alias*)",
       "Bash(type *)",
-
       "Bash(echo *)",
       "Bash(echo $*)",
       "Bash(echo \"$*\")",
@@ -458,13 +442,11 @@
       "Bash(set*)",
       "Bash(source *)",
       "Bash(. *)",
-
       "Bash(brew *)",
       "Bash(brew install *)",
       "Bash(brew update*)",
       "Bash(brew upgrade*)",
       "Bash(brew list*)",
-
       "Bash(openssl *)",
       "Bash(openssl rand *)",
       "Bash(openssl rand -hex 32*)",
@@ -476,7 +458,6 @@
       "Bash(shasum *)",
       "Bash(uuidgen*)",
       "Bash(pwgen *)",
-
       "Bash(tar *)",
       "Bash(tar -czf *)",
       "Bash(tar -xzf *)",
@@ -504,11 +485,9 @@
       "Bash(bunzip2 *)",
       "Bash(xz *)",
       "Bash(unxz *)",
-
       "Bash(bash *)",
       "Bash(sh *)",
       "Bash(./*.sh*)",
-
       "Bash(test *)",
       "Bash([ *)",
       "Bash([[ *)",
@@ -519,11 +498,9 @@
       "Bash(shuf *)",
       "Bash(bc *)",
       "Bash(expr *)",
-
       "Bash(for * in *; do *; done*)",
       "Bash(while *; do *; done*)",
       "Bash(if *; then *; fi*)",
-
       "Bash(* | *)",
       "Bash(* > *)",
       "Bash(* >> *)",
@@ -539,7 +516,6 @@
       "Bash(nohup * &)",
       "Bash(* > /dev/null 2>&1 &)",
       "Bash(disown*)",
-
       "Bash(open -a *)",
       "Bash(timeout *)",
       "Bash(time *)",
@@ -547,7 +523,11 @@
       "Bash(http-server *)",
       "Bash(npx http-server *)",
       "Bash(python -m http.server *)",
-      "Bash(python3 -m http.server *)"
+      "Bash(python3 -m http.server *)",
+      "Bash(npm test:*)",
+      "WebFetch(domain:base-ui.com)",
+      "WebFetch(domain:github.com)",
+      "Bash(npm run test:feature:*)"
     ],
     "deny": [
       "Bash(rm -rf /)",
@@ -559,7 +539,6 @@
       "Bash(rm -rf /home/*)",
       "Bash(rm -rf /var/*)",
       "Bash(rm -rf /opt/*)",
-
       "Bash(dd if=/dev/zero of=/dev/*)",
       "Bash(dd if=/dev/random of=/dev/*)",
       "Bash(mkfs*)",
@@ -567,9 +546,7 @@
       "Bash(parted*)",
       "Bash(> /dev/disk*)",
       "Bash(cat /dev/urandom > *)",
-
       "Bash(*fork*bomb*)",
-
       "Bash(curl * | sh*)",
       "Bash(curl * | bash*)",
       "Bash(curl -s * | sh*)",
@@ -580,7 +557,6 @@
       "Bash(wget * | sudo *)",
       "Bash(* | base64 -d | sh*)",
       "Bash(* | base64 -d | bash*)",
-
       "Bash(bash -i >& /dev/tcp/*)",
       "Bash(sh -i >& /dev/tcp/*)",
       "Bash(exec < /dev/tcp/*)",
@@ -598,7 +574,6 @@
       "Bash(socat*)",
       "Bash(nmap*)",
       "Bash(masscan*)",
-
       "Bash(cat ~/.aws/*)",
       "Bash(cat ~/.ssh/id_*)",
       "Bash(env | base64*)",
@@ -613,7 +588,6 @@
       "Bash(find / -name id_rsa*)",
       "Bash(find / -name *.key*)",
       "Bash(find / -name *.pem*)",
-
       "Bash(git commit --amend*)",
       "Bash(git push --force origin master*)",
       "Bash(git push --force origin main*)",
@@ -621,7 +595,6 @@
       "Bash(git push -f origin main*)",
       "Bash(git reset --hard origin/master*)",
       "Bash(git reset --hard origin/main*)",
-
       "Bash(docker run --privileged *)",
       "Bash(docker run --pid=host *)",
       "Bash(docker run --net=host *)",
@@ -630,14 +603,12 @@
       "Bash(docker run -v /var/run/docker.sock:/var/run/docker.sock *)",
       "Bash(docker run --cap-add=ALL *)",
       "Bash(docker run --security-opt *)",
-
       "Bash(shutdown*)",
       "Bash(reboot*)",
       "Bash(halt*)",
       "Bash(poweroff*)",
       "Bash(sudo shutdown*)",
       "Bash(sudo reboot*)",
-
       "Bash(sudo passwd*)",
       "Bash(passwd*)",
       "Bash(sudo chmod 777 /*)",
@@ -652,9 +623,7 @@
       "Bash(chmod 777 /bin/*)",
       "Bash(chmod 777 /usr/*)",
       "Bash(chown -R * /*)",
-
       "Bash(sysctl -w *)",
-
       "Bash(sudo -l*)",
       "Bash(sudo -V*)",
       "Bash(sudo su*)",
@@ -665,7 +634,6 @@
       "Bash(export PYTHONPATH=*)",
       "Bash(DYLD_INSERT_LIBRARIES=*)",
       "Bash(gdb -p *)",
-
       "Bash(*xmrig*)",
       "Bash(*monero*)",
       "Bash(*bitcoin*)",
@@ -674,20 +642,69 @@
       "Bash(*wallet.dat*)",
       "Bash(*privatekey*)",
       "Bash(*miner*)",
-
       "Bash(curl http://169.254.169.254/*)",
       "Bash(wget http://169.254.169.254/*)",
       "Bash(curl http://metadata.google.internal/*)",
-
       "Bash(rm /var/log/*)",
       "Bash(rm -rf /var/log/*)",
       "Bash(> /var/log/*)",
       "Bash(echo > /var/log/*)",
       "Bash(truncate -s 0 /var/log/*)",
-
       "Bash(npm install -g * --unsafe-perm*)",
       "Bash(pip install * --break-system-packages*)",
-      "Bash(gem install * --no-user-install*)"
+      "Bash(gem install * --no-user-install*)",
+      "Bash(dscl *)",
+      "Bash(sudo dscl *)",
+      "Bash(sysadminctl *)",
+      "Bash(sudo sysadminctl *)",
+      "Bash(launchctl load *)",
+      "Bash(launchctl submit *)",
+      "Bash(launchctl bootstrap *)",
+      "Bash(sudo launchctl *)",
+      "Bash(crontab -r*)",
+      "Bash(crontab -e*)",
+      "Bash(networksetup *)",
+      "Bash(sudo networksetup *)",
+      "Bash(scutil --set *)",
+      "Bash(sudo scutil *)",
+      "Bash(csrutil *)",
+      "Bash(sudo csrutil *)",
+      "Bash(spctl --master-disable*)",
+      "Bash(sudo spctl *)",
+      "Bash(security delete-*)",
+      "Bash(security dump-*)",
+      "Bash(security export *)",
+      "Bash(security find-generic-password -w *)",
+      "Bash(security find-internet-password -w *)",
+      "Bash(diskutil eraseDisk *)",
+      "Bash(diskutil partitionDisk *)",
+      "Bash(diskutil apfs deleteVolume *)",
+      "Bash(sudo diskutil *)",
+      "Bash(bless *)",
+      "Bash(sudo bless *)",
+      "Bash(sudo nvram *)",
+      "Bash(sudo systemsetup *)",
+      "Bash(fdesetup *)",
+      "Bash(sudo fdesetup *)",
+      "Bash(profiles install *)",
+      "Bash(sudo profiles *)",
+      "Bash(tmutil delete *)",
+      "Bash(sudo tmutil *)",
+      "Bash(sudo killall *)",
+      "Bash(kickstart *)",
+      "Bash(sudo /System/*)",
+      "Bash(sudo /Library/*)"
+    ],
+    "defaultMode": "plan",
+    "additionalDirectories": [
+      "../agent",
+      "../ingress",
+      "../placeholder",
+      "../builder"
     ]
-  }
+  },
+  "spinnerTipsEnabled": false,
+  "skipDangerousModePermissionPrompt": true,
+  "autoUpdatesChannel": "stable",
+  "minimumVersion": "2.1.87"
 }
