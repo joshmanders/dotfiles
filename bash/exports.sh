@@ -18,12 +18,18 @@ export VISUAL="${DOTFILES_EDITOR}"
 # Timezone (from config or default)
 export TZ="${DOTFILES_TZ}"
 
+# Silence macOS "default interactive shell is now zsh" warning
+export BASH_SILENCE_DEPRECATION_WARNING=1
+
 # Homebrew
 export HOMEBREW_NO_AUTO_UPDATE="${DOTFILES_HOMEBREW_NO_AUTOUPDATE}"
 
 # Android SDK
 export JAVA_HOME="/Library/Java/JavaVirtualMachines/zulu-17.jdk/Contents/Home"
 export ANDROID_HOME="${HOME}/Library/Android/sdk"
+
+# Composer
+export COMPOSER_HOME="${HOME}/.composer"
 
 # ripgrep config
 export RIPGREP_CONFIG_PATH="${DOTFILES}/ripgrep/config"

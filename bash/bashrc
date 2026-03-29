@@ -5,15 +5,17 @@
 # This file is symlinked to ~/.bashrc and ~/.bash_profile.
 # It sources modular configuration files for a clean, maintainable setup.
 
-# Exit early for non-interactive shells
-[[ $- != *i* ]] && return
-
 # Define dotfiles location
 export DOTFILES="${HOME}/.files"
 
-# Source modular configuration files
+# Environment and PATH are needed by non-interactive shells (e.g. Claude Code)
 source "${DOTFILES}/bash/exports.sh"
 source "${DOTFILES}/bash/path.sh"
+
+# Exit early for non-interactive shells
+[[ $- != *i* ]] && return
+
+# Interactive-only configuration
 source "${DOTFILES}/bash/aliases.sh"
 source "${DOTFILES}/bash/plugins.sh"
 source "${DOTFILES}/bash/completion.sh"
