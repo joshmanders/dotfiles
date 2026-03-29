@@ -3,12 +3,16 @@
 # cpx - Composer Package Executor
 #
 # Like npx but for PHP/Composer projects.
-# Traverses up looking for vendor/bin/<cmd>, falls back to composer run-script.
 # Stops at git repo boundary.
+#
+# Resolution order:
+#   1. vendor/bin/<cmd> (traverses up to repo root)
+#   2. php artisan <cmd> (Laravel projects)
+#   3. ~/.composer/vendor/bin/<cmd> (global)
 #
 # Usage:
 #   cpx pint          # runs vendor/bin/pint
-#   cpx dev           # runs composer run-script dev
+#   cpx migrate       # runs php artisan migrate (Laravel)
 #   cpx pint --dirty  # passes args to the command
 
 set -euo pipefail
@@ -37,9 +41,9 @@ while [[ "$dir" == "$repo_root"* ]]; do
     dir="$(dirname "$dir")"
 done
 
-# No binary found - try composer run-script
-if [[ -f "$repo_root/composer.json" ]]; then
-    exec composer --working-dir="$repo_root" run-script "$cmd" -- "$@"
+# Laravel project - forward to artisan
+if [[ -f "$repo_root/artisan" ]]; then
+    exec php "$repo_root/artisan" "$cmd" "$@"
 fi
 
 # Fall back to global composer bin
