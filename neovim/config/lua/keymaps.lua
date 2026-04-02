@@ -44,6 +44,12 @@ map("n", "<leader>fh", "<cmd>Telescope help_tags<cr>", { desc = "Help tags" })
 map("n", "<leader>fr", "<cmd>Telescope oldfiles<cr>", { desc = "Recent files" })
 map("n", "<leader>ft", "<cmd>TodoTelescope<cr>", { desc = "Find TODOs" })
 
+-- Quickfix list
+map("n", "]q", "<cmd>cnext<cr>zz", { desc = "Next quickfix item" })
+map("n", "[q", "<cmd>cprev<cr>zz", { desc = "Previous quickfix item" })
+map("n", "<leader>co", "<cmd>copen<cr>", { desc = "Open quickfix list" })
+map("n", "<leader>cc", "<cmd>cclose<cr>", { desc = "Close quickfix list" })
+
 -- Undotree
 map("n", "<leader>u", "<cmd>UndotreeToggle<cr>", { desc = "Toggle undotree" })
 
