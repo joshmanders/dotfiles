@@ -18,7 +18,7 @@ export DOTFILES_GITHUB_USERNAME=
 export DOTFILES_TZ="America/Los_Angeles"
 
 # Editor
-export DOTFILES_EDITOR="code"
+export DOTFILES_EDITOR="nvim"
 
 # Disable Homebrew auto-update (1 = disabled)
 export DOTFILES_HOMEBREW_NO_AUTOUPDATE="1"

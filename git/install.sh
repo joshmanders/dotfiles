@@ -33,7 +33,7 @@ symlink "$DOTFILES/git/ignore" "$HOME/.gitignore"
 # Set user info from config
 GIT_NAME="${DOTFILES_NAME:-}"
 GIT_EMAIL="${DOTFILES_EMAIL:-}"
-GIT_EDITOR="${DOTFILES_EDITOR:-code --wait}"
+GIT_EDITOR="${DOTFILES_EDITOR:-nvim}"
 
 if [[ -n "$GIT_NAME" ]]; then
     git config --global user.name "$GIT_NAME"
