@@ -1,0 +1,92 @@
+#!/usr/bin/env bash
+#
+# mux - tmux session manager
+#
+# Groups projects into sessions with windows (tabs).
+# Session name derived from parent directory, window from project directory.
+#
+#   ~/Code/niftyco/app      => session "niftyco", window "app"
+#   ~/Code/niftyco/api      => session "niftyco", window "api"
+#   ~/Code/primcloud/platform => session "primcloud", window "platform"
+#   ~/.files                 => session "files", window "files"
+#
+# Usage:
+#   mux                # auto-derive session and window from path
+#   mux my-session     # override session name, window from directory
+
+set -euo pipefail
+
+DOTFILES="${DOTFILES:-$HOME/.files}"
+REGISTRY="$DOTFILES/tmux/sessions.json"
+
+# Create registry if missing
+if [[ ! -f "$REGISTRY" ]]; then
+    echo '{}' > "$REGISTRY"
+fi
+
+dir="$PWD"
+
+# Look up existing mapping for this directory
+existing=$(jq -r --arg dir "$dir" '.[$dir] // empty' "$REGISTRY")
+
+if [[ -n "$existing" ]]; then
+    session=$(echo "$existing" | jq -r '.session')
+    window=$(echo "$existing" | jq -r '.window')
+else
+    # Derive session and window names
+    relative="${dir#"$HOME"/}"
+    relative="${relative#.}"
+
+    if [[ $# -gt 0 ]]; then
+        session="$1"
+    else
+        # Session = parent directory (e.g. "niftyco" from "Code/niftyco/app")
+        # If only one level deep, session = window = same name
+        parent=$(dirname "$relative")
+        if [[ "$parent" == "." ]]; then
+            session=$(basename "$relative")
+        else
+            session=$(basename "$parent")
+        fi
+    fi
+
+    window=$(basename "$relative")
+    session="${session,,}"
+    window="${window,,}"
+
+    # Save to registry
+    jq --arg dir "$dir" \
+       --arg session "$session" \
+       --arg window "$window" \
+       '. + {($dir): {session: $session, window: $window}}' \
+       "$REGISTRY" > "$REGISTRY.tmp" && mv "$REGISTRY.tmp" "$REGISTRY"
+fi
+
+# Attach, add window, or create session
+if tmux has-session -t "=$session" 2>/dev/null; then
+    # Session exists — check if window exists
+    if tmux list-windows -t "=$session" -F '#W' | grep -qx "$window"; then
+        # Window exists — just attach/switch
+        if [[ -n "${TMUX:-}" ]]; then
+            tmux switch-client -t "=$session:$window"
+        else
+            exec tmux attach-session -t "=$session:$window"
+        fi
+    else
+        # Add new window to existing session
+        tmux new-window -t "=$session" -n "$window" -c "$dir"
+        if [[ -n "${TMUX:-}" ]]; then
+            tmux switch-client -t "=$session:$window"
+        else
+            exec tmux attach-session -t "=$session:$window"
+        fi
+    fi
+else
+    # Create new session with named window
+    if [[ -n "${TMUX:-}" ]]; then
+        tmux new-session -d -s "$session" -n "$window" -c "$dir"
+        tmux switch-client -t "=$session:$window"
+    else
+        exec tmux new-session -s "$session" -n "$window" -c "$dir"
+    fi
+fi
