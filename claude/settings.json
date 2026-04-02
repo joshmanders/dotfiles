@@ -704,7 +704,8 @@
     ]
   },
   "spinnerTipsEnabled": false,
-  "skipDangerousModePermissionPrompt": true,
+  "effortLevel": "high",
   "autoUpdatesChannel": "stable",
-  "minimumVersion": "2.1.87"
+  "minimumVersion": "2.1.87",
+  "skipDangerousModePermissionPrompt": true
 }
