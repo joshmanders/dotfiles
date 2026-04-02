@@ -96,6 +96,7 @@ brew "libusb"
 brew "libuv"
 brew "mas"
 brew "mysql@8.4", restart_service: :changed, link: true
+brew "neovim"
 brew "node"
 brew "npth"
 brew "oh-my-posh"
@@ -103,6 +104,7 @@ brew "pinentry"
 brew "postgresql@14", restart_service: :changed
 brew "redis", restart_service: :changed
 brew "trash", link: true
+brew "tmux"
 brew "tree"
 brew "watchman"
 brew "wget"

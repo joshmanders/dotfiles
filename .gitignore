@@ -10,3 +10,9 @@ Brewfile.lock.json
 # Caddy sites (machine-specific)
 caddy/sites/*
 !caddy/sites/.gitkeep
+
+# tmux session registry (machine-specific)
+tmux/sessions.json
+
+# Neovim plugin lock file (machine-specific)
+neovim/config/lazy-lock.json

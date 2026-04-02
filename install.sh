@@ -25,6 +25,8 @@
 #   bash caddy/install.sh       # Web server
 #   bash claude/install.sh      # Claude Code config
 #   bash lazygit/install.sh     # Lazygit configuration
+#   bash neovim/install.sh      # Neovim configuration
+#   bash tmux/install.sh        # tmux configuration
 
 set -euo pipefail
 
@@ -73,6 +75,8 @@ source "$DOTFILES/caddy/install.sh"
 source "$DOTFILES/claude/install.sh"
 source "$DOTFILES/vscode/install.sh"
 source "$DOTFILES/lazygit/install.sh"
+source "$DOTFILES/neovim/install.sh"
+source "$DOTFILES/tmux/install.sh"
 
 echo ""
 echo "╔═══════════════════════════════════════════════════════════════════╗"

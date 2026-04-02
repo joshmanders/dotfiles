@@ -69,10 +69,12 @@ concierge add
 ├── homebrew/          # Package management
 ├── hyperkey/          # Hyperkey config
 ├── lib/               # Installer utilities
+├── neovim/            # Neovim configuration
 ├── npm/               # NPM configuration
 ├── rectangle/         # Window manager config
 ├── ripgrep/           # Ripgrep config
 ├── ssh/               # SSH configuration
+├── tmux/              # Terminal multiplexer
 ├── vscode/            # VS Code settings
 ├── config.sh.example  # Config template (copy to config.sh)
 ├── install.sh         # Main installer
@@ -102,6 +104,8 @@ bash ssh/install.sh         # Just SSH config
 bash dnsmasq/install.sh     # Just DNS setup
 bash caddy/install.sh       # Just web server
 bash claude/install.sh      # Just Claude Code config
+bash neovim/install.sh      # Just Neovim config
+bash tmux/install.sh        # Just tmux config
 bash vscode/install.sh      # Just VS Code settings
 ```
 
@@ -121,10 +125,13 @@ Each directory has its own README with detailed documentation:
 - [homebrew/README.md](homebrew/README.md) - Package management
 - [hyperkey/README.md](hyperkey/README.md) - Hyperkey
 - [lib/README.md](lib/README.md) - Installer utilities
+- [neovim/README.md](neovim/README.md) - Neovim configuration
+- [lazygit/README.md](lazygit/README.md) - Lazygit
 - [npm/README.md](npm/README.md) - NPM configuration
 - [rectangle/README.md](rectangle/README.md) - Window manager
 - [ripgrep/README.md](ripgrep/README.md) - Ripgrep
 - [ssh/README.md](ssh/README.md) - SSH configuration
+- [tmux/README.md](tmux/README.md) - Terminal multiplexer
 - [vscode/README.md](vscode/README.md) - VS Code settings
 
 ## Key Commands
@@ -135,6 +142,7 @@ Each directory has its own README with detailed documentation:
 | `concierge list` | List all dev sites                |
 | `z <dir>`        | Smart directory jump              |
 | `Ctrl+R`         | Fuzzy history search              |
+| `nvim`           | Open Neovim (plugins auto-install) |
 | `git save "msg"` | Quick commit                      |
 | `git sync`       | Fetch and rebase on upstream      |
 | `git undo`       | Undo last commit                  |
