@@ -4,6 +4,7 @@
 #
 # Groups projects into sessions with windows (tabs).
 # Session name derived from parent directory, window from project directory.
+# Pane layouts and processes are saved automatically and restored on next run.
 #
 #   ~/Code/niftyco/app      => session "niftyco", window "app"
 #   ~/Code/niftyco/api      => session "niftyco", window "api"
@@ -11,37 +12,178 @@
 #   ~/.files                 => session "files", window "files"
 #
 # Usage:
-#   mux                # auto-derive session and window from path
-#   mux my-session     # override session name, window from directory
+#   mux                        # auto-derive session and window from path
+#   mux my-session             # override session name, window from directory
+#   mux list                   # list all registered sessions
+#   mux show [session:window]  # show pane details for a session
+#   mux copy session:window    # copy layout from source to CWD's entry
+#   mux --save                 # save pane layouts + commands (called by tmux hooks)
 
 set -euo pipefail
 
 DOTFILES="${DOTFILES:-$HOME/.files}"
 REGISTRY="$DOTFILES/tmux/sessions.json"
 
-# Create registry if missing
 if [[ ! -f "$REGISTRY" ]]; then
     echo '{}' > "$REGISTRY"
 fi
 
+# --- Save pane layouts and running commands ---
+if [[ "${1:-}" == "--save" ]]; then
+    jq -r 'to_entries[] | "\(.key)\t\(.value.session)\t\(.value.window)"' "$REGISTRY" \
+    | while IFS=$'\t' read -r entry_dir entry_session entry_window; do
+        tmux has-session -t "=$entry_session" 2>/dev/null || continue
+        tmux list-windows -t "=$entry_session" -F '#W' | grep -qx "$entry_window" || continue
+
+        layout=$(tmux display-message -t "=$entry_session:$entry_window" -p '#{window_layout}')
+
+        panes="[]"
+        while read -r pane_pid pane_dir; do
+            cmd=""
+            child=$(pgrep -o -P "$pane_pid" 2>/dev/null) || true
+            if [[ -n "$child" ]]; then
+                cmd=$(ps -o command= -p "$child" 2>/dev/null) || true
+            fi
+            panes=$(echo "$panes" | jq \
+                --arg dir "$pane_dir" \
+                --arg cmd "$cmd" \
+                '. + [{dir: $dir, cmd: $cmd}]')
+        done < <(tmux list-panes -t "=$entry_session:$entry_window" -F '#{pane_pid} #{pane_current_path}')
+
+        jq --arg dir "$entry_dir" \
+           --arg layout "$layout" \
+           --argjson panes "$panes" \
+           '.[$dir].layout = $layout | .[$dir].panes = $panes' \
+           "$REGISTRY" > "$REGISTRY.tmp.$$" && mv "$REGISTRY.tmp.$$" "$REGISTRY"
+    done
+    exit 0
+fi
+
+# --- List all registered sessions ---
+if [[ "${1:-}" == "list" ]]; then
+    jq -r 'to_entries[] | "\(.value.session):\(.value.window)\t\(.key)\t\(.value.panes // [] | length) panes"' "$REGISTRY" \
+    | column -t -s $'\t'
+    exit 0
+fi
+
+# --- Show pane details for a session ---
+if [[ "${1:-}" == "show" ]]; then
+    target="${2:-}"
+
+    if [[ -z "$target" ]]; then
+        entry=$(jq -c --arg dir "$PWD" '.[$dir] // empty' "$REGISTRY")
+        if [[ -z "$entry" ]]; then
+            echo "No session registered for $PWD"
+            exit 1
+        fi
+        target="$(echo "$entry" | jq -r '.session'):$(echo "$entry" | jq -r '.window')"
+    fi
+
+    src_session="${target%%:*}"
+    src_window="${target#*:}"
+
+    entry_dir=$(jq -r --arg s "$src_session" --arg w "$src_window" \
+        'to_entries[] | select(.value.session == $s and .value.window == $w) | .key' \
+        "$REGISTRY")
+
+    if [[ -z "$entry_dir" ]]; then
+        echo "No entry found for $target"
+        exit 1
+    fi
+
+    echo "$src_session:$src_window  ($entry_dir)"
+    echo ""
+    jq -r --arg dir "$entry_dir" '
+        .[$dir].panes // [] | to_entries[] |
+        "  pane \(.key + 1): \(if .value.cmd != "" then .value.cmd else "(shell)" end)"
+    ' "$REGISTRY"
+
+    layout=$(jq -r --arg dir "$entry_dir" '.[$dir].layout // "none"' "$REGISTRY")
+    pane_count=$(jq -r --arg dir "$entry_dir" '.[$dir].panes // [] | length' "$REGISTRY")
+    echo ""
+    echo "  layout: $([[ "$layout" != "none" ]] && echo "saved" || echo "none")"
+    echo "  panes:  $pane_count"
+    exit 0
+fi
+
+# --- Copy layout from source to CWD's entry ---
+if [[ "${1:-}" == "copy" ]]; then
+    target="${2:-}"
+    if [[ -z "$target" ]]; then
+        echo "Usage: mux copy session:window"
+        exit 1
+    fi
+
+    src_session="${target%%:*}"
+    src_window="${target#*:}"
+
+    src_dir=$(jq -r --arg s "$src_session" --arg w "$src_window" \
+        'to_entries[] | select(.value.session == $s and .value.window == $w) | .key' \
+        "$REGISTRY")
+
+    if [[ -z "$src_dir" ]]; then
+        echo "No entry found for $target"
+        exit 1
+    fi
+
+    src_layout=$(jq -r --arg dir "$src_dir" '.[$dir].layout // empty' "$REGISTRY")
+    src_pane_count=$(jq --arg dir "$src_dir" '.[$dir].panes // [] | length' "$REGISTRY")
+
+    if [[ -z "$src_layout" || "$src_pane_count" -le 0 ]]; then
+        echo "No saved layout for $target"
+        exit 1
+    fi
+
+    dir="$PWD"
+    relative="${dir#"$HOME"/}"
+    relative="${relative#.}"
+
+    parent=$(dirname "$relative")
+    if [[ "$parent" == "." ]]; then
+        dest_session=$(basename "$relative")
+    else
+        dest_session=$(basename "$parent")
+    fi
+    dest_window=$(basename "$relative")
+
+    dest_session="${dest_session,,}"
+    dest_session="${dest_session//./-}"
+    dest_session="${dest_session//:/-}"
+    dest_window="${dest_window,,}"
+    dest_window="${dest_window//./-}"
+    dest_window="${dest_window//:/-}"
+
+    dest_panes=$(jq -n --arg dir "$dir" --argjson count "$src_pane_count" \
+        '[range($count) | {dir: $dir, cmd: ""}]')
+
+    jq --arg dir "$dir" \
+       --arg session "$dest_session" \
+       --arg window "$dest_window" \
+       --arg layout "$src_layout" \
+       --argjson panes "$dest_panes" \
+       '.[$dir] = {session: $session, window: $window, layout: $layout, panes: $panes}' \
+       "$REGISTRY" > "$REGISTRY.tmp.$$" && mv "$REGISTRY.tmp.$$" "$REGISTRY"
+
+    echo "Copied layout from $target to $dest_session:$dest_window ($dir)"
+    echo "  $src_pane_count panes, no commands (run mux to start)"
+    exit 0
+fi
+
+# --- Main ---
 dir="$PWD"
 
-# Look up existing mapping for this directory
 existing=$(jq -r --arg dir "$dir" '.[$dir] // empty' "$REGISTRY")
 
 if [[ -n "$existing" ]]; then
     session=$(echo "$existing" | jq -r '.session')
     window=$(echo "$existing" | jq -r '.window')
 else
-    # Derive session and window names
     relative="${dir#"$HOME"/}"
     relative="${relative#.}"
 
     if [[ $# -gt 0 ]]; then
         session="$1"
     else
-        # Session = parent directory (e.g. "niftyco" from "Code/niftyco/app")
-        # If only one level deep, session = window = same name
         parent=$(dirname "$relative")
         if [[ "$parent" == "." ]]; then
             session=$(basename "$relative")
@@ -51,20 +193,33 @@ else
     fi
 
     window=$(basename "$relative")
-    session="${session,,}"
-    window="${window,,}"
+fi
 
-    # Save to registry
-    jq --arg dir "$dir" \
-       --arg session "$session" \
-       --arg window "$window" \
-       '. + {($dir): {session: $session, window: $window}}' \
-       "$REGISTRY" > "$REGISTRY.tmp" && mv "$REGISTRY.tmp" "$REGISTRY"
+# Sanitize for tmux (. and : are target separators)
+session="${session,,}"
+session="${session//./-}"
+session="${session//:/-}"
+window="${window,,}"
+window="${window//./-}"
+window="${window//:/-}"
+
+# Save/update registry with sanitized names
+jq --arg dir "$dir" \
+   --arg session "$session" \
+   --arg window "$window" \
+   '.[$dir] = ((.[$dir] // {}) * {session: $session, window: $window})' \
+   "$REGISTRY" > "$REGISTRY.tmp.$$" && mv "$REGISTRY.tmp.$$" "$REGISTRY"
+
+# Load saved state
+panes=$(jq -c --arg dir "$dir" '.[$dir].panes // null' "$REGISTRY")
+layout=$(jq -r --arg dir "$dir" '.[$dir].layout // empty' "$REGISTRY")
+pane_count=0
+if [[ "$panes" != "null" ]]; then
+    pane_count=$(echo "$panes" | jq 'length')
 fi
 
 # Attach, add window, or create session
 if tmux has-session -t "=$session" 2>/dev/null; then
-    # Session exists — check if window exists
     if tmux list-windows -t "=$session" -F '#W' | grep -qx "$window"; then
         # Window exists — just attach/switch
         if [[ -n "${TMUX:-}" ]]; then
@@ -73,8 +228,24 @@ if tmux has-session -t "=$session" 2>/dev/null; then
             exec tmux attach-session -t "=$session:$window"
         fi
     else
-        # Add new window to existing session
+        # New window in existing session
         tmux new-window -t "=$session" -n "$window" -c "$dir"
+        tmux set-window-option -t "=$session:$window" automatic-rename off
+        if [[ "$pane_count" -gt 1 ]]; then
+            for ((i=1; i<pane_count; i++)); do
+                pane_dir=$(echo "$panes" | jq -r ".[$i].dir")
+                tmux split-window -t "=$session:$window" -c "$pane_dir" 2>/dev/null || break
+                tmux select-layout -t "=$session:$window" tiled 2>/dev/null || true
+            done
+            [[ -n "$layout" ]] && tmux select-layout -t "=$session:$window" "$layout" 2>/dev/null || true
+            idx=0
+            for pane_idx in $(tmux list-panes -t "=$session:$window" -F '#{pane_index}'); do
+                cmd=$(echo "$panes" | jq -r ".[$idx].cmd // empty")
+                [[ -n "$cmd" ]] && tmux send-keys -t "=$session:$window.$pane_idx" "$cmd" Enter 2>/dev/null || true
+                ((idx++))
+            done
+            tmux select-pane -t "=$session:$window.1" 2>/dev/null || true
+        fi
         if [[ -n "${TMUX:-}" ]]; then
             tmux switch-client -t "=$session:$window"
         else
@@ -82,11 +253,59 @@ if tmux has-session -t "=$session" 2>/dev/null; then
         fi
     fi
 else
-    # Create new session with named window
     if [[ -n "${TMUX:-}" ]]; then
+        # Inside tmux — create detached, restore, switch
         tmux new-session -d -s "$session" -n "$window" -c "$dir"
+        tmux set-window-option -t "=$session:$window" automatic-rename off
+        if [[ "$pane_count" -gt 1 ]]; then
+            for ((i=1; i<pane_count; i++)); do
+                pane_dir=$(echo "$panes" | jq -r ".[$i].dir")
+                tmux split-window -t "=$session:$window" -c "$pane_dir" 2>/dev/null || break
+                tmux select-layout -t "=$session:$window" tiled 2>/dev/null || true
+            done
+        fi
         tmux switch-client -t "=$session:$window"
+        # Apply layout after switch (session now has correct terminal size)
+        if [[ -n "$layout" && "$pane_count" -gt 1 ]]; then
+            tmux select-layout -t "=$session:$window" "$layout" 2>/dev/null || true
+        fi
+        if [[ "$pane_count" -gt 1 ]]; then
+            idx=0
+            for pane_idx in $(tmux list-panes -t "=$session:$window" -F '#{pane_index}'); do
+                cmd=$(echo "$panes" | jq -r ".[$idx].cmd // empty")
+                [[ -n "$cmd" ]] && tmux send-keys -t "=$session:$window.$pane_idx" "$cmd" Enter 2>/dev/null || true
+                ((idx++))
+            done
+            tmux select-pane -t "=$session:$window.1" 2>/dev/null || true
+        fi
     else
-        exec tmux new-session -s "$session" -n "$window" -c "$dir"
+        # Outside tmux — use command chain so layout applies at correct terminal size
+        tmux_cmd=(tmux new-session -s "$session" -n "$window" -c "$dir")
+        tmux_cmd+=(";" set-window-option automatic-rename off)
+
+        if [[ "$pane_count" -gt 1 ]]; then
+            for ((i=1; i<pane_count; i++)); do
+                pane_dir=$(echo "$panes" | jq -r ".[$i].dir")
+                tmux_cmd+=(";" split-window -c "$pane_dir")
+                tmux_cmd+=(";" select-layout tiled)
+            done
+
+            if [[ -n "$layout" ]]; then
+                tmux_cmd+=(";" select-layout "$layout")
+            fi
+
+            for ((i=0; i<pane_count; i++)); do
+                cmd=$(echo "$panes" | jq -r ".[$i].cmd // empty")
+                if [[ -n "$cmd" ]]; then
+                    pane_idx=$((i + 1))
+                    tmux_cmd+=(";" send-keys -t ":.${pane_idx}" -l "$cmd")
+                    tmux_cmd+=(";" send-keys -t ":.${pane_idx}" Enter)
+                fi
+            done
+
+            tmux_cmd+=(";" select-pane -t ":.1")
+        fi
+
+        exec "${tmux_cmd[@]}"
     fi
 fi

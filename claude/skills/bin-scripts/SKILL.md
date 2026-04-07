@@ -78,6 +78,18 @@ Custom shell scripts in `~/.files/bin/` for common development workflows.
 
 **brewdump:** Reviews leaf packages interactively, marks items for removal, runs `brew autoremove`, then dumps Brewfile to `$DOTFILES/homebrew/bundle`. Use `--dry-run` to preview.
 
+## tmux Session Management
+
+| Script | Usage                          | Purpose                                          |
+| ------ | ------------------------------ | ------------------------------------------------ |
+| `mux`  | `mux`                              | Create/attach session for CWD                |
+| `mux`  | `mux my-session`                   | Override session name                        |
+| `mux`  | `mux list`                         | List all registered sessions                 |
+| `mux`  | `mux show [session:window]`        | Show pane details (defaults to CWD)          |
+| `mux`  | `mux copy session:window`          | Copy pane layout from source to CWD          |
+
+Projects are grouped by parent directory (e.g. `~/Code/primcloud/platform` → session `primcloud`, window `platform`). Pane layouts and running commands are saved automatically and restored on next `mux`.
+
 ## Not Documented
 
 Scripts excluded from this skill (niche, interactive, or dangerous):

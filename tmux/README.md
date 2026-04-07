@@ -18,7 +18,7 @@ bash tmux/install.sh
 
 Plugins are auto-installed on first tmux start.
 
-**Important:** Your terminal must send Option as Meta/Esc+ for the keybindings to work. In iTerm2: Preferences > Profiles > Keys > set "Left Option key" to "Esc+". In Ghostty: `macos-option-as-alt = true` in config.
+**Important:** Your terminal must send Option as Meta/Esc+ for the keybindings to work. In Ghostty: `macos-option-as-alt = true` in config.
 
 ## Concepts
 
@@ -50,6 +50,34 @@ cd ~/Code/freelance/client-site
 mux freelance              # session "freelance", window "client-site"
 ```
 
+### Managing sessions
+
+```bash
+mux list                          # list all registered sessions
+mux show                          # show panes for CWD's session
+mux show primcloud:platform       # show panes for a specific session
+mux copy primcloud:platform       # copy layout to CWD (panes, no commands)
+```
+
+### Pane layout persistence
+
+First time you run `mux` for a directory, you get a clean session. Set up your panes however you want — the layout and running commands are saved automatically.
+
+Next time the tmux server restarts and you run `mux`, your panes are recreated with the same layout and commands re-launched.
+
+Saves happen automatically when you:
+- Split or close a pane
+- Switch between panes
+- Detach from tmux
+
+### Copying layouts between projects
+
+```bash
+cd ~/Code/aniftyco/saas-starter
+mux copy primcloud:platform       # same pane arrangement, CWD as working dir
+mux                               # creates session with copied layout
+```
+
 ### Switching between project tabs
 
 ```
@@ -72,15 +100,6 @@ Once inside a project window, split it up:
 Option + |           Split side-by-side
 Option + -           Split top/bottom
 ```
-
-Example — 2 claude instances on top, lazygit + terminal on bottom:
-
-1. You start in a single pane
-2. `Option + -` to split top/bottom
-3. `Option + |` to split the top pane left/right
-4. `Option + j` to move to the bottom pane
-5. `Option + |` to split the bottom pane left/right
-6. Start `claude` in top-left and top-right, `lazygit` in bottom-left
 
 ### Moving between panes
 
@@ -119,14 +138,6 @@ Option + d           Detach — leaves everything running in background
 mux                  Reattach from the project directory
 ```
 
-### After a machine restart
-
-Sessions auto-save every 15 minutes. After a restart:
-
-```bash
-mux                  # from any project dir — restores session automatically
-```
-
 ### Scrolling and copying
 
 Scroll up with mouse wheel or trackpad. To copy text:
@@ -154,4 +165,4 @@ Scroll up with mouse wheel or trackpad. To copy text:
 ## Plugins
 
 - **tmux-resurrect** — saves/restores sessions across tmux server restarts
-- **tmux-continuum** — auto-saves every 15 minutes, auto-restores on tmux start
+- **tmux-continuum** — auto-saves every 15 minutes
