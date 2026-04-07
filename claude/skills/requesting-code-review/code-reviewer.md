@@ -28,6 +28,10 @@ git diff --stat {BASE_SHA}..{HEAD_SHA}
 git diff {BASE_SHA}..{HEAD_SHA}
 ```
 
+**Never use `gh pr diff`** — local diff is the source of truth.
+
+Read changed files for full context, not just the diff hunks.
+
 ## Review Checklist
 
 **Code Quality:**
@@ -68,93 +72,92 @@ git diff {BASE_SHA}..{HEAD_SHA}
 
 ## Output Format
 
-### Strengths
+Present findings **per-file, per-line**. Only files with actual findings. Do NOT mention files that have no issues — skip them entirely. No "no issues found" or "looks good" filler for clean files.
 
-[What's well done? Be specific.]
+For each finding:
 
-### Issues
+**1. File path and line(s)**
 
-#### Critical (Must Fix)
+`src/auth.ts:42-45`
 
-[Bugs, security issues, data loss risks, broken functionality]
+**2. Code suggestion** (if applicable) — GitHub-style suggestion fence:
 
-#### Important (Should Fix)
+````
+```suggestion
+const user = await getUser(id);
+if (!user) return null;
+```
+````
 
-[Architecture problems, missing features, poor error handling, test gaps]
+**3. Comment** — explain the reason.
 
-#### Minor (Nice to Have)
+### Severity
 
-[Code style, optimization opportunities, documentation improvements]
+Categorize each finding:
 
-**For each issue:**
+- **Critical** — bugs, security issues, data loss risks, broken functionality
+- **Important** — architecture problems, missing features, poor error handling, test gaps
+- **Minor** — code style, optimization opportunities, documentation
 
-- File:line reference
-- What's wrong
-- Why it matters
-- How to fix (if not obvious)
+### Example
 
-### Recommendations
+---
 
-[Improvements for code quality, architecture, or process]
+`src/auth.ts:42-45`
 
-### Assessment
+```suggestion
+const user = await getUser(id);
+if (!user) return null;
+```
 
-**Ready to merge?** [Yes/No/With fixes]
+this can throw if `id` is undefined — worth a guard here since it comes from user input **(important)**
 
-**Reasoning:** [Technical assessment in 1-2 sentences]
+---
+
+`src/routes.ts:18`
+
+the redirect URL isn't validated, someone could pass an external domain and you'd get an open redirect **(critical)**
+
+---
+
+`src/utils.ts:7`
+
+```suggestion
+export function formatDate(date: Date): string {
+```
+
+missing return type annotation — rest of the module has them **(minor)**
+
+---
+
+### After all findings
+
+**Assessment:** Ready to merge? Yes / No / With fixes — one line.
+
+## Tone
+
+- Write like a teammate leaving a review comment
+- No AI identifiers ("As an AI", "I notice", "I'd suggest")
+- No filler praise ("great work!", "nice job!")
+- No hedging ("perhaps consider", "you might want to")
+- Be direct: if something's wrong, say so
+- If it's fine, say it's fine — don't manufacture issues
 
 ## Critical Rules
 
 **DO:**
 
+- Verify before commenting — read the actual code, trace the logic
 - Categorize by actual severity (not everything is Critical)
 - Be specific (file:line, not vague)
 - Explain WHY issues matter
-- Acknowledge strengths
 - Give clear verdict
 
 **DON'T:**
 
-- Say "looks good" without checking
+- Assume code is correct or incorrect without checking
+- Say "looks good" without reviewing
 - Mark nitpicks as Critical
-- Give feedback on code you didn't review
+- Give feedback on code you didn't read
 - Be vague ("improve error handling")
-- Avoid giving a clear verdict
-
-## Example Output
-
-```
-### Strengths
-- Clean database schema with proper migrations (db.ts:15-42)
-- Comprehensive test coverage (18 tests, all edge cases)
-- Good error handling with fallbacks (summarizer.ts:85-92)
-
-### Issues
-
-#### Important
-1. **Missing help text in CLI wrapper**
-   - File: index-conversations:1-31
-   - Issue: No --help flag, users won't discover --concurrency
-   - Fix: Add --help case with usage examples
-
-2. **Date validation missing**
-   - File: search.ts:25-27
-   - Issue: Invalid dates silently return no results
-   - Fix: Validate ISO format, throw error with example
-
-#### Minor
-1. **Progress indicators**
-   - File: indexer.ts:130
-   - Issue: No "X of Y" counter for long operations
-   - Impact: Users don't know how long to wait
-
-### Recommendations
-- Add progress reporting for user experience
-- Consider config file for excluded projects (portability)
-
-### Assessment
-
-**Ready to merge: With fixes**
-
-**Reasoning:** Core implementation is solid with good architecture and tests. Important issues (help text, date validation) are easily fixed and don't affect core functionality.
-```
+- Manufacture issues when the code is fine

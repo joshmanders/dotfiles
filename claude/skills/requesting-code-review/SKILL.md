@@ -4,19 +4,24 @@ description: Use when completing tasks, implementing major features, or before m
 user-invocable: false
 ---
 
-# Requesting Code Review
+# Code Review
 
-Dispatch code-reviewer subagent to catch issues before they cascade.
+Review code changes for production readiness. Used both for self-review (before merge) and PR review (via `/pr` skill).
 
-**Core principle:** Review early, review often.
+## Review Principles
 
-## When to Request Review
+- **Verify everything** — don't assume code is correct or incorrect. Read actual files, understand the codebase context, trace through the logic. If you're not sure about something, investigate before commenting. No assumptions.
+- **Resolved review threads** — context only. Read what was requested and how it was resolved. Do NOT re-raise. Use to inform understanding if relevant, otherwise discard.
+- **`receiving-code-review` takes precedence** — for communication style and how to handle feedback, defer to that skill.
+
+## When to Review
 
 **Mandatory:**
 
 - After each task in subagent-driven development
 - After completing major feature
 - Before merge to main
+- When `/pr` skill invokes this for PR review
 
 **Optional but valuable:**
 
@@ -24,16 +29,39 @@ Dispatch code-reviewer subagent to catch issues before they cascade.
 - Before refactoring (baseline check)
 - After fixing complex bug
 
-## How to Request
+## How to Review
 
-**1. Get git SHAs:**
+**1. Get git range:**
 
 ```bash
-BASE_SHA=$(git rev-parse HEAD~1)  # or origin/main
+BASE_SHA=$(git merge-base origin/<base-branch> HEAD)
 HEAD_SHA=$(git rev-parse HEAD)
 ```
 
-**2. Dispatch code-reviewer subagent:**
+**2. Get the diff and changed files:**
+
+```bash
+git diff --stat "$BASE_SHA".."$HEAD_SHA"
+git diff "$BASE_SHA".."$HEAD_SHA"
+git diff --name-only "$BASE_SHA".."$HEAD_SHA"
+```
+
+**Never use `gh pr diff`** — local diff is the source of truth.
+
+**3. Read changed files** for full context — not just diff hunks.
+
+**4. Review** using the checklist and output format in `code-reviewer.md`.
+
+**5. Act on findings:**
+
+- Fix Critical issues immediately
+- Fix Important issues before proceeding
+- Note Minor issues for later
+- Push back if reviewer is wrong (with reasoning)
+
+## Self-Review via Subagent
+
+For self-review during development, dispatch a code-reviewer subagent:
 
 Use Task tool with code-reviewer type, fill template at `code-reviewer.md`
 
@@ -44,59 +72,6 @@ Use Task tool with code-reviewer type, fill template at `code-reviewer.md`
 - `{BASE_SHA}` - Starting commit
 - `{HEAD_SHA}` - Ending commit
 - `{DESCRIPTION}` - Brief summary
-
-**3. Act on feedback:**
-
-- Fix Critical issues immediately
-- Fix Important issues before proceeding
-- Note Minor issues for later
-- Push back if reviewer is wrong (with reasoning)
-
-## Example
-
-```
-[Just completed Task 2: Add verification function]
-
-You: Let me request code review before proceeding.
-
-BASE_SHA=$(git log --oneline | grep "Task 1" | head -1 | awk '{print $1}')
-HEAD_SHA=$(git rev-parse HEAD)
-
-[Dispatch code-reviewer subagent]
-  WHAT_WAS_IMPLEMENTED: Verification and repair functions for conversation index
-  PLAN_OR_REQUIREMENTS: Task 2 from docs/plans/deployment-plan.md
-  BASE_SHA: a7981ec
-  HEAD_SHA: 3df7661
-  DESCRIPTION: Added verifyIndex() and repairIndex() with 4 issue types
-
-[Subagent returns]:
-  Strengths: Clean architecture, real tests
-  Issues:
-    Important: Missing progress indicators
-    Minor: Magic number (100) for reporting interval
-  Assessment: Ready to proceed
-
-You: [Fix progress indicators]
-[Continue to Task 3]
-```
-
-## Integration with Workflows
-
-**Subagent-Driven Development:**
-
-- Review after EACH task
-- Catch issues before they compound
-- Fix before moving to next task
-
-**Executing Plans:**
-
-- Review after each batch (3 tasks)
-- Get feedback, apply, continue
-
-**Ad-Hoc Development:**
-
-- Review before merge
-- Review when stuck
 
 ## Red Flags
 
