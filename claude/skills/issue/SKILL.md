@@ -1,7 +1,7 @@
 ---
 name: issue
 description: Start planning work on a GitHub issue
-argument-hint: "<issue-ref>"
+argument-hint: "<issue-ref> [note]"
 disable-model-invocation: true
 ---
 
@@ -11,9 +11,17 @@ Pull the specified GitHub issue and start planning work to complete it.
 
 **Related skills:** Use `github` skill patterns for CLI commands. Follow `planning` skill workflow for the planning phase.
 
+### Step 0: Parse arguments
+
+`$ARGUMENTS` is the issue ref optionally followed by a note. The first token is the issue ref, everything after is a note providing additional context.
+
+Example: `/issue 123 focus on the api endpoint, ignore the frontend for now` → issue ref: `123`, note: `focus on the api endpoint, ignore the frontend for now`
+
+If a note is present, treat it as guidance throughout planning and execution — it may narrow scope, set priorities, or provide context not in the issue itself.
+
 ### Step 1: Parse the issue reference
 
-Parse `$ARGUMENTS` to determine the repo and issue number:
+Parse the issue ref to determine the repo and issue number:
 
 | Format              | Example       | Meaning                               |
 | ------------------- | ------------- | ------------------------------------- |
