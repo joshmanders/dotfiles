@@ -106,6 +106,7 @@ brew "redis", restart_service: :changed
 brew "trash", link: true
 brew "tmux"
 brew "tree"
+brew "tree-sitter-cli"
 brew "watchman"
 brew "wget"
 brew "zoxide"

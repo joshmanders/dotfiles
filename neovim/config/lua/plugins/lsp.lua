@@ -70,8 +70,8 @@ return {
           map("<leader>ca", vim.lsp.buf.code_action, "Code action")
           map("<leader>rn", vim.lsp.buf.rename, "Rename symbol")
           map("<leader>D", vim.lsp.buf.type_definition, "Type definition")
-          map("[d", vim.diagnostic.goto_prev, "Previous diagnostic")
-          map("]d", vim.diagnostic.goto_next, "Next diagnostic")
+          map("[d", function() vim.diagnostic.jump({ count = -1 }) end, "Previous diagnostic")
+          map("]d", function() vim.diagnostic.jump({ count = 1 }) end, "Next diagnostic")
         end,
       })
     end,
