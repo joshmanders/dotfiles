@@ -28,6 +28,14 @@ autocmd("BufReadPost", {
   end,
 })
 
+-- Show diagnostics on cursor hold
+autocmd("CursorHold", {
+  group = augroup("diagnostic_float", { clear = true }),
+  callback = function()
+    vim.diagnostic.open_float({ scope = "cursor", focusable = false })
+  end,
+})
+
 -- Register blade filetype for tree-sitter-blade
 autocmd({ "BufRead", "BufNewFile" }, {
   group = augroup("blade_filetype", { clear = true }),
