@@ -7,6 +7,7 @@ tap "shivammathur/php"
 tap "sst/tap"
 tap "steipete/tap"
 tap "stripe/stripe-cli"
+brew "fd"
 brew "fmt"
 brew "brotli"
 brew "giflib"
@@ -103,6 +104,7 @@ brew "oh-my-posh"
 brew "pinentry"
 brew "postgresql@14", restart_service: :changed
 brew "redis", restart_service: :changed
+brew "ripgrep"
 brew "trash", link: true
 brew "tmux"
 brew "tree"
