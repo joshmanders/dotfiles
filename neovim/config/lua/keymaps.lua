@@ -3,9 +3,31 @@ local map = vim.keymap.set
 -- Exit insert mode
 map("i", "jk", "<Esc>", { desc = "Exit insert mode" })
 
+-- Ctrl+Click: go to definition, or references if already at definition
+map("n", "<C-LeftMouse>", function()
+  vim.cmd("normal! \\<LeftMouse>")
+  local cursor = vim.api.nvim_win_get_cursor(0)
+  local params = vim.lsp.util.make_position_params(0)
+  vim.lsp.buf_request(0, "textDocument/definition", params, function(_, result)
+    if not result or vim.tbl_isempty(result) then
+      vim.lsp.buf.references()
+      return
+    end
+    local target = result[1] or result
+    local target_uri = target.targetUri or target.uri
+    local target_range = target.targetRange or target.range
+    local current_uri = vim.uri_from_bufnr(0)
+    if target_uri == current_uri and target_range.start.line == cursor[1] - 1 then
+      vim.lsp.buf.references()
+    else
+      vim.lsp.buf.definition()
+    end
+  end)
+end, { desc = "Go to definition/references" })
+
 -- Save & quit
-map("n", "<leader>w", "<cmd>w<cr>", { desc = "Save file" })
-map("n", "<leader>q", "<cmd>q<cr>", { desc = "Quit" })
+map("n", "<leader>s", "<cmd>w<cr>", { desc = "Save file" })
+map("n", "<leader>q", "<cmd>qa<cr>", { desc = "Quit all" })
 
 -- Window navigation (works with vim-tmux-navigator)
 map("n", "<C-h>", "<C-w>h", { desc = "Move to left window" })
@@ -16,7 +38,19 @@ map("n", "<C-l>", "<C-w>l", { desc = "Move to right window" })
 -- Buffer navigation
 map("n", "[b", "<cmd>bprevious<cr>", { desc = "Previous buffer" })
 map("n", "]b", "<cmd>bnext<cr>", { desc = "Next buffer" })
-map("n", "<leader>x", "<cmd>bdelete<cr>", { desc = "Close buffer" })
+map("n", "<leader>w", function()
+  local bufs = vim.tbl_filter(function(b)
+    return vim.bo[b].buflisted
+  end, vim.api.nvim_list_bufs())
+  local cur = vim.api.nvim_get_current_buf()
+  if #bufs <= 1 then
+    vim.cmd("enew")
+    vim.api.nvim_buf_delete(cur, { force = false })
+  else
+    vim.cmd("bprevious")
+    vim.api.nvim_buf_delete(cur, { force = false })
+  end
+end, { desc = "Close buffer" })
 
 -- Move lines in visual mode
 map("v", "J", ":m '>+1<cr>gv=gv", { desc = "Move selection down" })
@@ -37,12 +71,7 @@ map("n", "<Esc>", "<cmd>nohlsearch<cr>", { desc = "Clear search highlight" })
 map("n", "<leader>e", "<cmd>Neotree toggle<cr>", { desc = "Toggle file explorer" })
 
 -- Telescope
-map("n", "<leader>ff", "<cmd>Telescope find_files<cr>", { desc = "Find files" })
-map("n", "<leader>fg", "<cmd>Telescope live_grep<cr>", { desc = "Live grep" })
-map("n", "<leader>fb", "<cmd>Telescope buffers<cr>", { desc = "Find buffers" })
-map("n", "<leader>fh", "<cmd>Telescope help_tags<cr>", { desc = "Help tags" })
-map("n", "<leader>fr", "<cmd>Telescope oldfiles<cr>", { desc = "Recent files" })
-map("n", "<leader>ft", "<cmd>TodoTelescope<cr>", { desc = "Find TODOs" })
+map("n", "<leader>p", "<cmd>Telescope find_files<cr>", { desc = "Find files" })
 
 -- Quickfix list
 map("n", "]q", "<cmd>cnext<cr>zz", { desc = "Next quickfix item" })
