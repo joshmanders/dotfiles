@@ -21,76 +21,146 @@ bash neovim/install.sh
 
 Plugins are auto-installed on first `nvim` launch via lazy.nvim.
 
+### Dependencies
+
+Install via Homebrew (included in `homebrew/bundle`):
+
+- `tree-sitter-cli` — required by nvim-treesitter to compile parsers
+- `fd` — file finder for Telescope
+- `ripgrep` — content search for Telescope
+
 ## Keybindings
 
-Leader key is `Space`.
+`<leader>` is `Space`.
 
 ### General
 
-| Binding          | Action                |
-| ---------------- | --------------------- |
-| `jk`             | Exit insert mode      |
-| `Space w`        | Save file             |
-| `Space q`        | Quit                  |
-| `Ctrl+h/j/k/l`  | Navigate windows/tmux |
-| `[b` / `]b`      | Previous/next buffer  |
-| `Space x`        | Close buffer          |
-| `Ctrl+d/u`       | Scroll down/up        |
-| `Esc`            | Clear search          |
+| Binding            | Action                |
+| ------------------ | --------------------- |
+| `jk`               | Exit insert mode      |
+| `<leader>s`        | Save file             |
+| `<leader>w`        | Close buffer          |
+| `<leader>q`        | Quit all              |
+| `Ctrl+h/j/k/l`    | Navigate windows/tmux |
+| `[b` / `]b`        | Previous/next buffer  |
+| `Ctrl+d/u`         | Scroll down/up        |
+| `Esc`              | Clear search          |
 
 ### Finding Things
 
-| Binding          | Action         |
-| ---------------- | -------------- |
-| `Space ff`       | Find files     |
-| `Space fg`       | Live grep      |
-| `Space fb`       | Find buffers   |
-| `Space fh`       | Help tags      |
-| `Space fr`       | Recent files   |
-| `Space ft`       | Find TODOs     |
+| Binding            | Action         |
+| ------------------ | -------------- |
+| `<leader>p`        | Find files     |
 
 ### Code
 
-| Binding          | Action             |
-| ---------------- | ------------------ |
-| `gd`             | Go to definition   |
-| `gr`             | Go to references   |
-| `gi`             | Go to impl         |
-| `K`              | Hover docs         |
-| `Space ca`       | Code action        |
-| `Space rn`       | Rename symbol      |
-| `Space D`        | Type definition    |
-| `[d` / `]d`      | Previous/next diag |
+| Binding            | Action             |
+| ------------------ | ------------------ |
+| `Ctrl+Click`       | Go to definition/references |
+| `K`                | Hover docs         |
+| `<leader>ca`       | Code action        |
+| `<leader>rn`       | Rename symbol      |
+| `<leader>D`        | Type definition    |
+| `[d` / `]d`        | Previous/next diag |
 
 ### Git
 
-| Binding          | Action         |
-| ---------------- | -------------- |
-| `]h` / `[h`      | Next/prev hunk |
-| `Space hs`       | Stage hunk     |
-| `Space hr`       | Reset hunk     |
-| `Space hp`       | Preview hunk   |
-| `Space hb`       | Blame line     |
+| Binding            | Action         |
+| ------------------ | -------------- |
+| `]h` / `[h`        | Next/prev hunk |
+| `<leader>hs`       | Stage hunk     |
+| `<leader>hr`       | Reset hunk     |
+| `<leader>hp`       | Preview hunk   |
+| `<leader>hb`       | Blame line     |
 
 ### Tools
 
-| Binding          | Action              |
-| ---------------- | ------------------- |
-| `Space e`        | Toggle file explorer|
-| `Space u`        | Toggle undotree     |
-| `Space lg`       | Open lazygit        |
-| `J` / `K` (vis)  | Move selection      |
+| Binding            | Action               |
+| ------------------ | -------------------- |
+| `<leader>e`        | Toggle file explorer |
+| `<leader>u`        | Toggle undotree      |
+| `<leader>lg`       | Open lazygit         |
+| `J` / `K` (vis)    | Move selection       |
 
 ### Laravel (in PHP/Blade files)
 
-| Binding          | Action           |
-| ---------------- | ---------------- |
-| `Space la`       | Artisan picker   |
-| `Space lr`       | Routes picker    |
-| `Space lm`       | Make picker      |
-| `Space lc`       | Commands picker  |
-| `Space lo`       | Resources picker |
-| `Space lu`       | Artisan hub      |
+| Binding            | Action           |
+| ------------------ | ---------------- |
+| `<leader>la`       | Artisan picker   |
+| `<leader>lr`       | Routes picker    |
+| `<leader>lm`       | Make picker      |
+| `<leader>lc`       | Commands picker  |
+| `<leader>lo`       | Resources picker |
+| `<leader>lu`       | Artisan hub      |
+
+### Lazygit (`<leader>lg`)
+
+#### Navigation
+
+| Key | Action |
+|-----|--------|
+| `1`-`5` | Switch panels (Status/Files/Branches/Commits/Stash) |
+| `h`/`l` | Move between panels |
+| `q` | Quit |
+
+#### Files
+
+| Key | Action |
+|-----|--------|
+| `space` | Stage/unstage file |
+| `a` | Stage/unstage all |
+| `enter` | Line-by-line staging |
+| `d` | Discard changes |
+| `c` | Commit |
+| `A` | Amend last commit |
+| `s` | Stash all |
+
+#### Line Staging (inside a file)
+
+| Key | Action |
+|-----|--------|
+| `space` | Stage/unstage line(s) |
+| `d` | Discard line(s) |
+| `a` | Toggle hunk/line mode |
+| `v` | Select range |
+| `tab` | Switch staged/unstaged view |
+
+#### Commits
+
+| Key | Action |
+|-----|--------|
+| `r` | Reword message |
+| `s` | Squash into commit below |
+| `f` | Fixup (squash, drop message) |
+| `F` | Create `fixup!` commit |
+| `S` | Autosquash all fixups |
+| `d` | Drop commit |
+| `e` | Edit (interactive rebase from here) |
+| `Ctrl+j`/`Ctrl+k` | Move commit up/down |
+
+#### Branches
+
+| Key | Action |
+|-----|--------|
+| `space` | Checkout branch |
+| `n` | New branch |
+| `d` | Delete branch |
+| `r` | Rebase current onto selected |
+| `M` | Merge selected into current |
+
+#### Global
+
+| Key | Action |
+|-----|--------|
+| `P` | Push |
+| `p` | Pull |
+| `z`/`Z` | Undo/redo last git command |
+| `m` | Merge/rebase options (abort/continue) |
+
+## Features
+
+- **Diagnostics on hover** — floating diagnostic message shown automatically when cursor rests on a warning/error
+- **Inline color swatches** — LSP color values (e.g. Tailwind classes) shown as colored `■` icons instead of background highlighting
 
 ## Plugins
 
@@ -104,7 +174,6 @@ Leader key is `Space`.
 | nvim-lspconfig      | LSP client                                |
 | mason.nvim          | LSP server installer                      |
 | blink.cmp           | Autocompletion                            |
-| conform.nvim        | Format on save                            |
 | nvim-lint           | Async linting (eslint_d)                  |
 | neo-tree.nvim       | File explorer                             |
 | github-nvim-theme   | GitHub Dark Default theme                 |
@@ -129,7 +198,7 @@ Auto-installed via Mason on first launch:
 - `rust_analyzer` — Rust
 - `tailwindcss` — Tailwind CSS
 - `astro` — Astro
-- `volar` — Vue
+- `vue_ls` — Vue
 - `yamlls` — YAML
 
 ## Configuration
@@ -137,6 +206,5 @@ Auto-installed via Mason on first launch:
 - **Options:** Edit `config/lua/options.lua`
 - **Keymaps:** Edit `config/lua/keymaps.lua`
 - **Add a plugin:** Create a new file in `config/lua/plugins/` returning a lazy.nvim spec
-- **Add an LSP server:** Add to the `servers` table in `config/lua/plugins/lsp.lua`
-- **Add a formatter:** Add to `formatters_by_ft` in `config/lua/plugins/formatting.lua`
+- **Add an LSP server:** Add to the `ensure_installed` table in `config/lua/plugins/lsp.lua`
 - **Add a linter:** Add to `linters_by_ft` in `config/lua/plugins/linting.lua`
