@@ -59,6 +59,9 @@ return {
       -- LSP keymaps (attach on LSP connect)
       vim.api.nvim_create_autocmd("LspAttach", {
         callback = function(event)
+          -- Show LSP colors as inline colored square instead of background
+          vim.lsp.document_color.enable(true, { buf = event.buf }, { style = "■" })
+
           local map = function(keys, func, desc)
             vim.keymap.set("n", keys, func, { buffer = event.buf, desc = desc })
           end
