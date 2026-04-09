@@ -21,7 +21,7 @@ bash lazygit/install.sh
 lazygit              # from any git repo
 ```
 
-Or from neovim: `Space lg`
+Or from neovim: `<leader>lg`
 
 ## Panels
 
@@ -68,14 +68,29 @@ Lazygit has 5 panels. Switch between them with number keys or arrow keys.
 | Key     | Action                              |
 | ------- | ----------------------------------- |
 | `space` | Stage/unstage file                  |
-| `a`     | Stage all                           |
+| `a`     | Stage/unstage all                   |
+| `enter` | Line-by-line staging                |
 | `c`     | Commit                              |
 | `A`     | Amend last commit                   |
-| `d`     | Discard changes (careful!)          |
+| `d`     | Discard changes                     |
+| `s`     | Stash all                           |
+| `S`     | Stash options (staged, unstaged)    |
 | `e`     | Edit file in $EDITOR                |
 | `o`     | Open file in default app            |
 | `i`     | Add to .gitignore                   |
-| `S`     | Stash all changes                   |
+| `f`     | Fetch from remote                   |
+| `` ` `` | Toggle flat/tree file view          |
+
+## Key Bindings — Line Staging (inside a file)
+
+| Key     | Action                              |
+| ------- | ----------------------------------- |
+| `space` | Stage/unstage line(s)               |
+| `d`     | Discard line(s)                     |
+| `a`     | Toggle hunk/line mode               |
+| `v`     | Select range                        |
+| `tab`   | Switch staged/unstaged view         |
+| `esc`   | Return to files panel               |
 
 ## Key Bindings — Branches Panel
 
@@ -86,33 +101,61 @@ Lazygit has 5 panels. Switch between them with number keys or arrow keys.
 | `d`     | Delete branch                       |
 | `M`     | Merge into current branch           |
 | `r`     | Rebase current branch onto selected |
+| `f`     | Fast-forward from upstream          |
 | `R`     | Rename branch                       |
+| `u`     | Upstream options (set/unset/reset)  |
 
 ## Key Bindings — Commits Panel
 
+| Key              | Action                              |
+| ---------------- | ----------------------------------- |
+| `r`              | Reword commit message               |
+| `s`              | Squash into commit below            |
+| `f`              | Fixup (squash, drop message)        |
+| `F`              | Create `fixup!` commit              |
+| `S`              | Autosquash all fixups               |
+| `d`              | Drop commit                         |
+| `e`              | Edit (interactive rebase from here) |
+| `Ctrl+j`/`Ctrl+k`| Move commit up/down                |
+| `C`              | Copy (mark for cherry-pick)         |
+| `V`              | Paste cherry-picked commits         |
+| `t`              | Revert commit                       |
+| `g`              | Reset to commit (soft/mixed/hard)   |
+| `n`              | New branch from commit              |
+| `y`              | Copy hash/URL/message to clipboard  |
+
+## Key Bindings — Stash Panel
+
 | Key     | Action                              |
 | ------- | ----------------------------------- |
-| `s`     | Squash commit into previous         |
-| `r`     | Reword commit message               |
-| `f`     | Fixup (squash, keep previous msg)   |
-| `d`     | Drop commit                         |
-| `p`     | Pick (cherry-pick)                  |
-| `e`     | Edit commit                         |
-| `t`     | Tag commit                          |
+| `space` | Apply stash (keep in list)          |
+| `g`     | Pop stash (apply and remove)        |
+| `d`     | Drop stash entry                    |
+| `n`     | New branch from stash               |
+| `r`     | Rename stash entry                  |
 
 ## Key Bindings — General
 
 | Key     | Action                              |
 | ------- | ----------------------------------- |
-| `p`     | Pull                                |
 | `P`     | Push                                |
-| `z`     | Undo                                |
+| `p`     | Pull                                |
+| `z`/`Z` | Undo/redo last git command          |
+| `m`     | Merge/rebase options (abort/continue)|
 | `?`     | Help (shows all keybindings)        |
 | `q`     | Quit                                |
-| `@`     | Open command log                    |
+| `:`     | Execute shell command               |
 | `/`     | Filter/search in current panel      |
-| `+`     | Next screen mode (expand panel)     |
-| `_`     | Previous screen mode                |
+| `+`/`_` | Cycle screen layout                 |
+
+## Fixup Workflow
+
+The killer feature for trunk-based development:
+
+1. Make your fix, stage it
+2. `Ctrl+f` in files panel — auto-detects which commit to fix
+3. Or go to commits panel, select the target commit, press `F` to create a `fixup!` commit
+4. Press `S` in commits panel to autosquash all fixups before pushing
 
 ## Config
 
