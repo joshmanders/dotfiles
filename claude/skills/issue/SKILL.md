@@ -1,15 +1,15 @@
 ---
 name: issue
-description: Start planning work on a GitHub issue
+description: Start working on a GitHub issue
 argument-hint: "<issue-ref> [note]"
 disable-model-invocation: true
 ---
 
 ## Task: Work on Issue $ARGUMENTS
 
-Pull the specified GitHub issue and start planning work to complete it.
+Pull the specified GitHub issue, create a working branch, and start.
 
-**Related skills:** Use `github` skill patterns for CLI commands. Follow `planning` skill workflow for the planning phase.
+**Related skills:** Use `github` skill patterns for CLI commands.
 
 ### Step 0: Parse arguments
 
@@ -37,31 +37,41 @@ gh repo view --json owner -q '.owner.login'
 
 ### Step 2: Fetch issue details
 
-Use `github` skill patterns:
-
 ```bash
 gh issue view <number> --repo <owner/repo>
 ```
 
-### Step 3: Understand the requirements
+Read the full issue: description, comments, linked issues/PRs, acceptance criteria.
 
-- Read the issue description and comments
-- Identify acceptance criteria
-- Note linked issues or PRs
+### Step 3: Create working branch
 
-### Step 4: Start planning workflow
+Ensure you're on the base branch (usually `master` or `main`), then create the working branch:
 
-Follow the `planning` skill:
+```bash
+git issue <number>
+```
 
-1. Understand the work from the issue
-2. Explore the codebase for relevant files
-3. Draft implementation plan
-4. Exit plan mode for approval
+This uses the `git-issue` helper which creates a branch named `TYPE-<number>` based on the issue's type field.
 
-### Step 5: Execute (after plan approval)
+### Step 4: Assess and begin
 
-Per `planning` skill workflow:
+Read the issue requirements and assess complexity:
 
-- Track this as the active issue
-- Do the work
-- Create PR that closes the issue
+**Straightforward** — the requirements are clear, the approach is obvious, no architectural decisions needed:
+
+- Skip planning. Start working immediately.
+- Follow the task lifecycle (read nearby code, implement, test, clean up).
+
+**Complex** — ambiguous requirements, multiple approaches possible, architectural decisions needed, or the note asks to plan first:
+
+- Use the `planning` skill to draft a plan.
+- Exit plan mode for approval before executing.
+
+Use your judgment. Default to just starting. Only plan when the work genuinely needs it.
+
+### Step 5: Execute
+
+- Track the issue as session context: `Active Issue: #<number> - <title>`
+- Do the work following the task lifecycle
+- If scope expands → STOP, ask about a new issue
+- When done, present the work and wait for review
