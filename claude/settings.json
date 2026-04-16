@@ -1,6 +1,20 @@
 {
   "env": {
-    "BASH_ENV": "${HOME}/.files/bash/bashrc"
+    "DOTFILES": "${HOME}/.files",
+    "BASH_ENV": "${DOTFILES}/bash/bashrc"
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${DOTFILES}/claude/hooks/guard.sh"
+          }
+        ]
+      }
+    ]
   },
   "attribution": {
     "commit": "Co-Authored-By: Dunnbot <dunnbot@joshmanders.com>",

@@ -1,0 +1,5 @@
+{
+  "git commit --amend": "We don't amend commits. If needing to change a non-published commit, use `git reset --soft HEAD~1` and recommit. Otherwise, create a new commit with the change.",
+  "git push (--force|-f) origin (main|master)": "Never force push to main/master. Create a new commit to fix the issue instead.",
+  "git reset --hard origin/(main|master)": "Don't hard reset to remote. Use `git reset --soft` to preserve changes, or `git stash` first."
+}
