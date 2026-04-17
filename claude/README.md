@@ -96,56 +96,11 @@ Edit `settings.json` for permissions and attribution.
 
 #### Permissions
 
-Uses `default` mode with explicit `allow`/`deny` lists. Anything not in either list prompts for approval.
+Uses `bypassPermissions` mode — all commands auto-approved. Security enforcement is handled by the PreToolUse guard hook (`claude/hooks/guard.sh`) which blocks dangerous commands via regex patterns in `claude/hooks/denied-commands.json` (72 patterns).
 
-**Allow** — auto-approved without prompting:
+Protected directories (`.git/`, `.claude/`, `.vscode/`, `.idea/`, `.husky/`) still prompt on write even in bypass mode.
 
-| Group             | Commands                                            |
-| ----------------- | --------------------------------------------------- |
-| Claude Code tools | Read, Edit, Write, Glob, Grep, LS, Todo, Task       |
-| Git               | status, log, diff, add, commit, push, pull, etc.    |
-| GitHub CLI        | gh repo, pr, issue, workflow, release               |
-| Docker            | ps, logs, exec, start/stop, inspect, volumes, etc.  |
-| Docker Compose    | up, down, ps, logs, build, restart, etc.            |
-| Kubernetes        | get, describe, apply, delete, exec, logs, etc.      |
-| Node.js           | npm, npx, node, bun, bunx                           |
-| Python            | python, python3, pip, pip3                          |
-| PHP               | php, composer                                       |
-| Rust              | cargo, rustc, rustup                                |
-| Go                | go build/run/test/mod/fmt/vet                       |
-| Make              | make                                                |
-| Filesystem        | ls, cat, cp, mv, rm, mkdir, touch, chmod, ln, etc.  |
-| Search & text     | grep, find, sed, awk, cut, sort, uniq, wc, tr, etc. |
-| JSON/YAML         | jq, yq                                              |
-| HTTP              | curl, wget                                          |
-| Processes         | ps, kill, pgrep, pkill, lsof, jobs, nohup           |
-| Networking        | ping, netstat, dig, nslookup, nc, traceroute        |
-| System info       | date, whoami, uname, which, df, du, top, uptime     |
-| Shell & env       | echo, printf, export, env, source                   |
-| Homebrew          | brew install/update/upgrade/list                    |
-| Crypto & hashing  | openssl, md5, shasum, uuidgen                       |
-| Archives          | tar, gzip, zip, unzip, 7z, bzip2, xz                |
-| Pipes & redirects | \|, >, >>, &&, \|\|, &, 2>&1                        |
-
-**Deny** — permanently blocked:
-
-| Category                | Examples                                                 |
-| ----------------------- | -------------------------------------------------------- |
-| Destructive filesystem  | `rm -rf /`, mass delete under `/home`, `/var`, `/opt`    |
-| Device destruction      | `dd` to `/dev/*`, `mkfs`, write to `/dev/disk*`          |
-| Remote code execution   | `curl \| sh`, `wget \| bash`, base64 decode to shell     |
-| Reverse shells          | `/dev/tcp`, socket-based shells in any language          |
-| Network listeners       | `nc -l`, `socat`, `nmap`, `masscan`                      |
-| Credential exfiltration | `cat ~/.aws/*`, `cat ~/.ssh/id_*`, env piped to base64   |
-| Git destructive         | `--amend`, force-push to main/master, hard reset to origin |
-| Privileged Docker       | `--privileged`, mount `/`, socket mount, `--cap-add=ALL` |
-| System power            | `shutdown`, `reboot`, `halt`, `poweroff`                 |
-| System tampering        | `passwd`, `chmod 777 /`, `sudo rm /etc/*`, `sysctl -w`   |
-| Privilege escalation    | `sudo su`, `sudo -i`, `export PATH=`, `gdb -p`           |
-| macOS injection         | `DYLD_INSERT_LIBRARIES`, `DYLD_LIBRARY_PATH`             |
-| Crypto mining           | xmrig, monero, bitcoin, ethereum, miner                  |
-| Cloud metadata          | `169.254.169.254`, `metadata.google.internal`            |
-| Log destruction         | `rm /var/log/*`, truncate logs                           |
+See `claude/settings.reference.md` for the full settings reference.
 
 #### Attribution
 
