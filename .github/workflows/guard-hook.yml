@@ -1,0 +1,16 @@
+name: Guard Hook Tests
+
+on:
+  push:
+    paths:
+      - "claude/hooks/**"
+  pull_request:
+    paths:
+      - "claude/hooks/**"
+
+jobs:
+  test:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: bash claude/hooks/guard.test.sh
