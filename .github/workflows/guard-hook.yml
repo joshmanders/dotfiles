@@ -4,9 +4,11 @@ on:
   push:
     paths:
       - "claude/hooks/**"
+      - ".github/workflows/guard-hook.yml"
   pull_request:
     paths:
       - "claude/hooks/**"
+      - ".github/workflows/guard-hook.yml"
 
 jobs:
   test:
