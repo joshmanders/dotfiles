@@ -1,9 +1,0 @@
-#!/usr/bin/env bash
-#
-# claude - Claude Code CLI wrapper
-#
-# Passes --allow-dangerously-skip-permissions by default
-# so bypass mode is available via Shift+Tab after plan approval.
-# Safety is handled by allow/deny lists in settings.json.
-
-exec /opt/homebrew/bin/claude --allow-dangerously-skip-permissions "$@"

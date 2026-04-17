@@ -1,5 +1,88 @@
 {
   "git commit --amend": "We don't amend commits. If needing to change a non-published commit, use `git reset --soft HEAD~1` and recommit. Otherwise, create a new commit with the change.",
   "git push (--force|-f) origin (main|master)": "Never force push to main/master. Create a new commit to fix the issue instead.",
-  "git reset --hard origin/(main|master)": "Don't hard reset to remote. Use `git reset --soft` to preserve changes, or `git stash` first."
+  "git reset --hard origin/(main|master)": "Don't hard reset to remote. Use `git reset --soft` to preserve changes, or `git stash` first.",
+
+  "^(sudo +)?rm +(-[^ ]+ +)*/($| |\\*)": "Refusing rm of the filesystem root (any flag combination).",
+  "^(sudo +)?rm +(-[^ ]+ +)*/(home|Users|etc|bin|sbin|usr|System|Library|boot|opt|var/log|var/lib|var/root|private/etc|private/var/log|private/var/lib)(/|$| )": "Refusing rm of a system/user directory (any flag combination). Scope to a specific subdirectory path.",
+  "^find +/ +-type +[fd] +-delete": "Recursive delete from filesystem root. Narrow the find scope to a specific subtree.",
+  "^(sudo +)?dd +if=/dev/(zero|random|urandom) +of=/dev/": "Writing raw data to a device destroys it. Verify the target and run manually.",
+  "^(sudo +)?(mkfs([.a-z0-9]+)?|fdisk|parted)( |$)": "Formatting/partitioning tools should be run manually in a terminal.",
+  "^(sudo +)?diskutil +(eraseDisk|partitionDisk|apfs +deleteVolume)": "Disk erasure/partitioning is destructive. Run interactively.",
+  "^sudo +diskutil ": "sudo diskutil operations run interactively.",
+  "> +/dev/disk": "Overwriting a disk device. Blocked.",
+  "cat +/dev/urandom +>": "Writing random bytes to a file/device. Blocked.",
+  "fork.*bomb": "Fork-bomb pattern detected.",
+
+  "(curl|wget) +[^|]*\\| *(sudo +)?(ba)?sh": "Piping downloaded content to a shell executes untrusted code. Download, inspect, then run manually.",
+  "\\| *base64 +-d +\\| *(ba)?sh": "Base64-decoding into a shell hides intent. Decode, inspect, then run manually.",
+
+  "^(ba)?sh +-i +>& */dev/tcp/": "Reverse-shell construct detected.",
+  "^exec +[0-9]*[<>]+ */dev/tcp/": "Network redirection via /dev/tcp is a reverse-shell primitive.",
+  "^python3? +-c +'[^']*import +socket": "Python socket one-liner matches reverse-shell patterns. Put it in a file if legitimate.",
+  "^php +-r +'[^']*\\$sock": "PHP socket one-liner matches reverse-shell patterns.",
+  "^ruby +-rsocket": "Ruby socket one-liner matches reverse-shell patterns.",
+  "^perl +-e +'[^']*use +Socket": "Perl socket one-liner matches reverse-shell patterns.",
+  "(^| |\\|) *(nc|netcat) +-l": "Listening with netcat is typically a backdoor. Use a real server if needed.",
+  "(^| |\\|) *socat ": "socat is often used for tunneling. Blocked by default.",
+  "^(nmap|masscan) ": "Network scanning tools blocked by default.",
+
+  "^cat +~?/\\.(aws|ssh/id_)": "Reading credentials from ~/.aws or ~/.ssh. Copy values manually if you need them.",
+  "^(env|printenv|set) *\\| *base64": "Encoding environment variables looks like exfiltration.",
+  "^history +\\| *grep +-i +(password|token|secret|key)": "Searching history for credentials.",
+  "^grep +-r +(password|token) +/etc": "Scanning /etc for credentials.",
+  "^find +/ +-name +['\"]?[^ ]*(id_rsa|\\.(key|pem))": "Searching filesystem for private keys.",
+
+  "^docker +run +[^|]*--privileged": "Privileged containers bypass Docker isolation.",
+  "^docker +run +[^|]*--(pid|net)=host": "Host namespace sharing breaks container isolation.",
+  "^docker +run +[^|]*-v +/(:|etc:|var/run/docker\\.sock)": "Mounting host root, /etc, or the Docker socket into a container is dangerous.",
+  "^docker +run +[^|]*--cap-add=ALL": "Granting all capabilities to a container.",
+  "^docker +run +[^|]*--security-opt": "Overriding Docker security options. Review and run manually.",
+
+  "^(sudo +)?(shutdown|reboot|halt|poweroff)( |$)": "Power-state commands blocked. Run manually.",
+  "^(sudo +)?passwd( |$)": "Password changes blocked. Run manually.",
+  "^sudo +chmod +(-R +)?777 +/": "Setting 777 on root/system paths.",
+  "^chmod +(-R +)?777 +/(etc|bin|usr|System|Library)": "Setting 777 on system directories.",
+  "^sudo +chown +(-R +)?[^ ]+ +/($| |[a-zA-Z])": "Recursive chown at filesystem root.",
+  "^sudo +rm +(-[rf]+ +)?/(etc|bin|usr|System|Library)": "Removing files inside system directories under sudo.",
+
+  "^(sudo +)?sysctl +-w": "Kernel parameter modification blocked.",
+  "^sudo +(-[liV]+|su)( |$|-)": "Interactive/privilege-escalation sudo. Run in a terminal if needed.",
+  "^export +(PATH|DYLD_LIBRARY_PATH|PYTHONPATH)=": "Rewriting library/PATH search can enable escalation; set it inline per command instead.",
+  "^DYLD_INSERT_LIBRARIES=": "dylib injection primitive.",
+  "^gdb +-p ": "Attaching gdb to a running process. Blocked to protect in-memory secrets.",
+
+  "(xmrig|monero|bitcoin-cli|ethereum|wallet\\.dat|privatekey)": "Crypto/mining-related term. Not for this machine.",
+
+  "https?://(169\\.254\\.169\\.254|metadata\\.google\\.internal)": "Cloud metadata endpoint access can exfiltrate credentials.",
+
+  "^(sudo +)?(rm +(-[^ ]+ +)*|truncate +-s +0 +)/var/log/": "Modifying /var/log is log-tampering.",
+  "(^| )> +/var/log/": "Truncating a log file.",
+  "^echo +[^>]*> +/var/log/": "Writing to /var/log.",
+
+  "^npm +install +[^|]*--unsafe-perm": "--unsafe-perm with npm install.",
+  "^pip[0-9]* +install +[^|]*--break-system-packages": "--break-system-packages bypasses pip isolation. Use a venv.",
+  "^gem +install +[^|]*--no-user-install": "System-wide gem install. Use user scope.",
+
+  "^(sudo +)?dscl ": "dscl modifies macOS directory services.",
+  "^(sudo +)?sysadminctl ": "sysadminctl manages user accounts.",
+  "^(launchctl +(load|submit|bootstrap)|sudo +launchctl )": "Loading launchd jobs can install persistence.",
+  "^crontab +-[re]( |$)": "Edit or remove crontab manually.",
+  "^(sudo +)?networksetup ": "networksetup modifies network config.",
+  "^(scutil +--set|sudo +scutil )": "scutil modifies system config.",
+  "^(sudo +)?csrutil ": "csrutil modifies System Integrity Protection.",
+  "^(spctl +--master-disable|sudo +spctl )": "Disabling Gatekeeper or wider spctl changes.",
+
+  "^security +(delete-|dump-|export )": "Keychain dump/delete/export blocked.",
+  "^security +find-(generic|internet)-password +[^|]*-w": "Cleartext keychain password export blocked.",
+
+  "^(sudo +)?bless ": "bless modifies boot config.",
+  "^sudo +nvram ": "nvram changes persist across reboots.",
+  "^sudo +systemsetup ": "systemsetup modifies global system prefs.",
+  "^(sudo +)?fdesetup ": "fdesetup manages FileVault.",
+  "^(profiles +install|sudo +profiles )": "Installing configuration profiles grants wide permissions.",
+  "^(tmutil +delete|sudo +tmutil )": "Deleting Time Machine state.",
+  "^sudo +killall ": "Mass process termination under sudo.",
+  "^kickstart ": "kickstart controls Apple Remote Desktop.",
+  "^sudo +/(System|Library)/": "Executing system binaries under sudo."
 }
