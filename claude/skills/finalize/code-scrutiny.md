@@ -6,8 +6,8 @@ You are reviewing code changes with fresh eyes. Scrutinize every line as if you'
 
 You have been given:
 - Config files (rules, skills, CLAUDE.md) that define how this project works
-- A git diff of all changes
-- A list of changed files
+- A git diff of all changes (branch diff against main if on a feature branch, otherwise uncommitted changes)
+- A list of all changed files (committed + uncommitted)
 - The issue URL or original ask (if available)
 
 ## Process

@@ -26,14 +26,37 @@ Acknowledge briefly: "Re-aligned with config files."
 
 ### 2. Identify What Changed
 
+Detect the primary branch and whether we're on a feature branch:
+
+```bash
+primary_branch=$(git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's@^refs/remotes/origin/@@')
+current_branch=$(git branch --show-current)
+```
+
+If on a feature branch (not the primary branch), diff the **entire branch** against the primary:
+
+```bash
+git diff "$primary_branch"...HEAD --name-only   # all files changed in the branch
+git diff "$primary_branch"...HEAD               # full branch diff
+```
+
+Also check for uncommitted work on top:
+
+```bash
+git diff --name-only          # unstaged
+git diff --staged --name-only # staged
+```
+
+If on the primary branch, just check uncommitted changes:
+
 ```bash
 git diff --name-only
 git diff
 ```
 
-Note new files separately — they need pattern checking too.
+All changed files — committed, staged, and unstaged — need review. Note new/untracked files separately.
 
-If nothing changed, stop: "Nothing to finalize."
+If nothing changed anywhere, stop: "Nothing to finalize."
 
 ### 3. Requirements Check
 
@@ -73,8 +96,8 @@ Dispatch a subagent using the `code-scrutiny.md` template in this skill's direct
 Provide the subagent with:
 1. The full `code-scrutiny.md` skill file
 2. All config files from this session (rules, skills, CLAUDE.md)
-3. The git diff output
-4. The changed file list
+3. The git diff output (branch diff if on a feature branch, otherwise uncommitted diff)
+4. The changed file list (all committed + uncommitted changes)
 5. The issue URL or original ask (if available)
 
 When findings come back:
