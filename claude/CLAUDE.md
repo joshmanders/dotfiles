@@ -40,7 +40,4 @@ Invoke these skills when their triggers apply:
 
 If context compaction has occurred (guidelines feel fuzzy, you're unsure of rules):
 
-1. Re-read this file
-2. Check `~/.claude/rules/` for the full rule set
-3. Acknowledge briefly: "Re-aligned with core workflow"
-4. Continue work following these patterns
+Run `/realign` to re-read all config files and rules.

@@ -18,11 +18,9 @@ User runs `/finalize`. Never auto-invoked.
 
 ## The Process
 
-### 1. Reload and Realign
+### 1. Realign
 
-Re-read all config files injected into this session (rules, skills, CLAUDE.md). Realign behavior with what they say.
-
-Acknowledge briefly: "Re-aligned with config files."
+Run `/realign` to re-read all config files and rules.
 
 ### 2. Identify What Changed
 
