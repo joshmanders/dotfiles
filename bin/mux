@@ -2,22 +2,24 @@
 #
 # mux - tmux session manager
 #
-# Groups projects into sessions with windows (tabs).
-# Session name derived from parent directory, window from project directory.
+# Each project directory gets its own session.
+# Session name derived from directory basename.
 # Pane layouts and processes are saved automatically and restored on next run.
 #
-#   ~/Code/niftyco/app      => session "niftyco", window "app"
-#   ~/Code/niftyco/api      => session "niftyco", window "api"
-#   ~/Code/primcloud/platform => session "primcloud", window "platform"
-#   ~/.files                 => session "files", window "files"
+#   ~/Code/niftyco/app        => session "niftyco-app" (shown as niftyco:app)
+#   ~/Code/niftyco/api        => session "niftyco-api" (shown as niftyco:api)
+#   ~/Code/primcloud/platform => session "primcloud-platform" (shown as primcloud:platform)
+#   ~/.files                  => session "files"
 #
 # Usage:
-#   mux                        # auto-derive session and window from path
-#   mux my-session             # override session name, window from directory
-#   mux list                   # list all registered sessions
-#   mux show [session:window]  # show pane details for a session
-#   mux copy session:window    # copy layout from source to CWD's entry
-#   mux --save                 # save pane layouts + commands (called by tmux hooks)
+#   mux                  # auto-derive session from directory name
+#   mux my-session       # override session name
+#   mux list             # list all registered sessions
+#   mux show [name]      # show pane details (accepts parent:child or session name)
+#   mux copy name        # copy layout from source to CWD's entry
+#   mux delete [name]    # remove session from registry
+#   mux kill [name]      # kill running tmux session
+#   mux --save           # save pane layouts + commands (called by tmux hooks)
 
 set -euo pipefail
 
@@ -61,7 +63,12 @@ fi
 
 # --- List all registered sessions ---
 if [[ "${1:-}" == "list" ]]; then
-    jq -r 'to_entries[] | "\(.value.session):\(.value.window)\t\(.key)\t\(.value.panes // [] | length) panes"' "$REGISTRY" \
+    jq -r --arg home "$HOME" 'to_entries[] |
+        (.key | ltrimstr($home + "/") | ltrimstr(".") | split("/") |
+         if length <= 1 then .[0]
+         else .[-2] + ":" + .[-1]
+         end) as $display |
+        "\($display)\t\(.key)\t\(.value.panes // [] | length) panes"' "$REGISTRY" \
     | column -t -s $'\t'
     exit 0
 fi
@@ -76,14 +83,14 @@ if [[ "${1:-}" == "show" ]]; then
             echo "No session registered for $PWD"
             exit 1
         fi
-        target="$(echo "$entry" | jq -r '.session'):$(echo "$entry" | jq -r '.window')"
+        target="$(echo "$entry" | jq -r '.session')"
     fi
 
-    src_session="${target%%:*}"
-    src_window="${target#*:}"
+    src_session="${target//:/-}"
+    src_session="${src_session,,}"
 
-    entry_dir=$(jq -r --arg s "$src_session" --arg w "$src_window" \
-        'to_entries[] | select(.value.session == $s and .value.window == $w) | .key' \
+    entry_dir=$(jq -r --arg s "$src_session" \
+        'to_entries[] | select(.value.session == $s) | .key' \
         "$REGISTRY")
 
     if [[ -z "$entry_dir" ]]; then
@@ -91,7 +98,9 @@ if [[ "${1:-}" == "show" ]]; then
         exit 1
     fi
 
-    echo "$src_session:$src_window  ($entry_dir)"
+    src_window="$src_session"
+
+    echo "$target  ($entry_dir)"
     echo ""
     jq -r --arg dir "$entry_dir" '
         .[$dir].panes // [] | to_entries[] |
@@ -106,19 +115,81 @@ if [[ "${1:-}" == "show" ]]; then
     exit 0
 fi
 
+# --- Delete session from registry ---
+if [[ "${1:-}" == "delete" ]]; then
+    target="${2:-}"
+
+    if [[ -z "$target" ]]; then
+        entry=$(jq -c --arg dir "$PWD" '.[$dir] // empty' "$REGISTRY")
+        if [[ -z "$entry" ]]; then
+            echo "No session registered for $PWD"
+            exit 1
+        fi
+        target="$(echo "$entry" | jq -r '.session')"
+    fi
+
+    src_session="${target//:/-}"
+    src_session="${src_session,,}"
+
+    entry_dir=$(jq -r --arg s "$src_session" \
+        'to_entries[] | select(.value.session == $s) | .key' \
+        "$REGISTRY")
+
+    if [[ -z "$entry_dir" ]]; then
+        echo "No entry found for $target"
+        exit 1
+    fi
+
+    if tmux has-session -t "=$src_session" 2>/dev/null; then
+        tmux kill-session -t "=$src_session"
+    fi
+
+    jq --arg dir "$entry_dir" 'del(.[$dir])' \
+        "$REGISTRY" > "$REGISTRY.tmp.$$" && mv "$REGISTRY.tmp.$$" "$REGISTRY"
+
+    echo "Deleted $target ($entry_dir)"
+    exit 0
+fi
+
+# --- Kill running tmux session ---
+if [[ "${1:-}" == "kill" ]]; then
+    target="${2:-}"
+
+    if [[ -z "$target" ]]; then
+        entry=$(jq -c --arg dir "$PWD" '.[$dir] // empty' "$REGISTRY")
+        if [[ -z "$entry" ]]; then
+            echo "No session registered for $PWD"
+            exit 1
+        fi
+        target="$(echo "$entry" | jq -r '.session')"
+    fi
+
+    src_session="${target//:/-}"
+    src_session="${src_session,,}"
+
+    if ! tmux has-session -t "=$src_session" 2>/dev/null; then
+        echo "No running session: $target"
+        exit 1
+    fi
+
+    tmux kill-session -t "=$src_session"
+    echo "Killed $target"
+    exit 0
+fi
+
 # --- Copy layout from source to CWD's entry ---
 if [[ "${1:-}" == "copy" ]]; then
     target="${2:-}"
     if [[ -z "$target" ]]; then
-        echo "Usage: mux copy session:window"
+        echo "Usage: mux copy session"
         exit 1
     fi
 
-    src_session="${target%%:*}"
-    src_window="${target#*:}"
+    src_session="${target//:/-}"
+    src_session="${src_session,,}"
 
-    src_dir=$(jq -r --arg s "$src_session" --arg w "$src_window" \
-        'to_entries[] | select(.value.session == $s and .value.window == $w) | .key' \
+    src_dir=$(jq -r --arg s "$src_session" \
+        'to_entries[] | select(.value.session == $s) | .key' \
         "$REGISTRY")
 
     if [[ -z "$src_dir" ]]; then
@@ -139,19 +210,17 @@ if [[ "${1:-}" == "copy" ]]; then
     relative="${relative#.}"
 
     parent=$(dirname "$relative")
+    base=$(basename "$relative")
     if [[ "$parent" == "." ]]; then
-        dest_session=$(basename "$relative")
+        dest_session="$base"
     else
-        dest_session=$(basename "$parent")
+        dest_session="$(basename "$parent")-$base"
     fi
-    dest_window=$(basename "$relative")
 
     dest_session="${dest_session,,}"
     dest_session="${dest_session//./-}"
     dest_session="${dest_session//:/-}"
-    dest_window="${dest_window,,}"
-    dest_window="${dest_window//./-}"
-    dest_window="${dest_window//:/-}"
+    dest_window="$dest_session"
 
     dest_panes=$(jq -n --arg dir "$dir" --argjson count "$src_pane_count" \
         '[range($count) | {dir: $dir, cmd: ""}]')
@@ -164,7 +233,15 @@ if [[ "${1:-}" == "copy" ]]; then
        '.[$dir] = {session: $session, window: $window, layout: $layout, panes: $panes}' \
        "$REGISTRY" > "$REGISTRY.tmp.$$" && mv "$REGISTRY.tmp.$$" "$REGISTRY"
 
-    echo "Copied layout from $target to $dest_session:$dest_window ($dir)"
+    # Derive display name from path
+    dest_parent=$(dirname "$relative")
+    if [[ "$dest_parent" == "." ]]; then
+        dest_display="$dest_session"
+    else
+        dest_display="$(basename "$dest_parent"):$base"
+    fi
+
+    echo "Copied layout from $target to $dest_display ($dir)"
     echo "  $src_pane_count panes, no commands (run mux to start)"
     exit 0
 fi
@@ -185,14 +262,15 @@ else
         session="$1"
     else
         parent=$(dirname "$relative")
+        base=$(basename "$relative")
         if [[ "$parent" == "." ]]; then
-            session=$(basename "$relative")
+            session="$base"
         else
-            session=$(basename "$parent")
+            session="$(basename "$parent")-$base"
         fi
     fi
 
-    window=$(basename "$relative")
+    window="$session"
 fi
 
 # Sanitize for tmux (. and : are target separators)
