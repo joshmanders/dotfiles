@@ -1,7 +1,7 @@
 ---
 name: pr-feedback
 description: Respond to review feedback on your GitHub PR - fetch comments, understand feedback, implement fixes
-argument-hint: "<pr-ref> [note]"
+argument-hint: "[pr-ref] [note]"
 disable-model-invocation: true
 ---
 
@@ -26,21 +26,44 @@ You implement fixes locally. Josh decides what to post and when to push.
 
 ### Step 0: Parse arguments
 
-`$ARGUMENTS` is the PR ref optionally followed by a note. The first token is the PR ref, everything after is a note providing additional context.
+`$ARGUMENTS` contains an optional PR ref and an optional note.
 
-Example: `/pr-feedback 123 look at just johnsmith review` → PR ref: `123`, note: `look at just johnsmith review`
+**PR ref detection:** The first token is a PR ref if it matches any of these patterns:
+
+- A plain number: `123`
+- `owner/repo#number`: `foo/bar#123`
+- `repo#number`: `bar#123`
+
+If the first token is NOT a PR ref, the entire `$ARGUMENTS` is a note and the PR is detected from the current branch.
+
+**Examples:**
+
+| Input                                      | PR ref      | Note                           |
+| ------------------------------------------ | ----------- | ------------------------------ |
+| `123 look at just johnsmith review`        | `123`       | `look at just johnsmith review`|
+| `foo/bar#123`                              | `foo/bar#123` | (none)                       |
+| `look at just johnsmith review`            | (auto)      | `look at just johnsmith review`|
+| (empty)                                    | (auto)      | (none)                         |
 
 If a note is present, treat it as guidance — it may narrow which reviews to address, highlight priorities, or provide context.
 
-### Step 1: Parse the PR reference
+### Step 1: Resolve the PR reference
 
-Parse the PR ref to determine the repo and PR number:
+**If a PR ref was provided**, parse it to determine the repo and PR number:
 
 | Format              | Example       | Meaning                            |
 | ------------------- | ------------- | ---------------------------------- |
 | Number only         | `123`         | Current repo, PR 123               |
 | `owner/repo#number` | `foo/bar#123` | Repo `foo/bar`, PR 123             |
 | `repo#number`       | `bar#123`     | Current owner + repo `bar`, PR 123 |
+
+**If no PR ref was provided**, detect from the current branch:
+
+```bash
+gh pr view --json number,headRepository -q '.number'
+```
+
+If no PR is found for the current branch, stop and tell Josh.
 
 Get current repo owner if needed:
 
