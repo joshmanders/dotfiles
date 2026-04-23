@@ -10,7 +10,8 @@ Review code changes for production readiness. Used both for self-review (before 
 
 ## Review Principles
 
-- **Verify everything** — don't assume code is correct or incorrect. Read actual files, understand the codebase context, trace through the logic. If you're not sure about something, investigate before commenting. No assumptions.
+- **Deep investigation, not surface scanning** — Read actual files, trace code paths end-to-end, understand call sites and callers. Follow data through the full lifecycle before forming opinions. Surface-level pattern matching produces wrong findings — if you haven't traced the actual execution path, you don't understand the code well enough to comment on it.
+- **Verify everything** — don't assume code is correct or incorrect. If you're not sure about something, investigate before commenting. No assumptions. No guessing based on names or structure alone.
 - **Resolved review threads** — context only. Read what was requested and how it was resolved. Do NOT re-raise. Use to inform understanding if relevant, otherwise discard.
 - **`receiving-code-review` takes precedence** — for communication style and how to handle feedback, defer to that skill.
 
@@ -50,9 +51,11 @@ git diff --name-only "$BASE_SHA".."$HEAD_SHA"
 
 **3. Read changed files** for full context — not just diff hunks.
 
-**4. Review** using the checklist and output format in `code-reviewer.md`.
+**4. Trace code paths** — For each significant change, follow the execution path: who calls this? What does the caller expect? What happens downstream? Read the callers, the callees, the types, the tests. A diff hunk in isolation is misleading — understand the full picture before flagging anything.
 
-**5. Act on findings:**
+**5. Review** using the checklist and output format in `code-reviewer.md`.
+
+**6. Act on findings:**
 
 - Fix Critical issues immediately
 - Fix Important issues before proceeding

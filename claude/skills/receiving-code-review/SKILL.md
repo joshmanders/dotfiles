@@ -10,7 +10,7 @@ user-invocable: false
 
 Code review requires technical evaluation, not emotional performance.
 
-**Core principle:** Verify before implementing. Ask before assuming. Technical correctness over social comfort.
+**Core principle:** Verify before implementing. Ask before assuming. Technical correctness over social comfort. Deep investigation over surface scanning.
 
 ## The Response Pattern
 
@@ -19,8 +19,8 @@ WHEN receiving code review feedback:
 
 1. READ: Complete feedback without reacting
 2. UNDERSTAND: Restate requirement in own words (or ask)
-3. VERIFY: Check against codebase reality
-4. EVALUATE: Technically sound for THIS codebase?
+3. VERIFY: Deep dive into the codebase — trace full code paths, read callers and callees, understand data flow end-to-end. Surface-level checks produce wrong conclusions.
+4. EVALUATE: Technically sound for THIS codebase? Base this on what you traced, not what you assumed.
 5. RESPOND: Technical acknowledgment or reasoned pushback
 6. IMPLEMENT: One item at a time, test each
 ```
@@ -73,14 +73,16 @@ You understand 1,2,3,6. Unclear on 4,5.
 
 ```
 BEFORE implementing:
-  1. Check: Technically correct for THIS codebase?
-  2. Check: Breaks existing functionality?
-  3. Check: Reason for current implementation?
-  4. Check: Works on all platforms/versions?
-  5. Check: Does reviewer understand full context?
+  1. Trace the code path end-to-end — read the actual callers,
+     callees, types, and data flow. Do not skim.
+  2. Check: Technically correct for THIS codebase?
+  3. Check: Breaks existing functionality?
+  4. Check: Reason for current implementation?
+  5. Check: Works on all platforms/versions?
+  6. Check: Does reviewer understand full context?
 
 IF suggestion seems wrong:
-  Push back with technical reasoning
+  Push back with technical reasoning backed by what you traced
 
 IF can't easily verify:
   Say so: "I can't verify this without [X]. Should I [investigate/ask/proceed]?"
@@ -177,6 +179,7 @@ State the correction factually and move on.
 | ---------------------------- | ----------------------------------- |
 | Performative agreement       | State requirement or just act       |
 | Blind implementation         | Verify against codebase first       |
+| Surface-level verification   | Trace full code paths before concluding |
 | Batch without testing        | One at a time, test each            |
 | Assuming reviewer is right   | Check if breaks things              |
 | Avoiding pushback            | Technical correctness > comfort     |
