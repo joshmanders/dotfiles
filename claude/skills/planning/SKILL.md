@@ -1,6 +1,6 @@
 ---
 name: planning
-description: "Work planning through GitHub issues. Invoke when: starting new work, planning a feature, or when asked 'let's plan X'. Every session = one issue = one PR."
+description: "Creates GitHub issues with acceptance criteria, links issues to PRs, and breaks features into scoped tasks. Invoke when: starting new work, planning a feature, or when asked 'let's plan X'. Every session = one issue = one PR."
 user-invocable: false
 ---
 
@@ -96,29 +96,6 @@ Any additional context, decisions, risks."
 3. Add to project board (if not auto-added)
 4. Move to "In Progress"
 5. **Store internally:** "Working on #N - [title]"
-
----
-
-## Session Context Tracking
-
-Once an issue is created, track it as session context:
-
-```
-Active Issue: #123 - Feature description
-Repo: <org>/<repo>
-```
-
-This context should be referenced:
-
-- When making implementation decisions
-- When scope questions arise
-- When creating the PR
-
-If context compaction occurs, the issue contains the full context. Fetch it:
-
-```bash
-gh issue view <number> --repo <org>/<repo>
-```
 
 ---
 
@@ -219,31 +196,7 @@ What was done.
 Closes #<issue-number>"
 ```
 
-### 2. PR Summary Format
-
-When presenting the PR:
-
-```
-PR ready to create:
-
-Title: feat: add feature description
-
-Body:
-## Summary
-Implemented the feature.
-
-## Changes
-- Added endpoint
-- Added validation
-- Added tests
-
-Closes #123
-```
-
-The `Closes #123` automatically:
-
-- Links the PR to the issue
-- Moves issue to "Done" when PR merges
+The `Closes #123` in the PR body automatically links the PR to the issue and moves it to "Done" when merged.
 
 ---
 

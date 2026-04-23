@@ -1,6 +1,6 @@
 ---
 name: pr-review
-description: Review a colleague's GitHub PR - checkout locally, gather context, then review code (READ-ONLY)
+description: "Reviews a colleague's GitHub PR by checking out locally, gathering context, and analyzing code changes in READ-ONLY mode. Use when asked to review a pull request, look at a PR, or give feedback on a colleague's code changes."
 argument-hint: "<pr-ref> [note]"
 disable-model-invocation: true
 ---

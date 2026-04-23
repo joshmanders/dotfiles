@@ -1,0 +1,10 @@
+{
+  "repo": "joshmanders/dotfiles",
+  "skills": [
+    { "name": "systematic-debugging", "before": 47, "after": 87 },
+    { "name": "brainstorming", "before": 60, "after": 84 },
+    { "name": "bin-scripts", "before": 80, "after": 91 },
+    { "name": "planning", "before": 83, "after": 90 },
+    { "name": "pr-review", "before": 92, "after": 99 }
+  ]
+}

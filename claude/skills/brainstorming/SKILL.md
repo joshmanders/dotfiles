@@ -1,58 +1,44 @@
 ---
 name: brainstorming
-description: "You MUST use this before any creative work - creating features, building components, adding functionality, or modifying behavior. Explores user intent, requirements and design before implementation."
+description: "Gathers requirements through structured questions, proposes 2-3 approaches with trade-offs, and presents designs incrementally for validation. Use when the user requests a new feature without clear requirements, asks to plan a component, or needs help defining scope before coding."
 user-invocable: false
 ---
 
 # Brainstorming Ideas Into Designs
 
-## Overview
-
-Help turn ideas into fully formed designs and specs through natural collaborative dialogue.
-
-Start by understanding the current project context, then ask questions one at a time to refine the idea. Once you understand what you're building, present the design in small sections (200-300 words), checking after each section whether it looks right so far.
+Turn ideas into validated designs through collaborative dialogue — one question at a time.
 
 ## The Process
 
 **Understanding the idea:**
 
-- Check out the current project state first (files, docs, recent commits)
-- Ask questions one at a time to refine the idea
-- Prefer multiple choice questions when possible, but open-ended is fine too
-- Only one question per message - if a topic needs more exploration, break it into multiple questions
-- Focus on understanding: purpose, constraints, success criteria
+- Check current project state first (files, docs, recent commits)
+- Ask questions one at a time — prefer multiple choice when possible
+- Focus on: purpose, constraints, success criteria
+
+Example question sequence:
+> "What should happen when the API call fails? A) Retry 3 times with backoff B) Show error to user immediately C) Fall back to cached data"
 
 **Exploring approaches:**
 
 - Propose 2-3 different approaches with trade-offs
-- Present options conversationally with your recommendation and reasoning
 - Lead with your recommended option and explain why
 
 **Presenting the design:**
 
-- Once you believe you understand what you're building, present the design
-- Break it into sections of 200-300 words
+- Break into sections of 200-300 words
 - Ask after each section whether it looks right so far
 - Cover: architecture, components, data flow, error handling, testing
-- Be ready to go back and clarify if something doesn't make sense
+
+Example design section:
+> **Data Flow**: User submits form → validate client-side → POST to `/api/resource` → service validates + persists → return created resource with ID → redirect to detail view. On validation failure, return 422 with field-level errors displayed inline.
 
 ## After the Design
 
-**Documentation:**
-
-- Write the validated design to a plan file
-- Use writing-clearly-and-concisely skill
-
-**Implementation (if continuing):**
-
-- Ask: "Ready to start planning implementation?"
-- Use the `planning` skill to create a GitHub issue and implementation plan
+- Write the validated design to a plan file using `writing-clearly-and-concisely` skill
+- Ask: "Ready to start planning implementation?" → use `planning` skill
 
 ## Key Principles
 
-- **One question at a time** - Don't overwhelm with multiple questions
-- **Multiple choice preferred** - Easier to answer than open-ended when possible
-- **YAGNI ruthlessly** - Remove unnecessary features from all designs
-- **Explore alternatives** - Always propose 2-3 approaches before settling
-- **Incremental validation** - Present design in sections, validate each
-- **Be flexible** - Go back and clarify when something doesn't make sense
+- **YAGNI ruthlessly** — remove unnecessary features from all designs
+- **Incremental validation** — present design in sections, validate each

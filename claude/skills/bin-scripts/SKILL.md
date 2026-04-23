@@ -1,6 +1,6 @@
 ---
 name: bin-scripts
-description: Use when performing git operations, running Laravel/Composer commands, managing local dev sites, or killing processes on ports. Custom scripts in ~/.files/bin/ provide shortcuts for common workflows.
+description: "Runs custom shell scripts from ~/.files/bin/ for git commits, branch management, Laravel artisan commands, killing processes by port, and local Caddy dev site management. Use when performing git operations, running Laravel/Composer commands, managing local dev sites, or killing processes on ports."
 user-invocable: false
 ---
 
@@ -22,7 +22,7 @@ Custom shell scripts in `~/.files/bin/` for common development workflows.
 | Script        | Usage                | Purpose                                              |
 | ------------- | -------------------- | ---------------------------------------------------- |
 | `git-undo`    | `git undo`           | Soft reset to previous commit (keeps changes staged) |
-| `git-abort`   | `git abort`          | Hard reset + clean untracked files (destructive)     |
+| `git-abort`   | `git abort`          | Hard reset + clean untracked files (**destructive** — check `git status` first) |
 | `git-restore` | `git restore <file>` | Restore file to state before last commit             |
 | `git-unstash` | `git unstash`        | Pop stash                                            |
 
