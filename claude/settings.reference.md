@@ -1,6 +1,6 @@
 # Claude Code `settings.json` Reference
 
-Exhaustive reference for every documented key in Claude Code's `settings.json`, verified against the shipping binary schema (v2.1.92) and official docs.
+Exhaustive reference for every documented key in Claude Code's `settings.json`, verified against the shipping binary schema (v2.1.119) and official docs.
 
 ## Scope precedence
 
@@ -98,10 +98,10 @@ Managed (MDM/policy) > CLI flags > Local (.claude/settings.local.json)
 
 ### `effortLevel`
 
-- **Type:** `"low" | "medium" | "high"` (persisted)
+- **Type:** `"low" | "medium" | "high" | "xhigh"` (persisted)
 - **Default:** model-dependent (Opus 4.7 → `xhigh`; Opus 4.6 / Sonnet 4.6 → `high`)
 - **Purpose:** Persisted reasoning/thinking depth.
-- **Critical gotcha:** `"xhigh"` and `"max"` exist at runtime but are **not** persistable here — only available via `/effort` or `CLAUDE_CODE_EFFORT_LEVEL` env var. If you want xhigh permanently, set the env var.
+- **Gotcha:** `"max"` exists at runtime but is **not** persistable here — only available via `/effort` or `CLAUDE_CODE_EFFORT_LEVEL` env var. `"xhigh"` became persistable as of v2.1.119.
 - **Precedence:** `CLAUDE_CODE_EFFORT_LEVEL` env > this setting > model default.
 
 ### `alwaysThinkingEnabled`
@@ -230,6 +230,39 @@ Managed (MDM/policy) > CLI flags > Local (.claude/settings.local.json)
 - **Type:** `"chat" | "transcript"`
 - **Default:** unset
 - **Purpose:** Default transcript view — `"chat"` shows SendUserMessage checkpoints only; `"transcript"` shows the full stream.
+
+### `editorMode`
+
+- **Type:** `"normal" | "vim"`
+- **Default:** `"normal"`
+- **Purpose:** Key binding mode for the prompt input. `"vim"` enables vim-style navigation and editing (hjkl, visual mode, etc.) in the input box.
+- **Gotcha:** Invalid values silently fall back to `undefined` (`.catch(void 0)` in schema). Only affects the input prompt, not file editing.
+
+### `verbose`
+
+- **Type:** `boolean`
+- **Default:** `false`
+- **Purpose:** Show full tool output instead of truncated summaries. When enabled, tool results are displayed in full rather than collapsed.
+
+### `preferredNotifChannel`
+
+- **Type:** `"auto" | "iterm2" | "iterm2_with_bell" | "terminal_bell" | "kitty" | "ghostty" | "notifications_disabled"`
+- **Default:** `"auto"` (detects terminal)
+- **Purpose:** Preferred OS notification channel for task-complete and attention-needed alerts.
+- **Gotcha:** In tmux, progress bars and notifications require `set -g allow-passthrough on`.
+
+### `terminalProgressBarEnabled`
+
+- **Type:** `boolean`
+- **Default:** `true`
+- **Purpose:** Emit OSC 9;4 progress sequences during long operations. Supported terminals: Ghostty 1.2.0+, iTerm2 3.6.6+, ConEmu.
+
+### `awaySummaryEnabled`
+
+- **Type:** `boolean`
+- **Default:** `true` (when absent or `true`, recap is enabled)
+- **Purpose:** Controls the session recap shown when you return after 5+ minutes of inactivity. `false` disables automatic recaps; `/recap` still works manually.
+- **Gotcha:** Marked `@internal` in schema — hidden from public SDK types.
 
 ---
 
@@ -446,15 +479,23 @@ Managed (MDM/policy) > CLI flags > Local (.claude/settings.local.json)
 - **Default:** provider-dependent
 - **Purpose:** Probability the session-quality survey appears when eligible. `0` suppresses, `0.05` = 5% of sessions.
 
+### `remoteControlAtStartup`
+
+- **Type:** `boolean`
+- **Default:** `false`
+- **Purpose:** Start Remote Control bridge automatically each session. Registers the local session with claude.ai/code and the Claude mobile app for remote access.
+- **Manual alternative:** `claude --remote-control`, `claude remote-control`, or `/remote-control` (alias `/rc`) within a session.
+- **Gotcha:** Requires full-scope authentication (not API keys or limited tokens). On Team/Enterprise, an admin must enable Remote Control in admin settings. Known VS Code extension bug (issue #41036): the extension ignores this setting — use `/remote-control` manually.
+
 ---
 
 ## Updates
 
 ### `autoUpdatesChannel`
 
-- **Type:** `"latest" | "stable"` **(only these two — no `"off"`)**
+- **Type:** `"latest" | "stable" | "rc"`
 - **Default:** `"latest"`
-- **Purpose:** Release channel. `"stable"` lags `latest` by ~1 week.
+- **Purpose:** Release channel. `"stable"` lags `latest` by ~1 week. `"rc"` tracks release candidates.
 - **Real disable:** set `DISABLE_AUTOUPDATER=1` in `env`. Invalid values here are silently dropped; there is no JSON-level "off."
 
 ### `minimumVersion`
@@ -562,7 +603,7 @@ The following documented keys are intentionally left unset in our `settings.json
 
 ## Sources
 
-- Shipping binary schema: `/opt/homebrew/Caskroom/claude-code/2.1.92/claude` (zod definitions)
+- Shipping binary schema: `/opt/homebrew/Caskroom/claude-code@latest/2.1.119/claude` (zod definitions)
 - Official docs: https://code.claude.com/docs/en/settings
 - Hooks: https://code.claude.com/docs/en/hooks
 - Permissions: https://code.claude.com/docs/en/permissions
