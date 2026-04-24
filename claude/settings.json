@@ -46,11 +46,16 @@
   "effortLevel": "high",
   "fastMode": false,
   "fastModePerSessionOptIn": false,
+  "awaySummaryEnabled": false,
   "autoUpdatesChannel": "stable",
   "prefersReducedMotion": false,
   "autoMemoryEnabled": true,
   "skipDangerousModePermissionPrompt": true,
   "voiceEnabled": false,
   "mcpServers": {},
-  "awaySummaryEnabled": false
+  "editorMode": "normal",
+  "verbose": false,
+  "preferredNotifChannel": "auto",
+  "terminalProgressBarEnabled": false,
+  "remoteControlAtStartup": false
 }
