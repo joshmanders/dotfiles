@@ -72,7 +72,7 @@ Read changed files for full context, not just the diff hunks.
 
 ## Output Format
 
-Present findings **per-file, per-line**. Only files with actual findings. Do NOT mention files that have no issues — skip them entirely. No "no issues found" or "looks good" filler for clean files.
+**Only actionable items.** If a file has no issues, skip it — do not mention it at all. No "Correct.", "Clean.", "Well designed.", no narration of what the code does. The review exists to surface problems, not describe or praise working code.
 
 For each finding:
 

@@ -62,6 +62,14 @@ git diff --name-only "$BASE_SHA".."$HEAD_SHA"
 - Note Minor issues for later
 - Push back if reviewer is wrong (with reasoning)
 
+## Output Rules
+
+**Only surface actionable items.** If a file has no issues, skip it entirely. No per-file narration, no "Correct.", no "Clean.", no "Well designed.", no "Sound architecture." — none of that is actionable. The review exists to surface problems, not describe what the code does or confirm it works.
+
+- Report only bugs, concerns, and items that need action
+- Use the output format from `code-reviewer.md` (file:line, suggestion, severity)
+- If there are no issues, say so in one line — don't fill space
+
 ## Self-Review via Subagent
 
 For self-review during development, dispatch a code-reviewer subagent:
