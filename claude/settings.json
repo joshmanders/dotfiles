@@ -1,9 +1,28 @@
 {
+  "respectGitignore": true,
+  "cleanupPeriodDays": 30,
   "env": {
     "DOTFILES": "/Users/josh/.files",
     "BASH_ENV": "/Users/josh/.files/bash/bashrc",
     "DISABLE_AUTOUPDATER": "1"
   },
+  "attribution": {
+    "commit": "Co-Authored-By: Dunnbot <dunnbot@joshmanders.com>",
+    "pr": ""
+  },
+  "includeGitInstructions": true,
+  "permissions": {
+    "defaultMode": "bypassPermissions",
+    "additionalDirectories": [
+      "../agent",
+      "../ingress",
+      "../placeholder",
+      "../builder"
+    ]
+  },
+  "enableAllProjectMcpServers": false,
+  "disabledMcpjsonServers": [],
+  "deniedMcpServers": [],
   "hooks": {
     "PreToolUse": [
       {
@@ -17,39 +36,21 @@
       }
     ]
   },
-  "attribution": {
-    "commit": "Co-Authored-By: Dunnbot <dunnbot@joshmanders.com>",
-    "pr": ""
-  },
-  "permissions": {
-    "defaultMode": "bypassPermissions",
-    "additionalDirectories": [
-      "../agent",
-      "../ingress",
-      "../placeholder",
-      "../builder"
-    ]
-  },
-  "effortLevel": "high",
-  "alwaysThinkingEnabled": true,
-  "fastMode": false,
-  "fastModePerSessionOptIn": false,
-  "outputStyle": "Default",
-  "autoUpdatesChannel": "stable",
-  "autoMemoryEnabled": true,
-  "cleanupPeriodDays": 30,
-  "respectGitignore": true,
-  "includeGitInstructions": true,
+  "disableAllHooks": false,
   "defaultShell": "bash",
-  "voiceEnabled": false,
+  "outputStyle": "Default",
   "spinnerTipsEnabled": false,
-  "prefersReducedMotion": false,
   "syntaxHighlightingDisabled": false,
   "terminalTitleFromRename": true,
-  "disableAllHooks": false,
-  "enableAllProjectMcpServers": false,
-  "disabledMcpjsonServers": [],
-  "deniedMcpServers": [],
+  "alwaysThinkingEnabled": true,
+  "effortLevel": "high",
+  "fastMode": false,
+  "fastModePerSessionOptIn": false,
+  "autoUpdatesChannel": "stable",
+  "prefersReducedMotion": false,
+  "autoMemoryEnabled": true,
+  "skipDangerousModePermissionPrompt": true,
+  "voiceEnabled": false,
   "mcpServers": {},
-  "skipDangerousModePermissionPrompt": true
+  "awaySummaryEnabled": false
 }
