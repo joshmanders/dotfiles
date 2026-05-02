@@ -44,3 +44,17 @@ autocmd({ "BufRead", "BufNewFile" }, {
     vim.bo.filetype = "blade"
   end,
 })
+
+-- Suppress neovim defaults.lua "Did not detect DSR response" warning.
+-- Fired before user config loads, so we clear it right after UI attaches.
+autocmd("UIEnter", {
+  group = augroup("suppress_dsr_warning", { clear = true }),
+  once = true,
+  callback = function()
+    local ok, msgs = pcall(vim.api.nvim_exec2, "messages", { output = true })
+    if ok and msgs.output and msgs.output:find("DSR response", 1, true) then
+      vim.cmd("messages clear")
+      vim.cmd("redraw")
+    end
+  end,
+})
