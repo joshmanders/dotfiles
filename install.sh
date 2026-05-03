@@ -18,15 +18,16 @@
 #   --deny             Skip all commands (non-interactive)
 #
 # Modules (can run standalone):
-#   bash homebrew/install.sh    # Shell setup
-#   bash git/install.sh         # Git configuration
-#   bash ssh/install.sh         # SSH configuration
-#   bash dnsmasq/install.sh     # DNS resolver
-#   bash caddy/install.sh       # Web server
-#   bash claude/install.sh      # Claude Code config
-#   bash lazygit/install.sh     # Lazygit configuration
-#   bash neovim/install.sh      # Neovim configuration
-#   bash tmux/install.sh        # tmux configuration
+#   bash homebrew/install.sh
+#   bash git/install.sh
+#   bash ssh/install.sh
+#   bash dnsmasq/install.sh
+#   bash caddy/install.sh
+#   bash claude/install.sh
+#   bash cpanel/install.sh
+#   bash lazygit/install.sh
+#   bash neovim/install.sh
+#   bash tmux/install.sh
 
 set -euo pipefail
 
@@ -73,6 +74,7 @@ source "$DOTFILES/ssh/install.sh"
 source "$DOTFILES/dnsmasq/install.sh"
 source "$DOTFILES/caddy/install.sh"
 source "$DOTFILES/claude/install.sh"
+source "$DOTFILES/cpanel/install.sh"
 source "$DOTFILES/vscode/install.sh"
 source "$DOTFILES/lazygit/install.sh"
 source "$DOTFILES/neovim/install.sh"

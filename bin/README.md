@@ -23,6 +23,8 @@ PATH="${PATH}:${DOTFILES}/bin"
 | `killport`  | Kill process on a specified port                       |
 | `hiroshima` | Nuke all Docker containers and prune system            |
 | `edit`      | Open files/configs in editor                           |
+| `mux`       | tmux session orchestrator (CWD-aware)                  |
+| `cpanel`    | Claude Panel TUI for `~/.claude/` (Bun/React; see [cpanel/README.md](../cpanel/README.md)) |
 
 ### Git Workflow
 

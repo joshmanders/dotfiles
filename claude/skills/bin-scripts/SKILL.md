@@ -78,6 +78,20 @@ Custom shell scripts in `~/.files/bin/` for common development workflows.
 
 **brewdump:** Reviews leaf packages interactively, marks items for removal, runs `brew autoremove`, then dumps Brewfile to `$DOTFILES/homebrew/bundle`. Use `--dry-run` to preview.
 
+## Claude Internals
+
+| Script   | Usage    | Purpose                                                                       |
+| -------- | -------- | ----------------------------------------------------------------------------- |
+| `cpanel` | `cpanel` | TUI for everything in `~/.claude/` — browse, search, mine, and clean         |
+
+**cpanel:** React/Bun TUI built on `@opentui/react`. Source lives in `~/.files/cpanel/`; the `bin/` entry is a thin bash wrapper that `exec`s `bun run`. Requires `bun` (already in Brewfile). Full docs at `~/.files/cpanel/README.md`.
+
+Panels (in tab order): **Dashboard** (overview cards) · **Insights** (correction/pattern/stuck-loop/wasted-work miners with `s` to scaffold rules + skills) · **Conversations** (chat-rendered reader for every session) · **Live** (real-time monitor of running Claude Code sessions) · **Search** (ripgrep over all jsonls) · **Cost** ($ per day/project/session from token×rate) · **Digest** (daily activity rollup) · **Plans** · **Sessions** (with `r` to resume in a new terminal) · **Projects** · **Settings** (incl. backup restore) · **Cleanup**.
+
+Config: `~/.config/cpanel/config.json` (symlinked from `~/.files/cpanel/config.json`). Currently one option: `ignoreProjects: string[]` — path prefixes hidden from UI lists; aggregates still include them. Press `.` from any panel to toggle showing them temporarily.
+
+Safety: all destructive actions go through a confirm dialog with the exact path + size before deleting.
+
 ## tmux Session Management
 
 | Script | Usage                          | Purpose                                          |

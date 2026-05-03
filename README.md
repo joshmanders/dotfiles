@@ -61,6 +61,7 @@ concierge add
 ├── bin/               # Custom scripts
 ├── caddy/             # Web server config
 ├── claude/            # Claude Code config, rules, and skills
+├── cpanel/            # Claude Panel TUI (Bun/React)
 ├── dnsmasq/           # DNS resolver config
 ├── fzf/               # Fuzzy finder config
 ├── gh/                # GitHub CLI config
@@ -104,6 +105,7 @@ bash ssh/install.sh         # Just SSH config
 bash dnsmasq/install.sh     # Just DNS setup
 bash caddy/install.sh       # Just web server
 bash claude/install.sh      # Just Claude Code config
+bash cpanel/install.sh      # Just Claude Panel TUI (config symlink + bun install)
 bash neovim/install.sh      # Just Neovim config
 bash tmux/install.sh        # Just tmux config
 bash vscode/install.sh      # Just VS Code settings
@@ -117,6 +119,7 @@ Each directory has its own README with detailed documentation:
 - [bin/README.md](bin/README.md) - Custom scripts
 - [caddy/README.md](caddy/README.md) - Web server
 - [claude/README.md](claude/README.md) - Claude Code config
+- [cpanel/README.md](cpanel/README.md) - Claude Panel TUI (browse/mine `~/.claude`)
 - [dnsmasq/README.md](dnsmasq/README.md) - DNS resolver
 - [fzf/README.md](fzf/README.md) - Fuzzy finder
 - [gh/README.md](gh/README.md) - GitHub CLI
@@ -146,6 +149,7 @@ Each directory has its own README with detailed documentation:
 | `git save "msg"` | Quick commit                      |
 | `git sync`       | Fetch and rebase on upstream      |
 | `git undo`       | Undo last commit                  |
+| `cpanel`         | TUI for everything in `~/.claude` |
 
 ## Contributing
 
