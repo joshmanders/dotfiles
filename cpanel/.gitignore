@@ -1,0 +1,6 @@
+# Bun-installed deps; restored by cpanel/install.sh on a fresh machine.
+node_modules/
+
+# Personal config — may contain client-project paths under `ignoreProjects`.
+# install.sh seeds it with defaults if missing, then symlinks to ~/.config/cpanel/config.json.
+config.json

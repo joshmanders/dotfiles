@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+#
+# cpanel - Claude Panel TUI
+#
+# Browse and manipulate ~/.claude (plans, sessions, projects, history,
+# stats, tasks, backups, settings, telemetry) from a single TUI.
+
+set -euo pipefail
+
+DOTFILES="${DOTFILES:-$HOME/.files}"
+exec bun run "$DOTFILES/cpanel/src/index.tsx" "$@"
