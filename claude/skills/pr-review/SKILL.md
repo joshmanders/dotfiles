@@ -1,6 +1,6 @@
 ---
 name: pr-review
-description: Review a colleague's GitHub PR - checkout locally, gather context, then review code (READ-ONLY)
+description: Review a colleague's GitHub PR - checkout locally, deep review, output actionable findings (READ-ONLY)
 argument-hint: "<pr-ref> [note]"
 disable-model-invocation: true
 ---
@@ -101,29 +101,53 @@ git diff --name-only "$BASE_SHA"..HEAD
 
 **Never use `gh pr diff`** — API diffs can be inaccurate. Local diff is the source of truth.
 
-### Step 5: Read changed files locally
+### Step 5: Read changed files and deep review
 
-Use `git diff --name-only` output to get the file list. Read each changed file to understand the full context around changes — not just the diff hunks.
+Use `git diff --name-only` output to get the file list. Apply the `requesting-code-review` skill:
 
-### Step 6: Review code
+- Read each changed file in full — not just diff hunks
+- Trace code paths end-to-end per the skill's review process
+- Use the review criteria from `code-reviewer.md` (bugs, regressions, security, pattern violations, etc.)
+- Follow the skill's output rules: only actionable items, nothing else
 
-Apply `requesting-code-review` skill with the gathered context:
+### Step 6: Output
 
-- PR metadata, linked issues, review conversation history
-- `BASE_SHA` and `HEAD_SHA` for the git range
-- Changed file list and full file contents
+**If the PR is clean** — no bugs, no regressions, nothing substantial:
 
-The review skill handles the actual code review, output format, and tone.
+> This PR is good to go. Approve it.
 
-### Step 7: PR-specific context (after review findings)
+One line. Done. Do not elaborate, summarize changes, or praise the code.
 
-After presenting per-file findings, add:
+**If there are findings** — output each as a raw markdown block wrapped in ```````` so Josh gets copyable markdown. Each finding is a separate block he can paste as a GitHub review comment.
 
-- **Unresolved Review Threads**: Summarize any open conversations from existing reviews
-- **CI Status**: Pass/fail and any notable failures
-- **Overall**: One-line verdict (ready to merge / needs changes / needs discussion)
+Format for each finding:
 
-### Step 8: Restore original state
+`````````
+````
+`path/to/file.ts` line 42
+
+Description of the problem — direct, specific, explains *why* it matters.
+
+```suggestion
+// corrected code here if applicable
+```
+````
+`````````
+
+- File path and line number (or range like `lines 42-48`) on the first line
+- Problem description — plain language, no severity labels, no categories
+- GitHub suggestion block only when you have a concrete fix. Omit if the fix is non-trivial or requires discussion.
+- One finding per block. Do not combine multiple issues.
+
+After all findings, one line:
+
+> Request changes — [N] items above.
+
+Or if findings are minor enough to not block:
+
+> Approve with comments — [N] items above worth addressing.
+
+### Step 7: Restore original state
 
 After completing the review, ALWAYS return to the original branch and restore stash:
 

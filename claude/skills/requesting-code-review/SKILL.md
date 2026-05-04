@@ -6,29 +6,14 @@ user-invocable: false
 
 # Code Review
 
-Review code changes for production readiness. Used both for self-review (before merge) and PR review (via `/pr` skill).
+Review code changes for production readiness. Used both for self-review (before merge) and PR review (via `/pr-review` skill).
 
 ## Review Principles
 
-- **Deep investigation, not surface scanning** — Read actual files, trace code paths end-to-end, understand call sites and callers. Follow data through the full lifecycle before forming opinions. Surface-level pattern matching produces wrong findings — if you haven't traced the actual execution path, you don't understand the code well enough to comment on it.
-- **Verify everything** — don't assume code is correct or incorrect. If you're not sure about something, investigate before commenting. No assumptions. No guessing based on names or structure alone.
-- **Resolved review threads** — context only. Read what was requested and how it was resolved. Do NOT re-raise. Use to inform understanding if relevant, otherwise discard.
+- **Deep investigation, not surface scanning** — Read actual files, trace code paths end-to-end, understand call sites and callers. Follow data through the full lifecycle before forming opinions. If you haven't traced the actual execution path, you don't understand the code well enough to comment on it.
+- **Verify everything** — don't assume code is correct or incorrect. Investigate before commenting.
+- **Resolved review threads** — context only. Do NOT re-raise. Use to inform understanding if relevant, otherwise discard.
 - **`receiving-code-review` takes precedence** — for communication style and how to handle feedback, defer to that skill.
-
-## When to Review
-
-**Mandatory:**
-
-- After each task in subagent-driven development
-- After completing major feature
-- Before merge to main
-- When `/pr` skill invokes this for PR review
-
-**Optional but valuable:**
-
-- When stuck (fresh perspective)
-- Before refactoring (baseline check)
-- After fixing complex bug
 
 ## How to Review
 
@@ -51,11 +36,13 @@ git diff --name-only "$BASE_SHA".."$HEAD_SHA"
 
 **3. Read changed files** for full context — not just diff hunks.
 
-**4. Trace code paths** — For each significant change, follow the execution path: who calls this? What does the caller expect? What happens downstream? Read the callers, the callees, the types, the tests. A diff hunk in isolation is misleading — understand the full picture before flagging anything.
+**4. Trace code paths** — For each significant change, follow the execution path: who calls this? What does the caller expect? What happens downstream? Read the callers, the callees, the types, the tests.
 
-**5. Review** using the checklist and output format in `code-reviewer.md`.
+**5. Check codebase patterns** — Read nearby code (same directory, similar files) to understand existing conventions. Flag deviations from established patterns and suggest the existing approach.
 
-**6. Act on findings:**
+**6. Review** using the criteria and output format in `code-reviewer.md`.
+
+**7. Act on findings:**
 
 - Fix Critical issues immediately
 - Fix Important issues before proceeding
@@ -64,11 +51,11 @@ git diff --name-only "$BASE_SHA".."$HEAD_SHA"
 
 ## Output Rules
 
-**Only surface actionable items.** If a file has no issues, skip it entirely. No per-file narration, no "Correct.", no "Clean.", no "Well designed.", no "Sound architecture." — none of that is actionable. The review exists to surface problems, not describe what the code does or confirm it works.
+**Only surface actionable items.** If a file has no issues, skip it entirely. No narration, no affirmations, no commentary on working code.
 
-- Report only bugs, concerns, and items that need action
-- Use the output format from `code-reviewer.md` (file:line, suggestion, severity)
-- If there are no issues, say so in one line — don't fill space
+- Report only: bugs, regressions, security issues, pattern violations, and concrete alternatives
+- If there are no issues, say so in one line
+- Use the output format from `code-reviewer.md`
 
 ## Self-Review via Subagent
 
@@ -83,20 +70,5 @@ Use Task tool with code-reviewer type, fill template at `code-reviewer.md`
 - `{BASE_SHA}` - Starting commit
 - `{HEAD_SHA}` - Ending commit
 - `{DESCRIPTION}` - Brief summary
-
-## Red Flags
-
-**Never:**
-
-- Skip review because "it's simple"
-- Ignore Critical issues
-- Proceed with unfixed Important issues
-- Argue with valid technical feedback
-
-**If reviewer wrong:**
-
-- Push back with technical reasoning
-- Show code/tests that prove it works
-- Request clarification
 
 See template at: requesting-code-review/code-reviewer.md
