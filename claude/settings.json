@@ -51,11 +51,15 @@
   "prefersReducedMotion": false,
   "autoMemoryEnabled": true,
   "skipDangerousModePermissionPrompt": true,
-  "voiceEnabled": false,
-  "mcpServers": {},
   "editorMode": "normal",
   "verbose": false,
   "preferredNotifChannel": "auto",
   "terminalProgressBarEnabled": false,
-  "remoteControlAtStartup": false
+  "remoteControlAtStartup": false,
+  "voiceEnabled": true,
+  "mcpServers": {},
+  "voice": {
+    "enabled": true,
+    "mode": "hold"
+  }
 }
