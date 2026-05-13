@@ -1,10 +1,25 @@
--- Format on save via LSP
--- Formatter changes (e.g. switching to oxfmt) are handled by the LSP server,
--- not this config. Just ensure your LSP supports formatting.
-vim.api.nvim_create_autocmd("BufWritePre", {
-  callback = function()
-    vim.lsp.buf.format({ timeout_ms = 3000 })
-  end,
-})
+return {
+  "stevearc/conform.nvim",
+  event = "BufWritePre",
+  opts = {
+    formatters_by_ft = {
+      php = { "pint" },
+      javascript = { "prettier" },
+      typescript = { "prettier" },
+      javascriptreact = { "prettier" },
+      typescriptreact = { "prettier" },
+    },
+    format_on_save = function(bufnr)
+      local ft = vim.bo[bufnr].filetype
+      local conform_fts = require("conform").formatters_by_ft
 
-return {}
+      -- Use conform for filetypes with configured formatters, LSP for the rest
+      if conform_fts[ft] then
+        return { timeout_ms = 3000, lsp_fallback = false }
+      end
+
+      vim.lsp.buf.format({ bufnr = bufnr, timeout_ms = 3000 })
+      return false
+    end,
+  },
+}
