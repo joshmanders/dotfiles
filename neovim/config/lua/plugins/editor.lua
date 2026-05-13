@@ -32,6 +32,16 @@ return {
     cmd = "UndotreeToggle",
   },
 
+  -- Session persistence (restore buffers on restart)
+  {
+    "folke/persistence.nvim",
+    event = "BufReadPre",
+    opts = {},
+    keys = {
+      { "<leader>rs", function() require("persistence").load() end, desc = "Restore session" },
+    },
+  },
+
   -- Highlight TODO/FIXME/NOTE comments
   {
     "folke/todo-comments.nvim",
