@@ -26,8 +26,18 @@ map("n", "<C-LeftMouse>", function()
 end, { desc = "Go to definition/references" })
 
 -- Save & quit
-map("n", "<leader>s", "<cmd>w<cr>", { desc = "Save file" })
+map("n", "<leader>s", "<cmd>silent w<cr>", { desc = "Save file" })
 map("n", "<leader>q", "<cmd>qa<cr>", { desc = "Quit all" })
+
+-- New file relative to project root
+map("n", "<leader>n", function()
+  vim.ui.input({ prompt = "New file: " }, function(name)
+    if not name or name == "" then return end
+    local path = vim.fn.getcwd() .. "/" .. name
+    vim.fn.mkdir(vim.fn.fnamemodify(path, ":h"), "p")
+    vim.cmd("edit " .. vim.fn.fnameescape(path))
+  end)
+end, { desc = "New file" })
 
 -- Window navigation (works with vim-tmux-navigator)
 map("n", "<C-h>", "<C-w>h", { desc = "Move to left window" })
@@ -39,15 +49,18 @@ map("n", "<C-l>", "<C-w>l", { desc = "Move to right window" })
 map("n", "[b", "<cmd>bprevious<cr>", { desc = "Previous buffer" })
 map("n", "]b", "<cmd>bnext<cr>", { desc = "Next buffer" })
 map("n", "<leader>w", function()
-  local bufs = vim.tbl_filter(function(b)
-    return vim.bo[b].buflisted
-  end, vim.api.nvim_list_bufs())
   local cur = vim.api.nvim_get_current_buf()
-  if #bufs <= 1 then
-    vim.cmd("enew")
-    vim.api.nvim_buf_delete(cur, { force = false })
+  if vim.bo[cur].modified then
+    vim.ui.select({ "Save", "Discard", "Cancel" }, { prompt = "Unsaved changes:" }, function(choice)
+      if not choice or choice == "Cancel" then return end
+      if choice == "Save" then vim.cmd("write") end
+      local bufs = vim.tbl_filter(function(b) return vim.bo[b].buflisted end, vim.api.nvim_list_bufs())
+      if #bufs <= 1 then vim.cmd("enew") else vim.cmd("bprevious") end
+      vim.api.nvim_buf_delete(cur, { force = true })
+    end)
   else
-    vim.cmd("bprevious")
+    local bufs = vim.tbl_filter(function(b) return vim.bo[b].buflisted end, vim.api.nvim_list_bufs())
+    if #bufs <= 1 then vim.cmd("enew") else vim.cmd("bprevious") end
     vim.api.nvim_buf_delete(cur, { force = false })
   end
 end, { desc = "Close buffer" })
@@ -83,7 +96,7 @@ map("n", "<leader>cc", "<cmd>cclose<cr>", { desc = "Close quickfix list" })
 map("n", "<leader>u", "<cmd>UndotreeToggle<cr>", { desc = "Toggle undotree" })
 
 -- Lazygit
-map("n", "<leader>lg", function()
+map("n", "<leader>g", function()
   local buf = vim.api.nvim_create_buf(false, true)
   local width = math.floor(vim.o.columns * 0.9)
   local height = math.floor(vim.o.lines * 0.9)
