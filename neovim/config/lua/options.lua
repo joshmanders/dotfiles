@@ -56,3 +56,5 @@ vim.filetype.add({
 -- Misc
 opt.mouse = "a"
 opt.showmode = false
+opt.cmdheight = 0
+opt.sessionoptions = "buffers,curdir,tabpages,winsize"
