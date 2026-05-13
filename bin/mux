@@ -16,6 +16,7 @@
 #   mux my-session       # override session name
 #   mux list             # list all registered sessions
 #   mux show [name]      # show pane details (accepts parent:child or session name)
+#   mux title [name]     # set/show display title for terminal and status bar
 #   mux copy name        # copy layout from source to CWD's entry
 #   mux delete [name]    # remove session from registry
 #   mux kill [name]      # kill running tmux session
@@ -246,6 +247,40 @@ if [[ "${1:-}" == "copy" ]]; then
     exit 0
 fi
 
+# --- Set display title ---
+if [[ "${1:-}" == "title" ]]; then
+    name="${2:-}"
+
+    entry=$(jq -c --arg dir "$PWD" '.[$dir] // empty' "$REGISTRY")
+    if [[ -z "$entry" ]]; then
+        echo "No session registered for $PWD (run mux first)"
+        exit 1
+    fi
+
+    session=$(echo "$entry" | jq -r '.session')
+
+    if [[ -z "$name" ]]; then
+        current=$(jq -r --arg dir "$PWD" '.[$dir].name // empty' "$REGISTRY")
+        if [[ -n "$current" ]]; then
+            echo "$current"
+        else
+            echo "No title set (using session name: $session)"
+        fi
+        exit 0
+    fi
+
+    jq --arg dir "$PWD" --arg name "$name" \
+       '.[$dir].name = $name' \
+       "$REGISTRY" > "$REGISTRY.tmp.$$" && mv "$REGISTRY.tmp.$$" "$REGISTRY"
+
+    if tmux has-session -t "=$session" 2>/dev/null; then
+        tmux set -t "$session" @title "$name" 2>/dev/null || true
+    fi
+
+    echo "Title set: $name"
+    exit 0
+fi
+
 # --- Main ---
 dir="$PWD"
 
@@ -295,11 +330,13 @@ pane_count=0
 if [[ "$panes" != "null" ]]; then
     pane_count=$(echo "$panes" | jq 'length')
 fi
+name=$(jq -r --arg dir "$dir" '.[$dir].name // empty' "$REGISTRY")
 
 # Attach, add window, or create session
 if tmux has-session -t "=$session" 2>/dev/null; then
     if tmux list-windows -t "=$session" -F '#W' | grep -qx "$window"; then
         # Window exists — just attach/switch
+        [[ -n "$name" ]] && tmux set -t "$session" @title "$name" 2>/dev/null || true
         if [[ -n "${TMUX:-}" ]]; then
             tmux switch-client -t "=$session:$window"
         else
@@ -309,6 +346,7 @@ if tmux has-session -t "=$session" 2>/dev/null; then
         # New window in existing session
         tmux new-window -t "=$session" -n "$window" -c "$dir"
         tmux set-window-option -t "=$session:$window" automatic-rename off
+        [[ -n "$name" ]] && tmux set -t "$session" @title "$name" 2>/dev/null || true
         if [[ "$pane_count" -gt 1 ]]; then
             for ((i=1; i<pane_count; i++)); do
                 pane_dir=$(echo "$panes" | jq -r ".[$i].dir")
@@ -335,6 +373,7 @@ else
         # Inside tmux — create detached, restore, switch
         tmux new-session -d -s "$session" -n "$window" -c "$dir"
         tmux set-window-option -t "=$session:$window" automatic-rename off
+        [[ -n "$name" ]] && tmux set -t "$session" @title "$name" 2>/dev/null || true
         if [[ "$pane_count" -gt 1 ]]; then
             for ((i=1; i<pane_count; i++)); do
                 pane_dir=$(echo "$panes" | jq -r ".[$i].dir")
@@ -360,6 +399,7 @@ else
         # Outside tmux — use command chain so layout applies at correct terminal size
         tmux_cmd=(tmux new-session -s "$session" -n "$window" -c "$dir")
         tmux_cmd+=(";" set-window-option automatic-rename off)
+        [[ -n "$name" ]] && tmux_cmd+=(";" set-option @title "$name")
 
         if [[ "$pane_count" -gt 1 ]]; then
             for ((i=1; i<pane_count; i++)); do
