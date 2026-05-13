@@ -46,6 +46,13 @@ opt.timeoutlen = 300
 -- Completion
 opt.completeopt = "menu,menuone,noselect"
 
+-- Filetypes
+vim.filetype.add({
+  pattern = {
+    [".*%.blade%.php"] = "blade",
+  },
+})
+
 -- Misc
 opt.mouse = "a"
 opt.showmode = false

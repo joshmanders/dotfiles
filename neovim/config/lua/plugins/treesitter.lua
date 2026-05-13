@@ -6,23 +6,19 @@ return {
     build = ":TSUpdate",
     config = function()
       -- Register blade parser
-      local blade_parser = {
+      local parsers = require("nvim-treesitter.parsers")
+      parsers.blade = {
         install_info = {
           url = "https://github.com/EmranMR/tree-sitter-blade",
           branch = "main",
         },
       }
-      require("nvim-treesitter.parsers").blade = blade_parser
-      vim.api.nvim_create_autocmd("User", {
-        pattern = "TSUpdate",
-        callback = function()
-          require("nvim-treesitter.parsers").blade = blade_parser
-        end,
-      })
+      vim.treesitter.language.register("blade", "blade")
 
       -- Ensure parsers are installed
       local ensure_installed = {
         "bash",
+        "blade",
         "css",
         "diff",
         "dockerfile",
