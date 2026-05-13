@@ -1,6 +1,6 @@
 -- Set leader key before anything else
-vim.g.mapleader = " "
-vim.g.maplocalleader = " "
+vim.g.mapleader = ","
+vim.g.maplocalleader = ","
 
 -- Core configuration
 require("options")
