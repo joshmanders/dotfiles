@@ -18,7 +18,7 @@ bash tmux/install.sh
 
 Plugins are auto-installed on first tmux start.
 
-**Important:** Your terminal must send Option as Meta/Esc+ for the keybindings to work. In Ghostty: `macos-option-as-alt = true` in config.
+**Important:** Your terminal must support the kitty keyboard protocol / CSI-u extended keys for the `Ctrl+;` prefix to reach tmux. Ghostty, iTerm2, kitty, Alacritty, and WezTerm all support this.
 
 ## Concepts
 
@@ -27,6 +27,8 @@ Plugins are auto-installed on first tmux start.
 - **Pane** — a split within a window (e.g. claude on the left, terminal on the right)
 
 ## Daily Workflow
+
+The prefix is `Ctrl+;`. Press it, release, then press the next key.
 
 ### Opening projects
 
@@ -81,15 +83,15 @@ mux                               # creates session with copied layout
 ### Switching between project tabs
 
 ```
-Option + 1/2/3...    Jump to window by number
-Option + n           Next window
-Option + p           Previous window
+Ctrl+; 1/2/3...      Jump to window by number
+Ctrl+; n             Next window
+Ctrl+; p             Previous window
 ```
 
 ### Switching between sessions
 
 ```
-Option + s           Open session picker (arrow keys to select, Enter to switch)
+Ctrl+; s             Open session picker (arrow keys to select, Enter to switch)
 ```
 
 ### Building your pane layout
@@ -97,28 +99,33 @@ Option + s           Open session picker (arrow keys to select, Enter to switch)
 Once inside a project window, split it up:
 
 ```
-Option + |           Split side-by-side
-Option + -           Split top/bottom
+Ctrl+; \             Split side-by-side
+Ctrl+; Enter         Split top/bottom
 ```
 
 ### Moving between panes
 
+Pane navigation is prefix-free thanks to vim-tmux-navigator — these also jump in and out of Neovim splits:
+
 ```
-Option + h           Move left
-Option + j           Move down
-Option + k           Move up
-Option + l           Move right
+Ctrl+h               Move left
+Ctrl+j               Move down
+Ctrl+k               Move up
+Ctrl+l               Move right
 ```
 
 Or click a pane with the mouse.
 
 ### Resizing panes
 
+Hold the prefix once, then repeat the key:
+
 ```
-Option + Shift + H   Resize left
-Option + Shift + J   Resize down
-Option + Shift + K   Resize up
-Option + Shift + L   Resize right
+Ctrl+; -             Shrink down
+Ctrl+; =             Grow up
+Ctrl+; [             Shrink left
+Ctrl+; ]             Grow right
+Ctrl+; Delete        Equalize all panes (tiled layout)
 ```
 
 Or drag pane borders with the mouse.
@@ -126,15 +133,15 @@ Or drag pane borders with the mouse.
 ### Pane and window management
 
 ```
-Option + z           Zoom — toggle a pane fullscreen (again to restore)
-Option + w           Close the current pane
-Option + t           New empty window (tab) in current session
+Ctrl+; z             Zoom — toggle a pane fullscreen (again to restore)
+Ctrl+; x             Close the current pane
+Ctrl+; c             New empty window (tab) in current session
 ```
 
 ### Leaving and returning
 
 ```
-Option + d           Detach — leaves everything running in background
+Ctrl+; d             Detach — leaves everything running in background
 mux                  Reattach from the project directory
 ```
 
@@ -143,26 +150,31 @@ mux                  Reattach from the project directory
 Scroll up with mouse wheel or trackpad. To copy text:
 
 - **Mouse:** click and drag to select, copies to clipboard automatically
-- **Keyboard:** `Ctrl+a [` enters copy mode, vim keys to move, `v` to select, `y` to copy
+- **Keyboard:** `Ctrl+; v` enters copy mode, vim keys to move, `v` to select (`V` for line, `Ctrl+v` for block), `y` to copy, `q` to exit
 
 ## Quick Reference
 
 | Binding              | Action                |
 | -------------------- | --------------------- |
-| `Option + \|`        | Split side-by-side    |
-| `Option + -`         | Split top/bottom      |
-| `Option + h/j/k/l`  | Navigate panes        |
-| `Option + H/J/K/L`  | Resize panes          |
-| `Option + z`         | Zoom pane             |
-| `Option + w`         | Close pane            |
-| `Option + t`         | New window (tab)      |
-| `Option + 1-9`       | Jump to window number |
-| `Option + n/p`       | Next/previous window  |
-| `Option + s`         | Session picker        |
-| `Option + d`         | Detach session        |
-| `Option + r`         | Reload config         |
+| `Ctrl+; \`           | Split side-by-side    |
+| `Ctrl+; Enter`       | Split top/bottom      |
+| `Ctrl+h/j/k/l`       | Navigate panes        |
+| `Ctrl+; -/=/[/]`     | Resize panes          |
+| `Ctrl+; Delete`      | Equalize panes        |
+| `Ctrl+; z`           | Zoom pane             |
+| `Ctrl+; x`           | Close pane            |
+| `Ctrl+; c`           | New window (tab)      |
+| `Ctrl+; 1-9`         | Jump to window number |
+| `Ctrl+; n/p`         | Next/previous window  |
+| `Ctrl+; s`           | Session picker        |
+| `Ctrl+; d`           | Detach session        |
+| `Ctrl+; v`           | Enter copy mode       |
+| `Ctrl+; r`           | Reload config         |
+| `Ctrl+; Ctrl+k`      | Clear screen + scrollback |
 
 ## Plugins
 
 - **tmux-resurrect** — saves/restores sessions across tmux server restarts
 - **tmux-continuum** — auto-saves every 15 minutes
+- **tmux-better-mouse-mode** — natural scroll-to-exit behavior in copy mode
+- **vim-tmux-navigator** — seamless `Ctrl+h/j/k/l` between Neovim splits and tmux panes
