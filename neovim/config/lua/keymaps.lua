@@ -39,12 +39,6 @@ map("n", "<leader>n", function()
   end)
 end, { desc = "New file" })
 
--- Window navigation (works with vim-tmux-navigator)
-map("n", "<C-h>", "<C-w>h", { desc = "Move to left window" })
-map("n", "<C-j>", "<C-w>j", { desc = "Move to lower window" })
-map("n", "<C-k>", "<C-w>k", { desc = "Move to upper window" })
-map("n", "<C-l>", "<C-w>l", { desc = "Move to right window" })
-
 -- Buffer navigation
 map("n", "[b", "<cmd>bprevious<cr>", { desc = "Previous buffer" })
 map("n", "]b", "<cmd>bnext<cr>", { desc = "Next buffer" })

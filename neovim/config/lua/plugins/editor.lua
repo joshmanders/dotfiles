@@ -20,10 +20,28 @@ return {
     opts = {},
   },
 
-  -- Seamless tmux/neovim pane navigation
+  -- Seamless tmux/neovim pane navigation.
+  -- Disable the plugin's default mappings — its terminal-mode tnoremaps use
+  -- `<C-w>:` (Vim's terminal escape), which doesn't escape in Neovim, so the
+  -- RHS leaks as literal input to focused terminal apps (e.g. lazygit).
   {
     "christoomey/vim-tmux-navigator",
-    event = "VeryLazy",
+    init = function()
+      vim.g.tmux_navigator_no_mappings = 1
+    end,
+    cmd = {
+      "TmuxNavigateLeft",
+      "TmuxNavigateDown",
+      "TmuxNavigateUp",
+      "TmuxNavigateRight",
+      "TmuxNavigatePrevious",
+    },
+    keys = {
+      { "<C-h>", "<cmd>TmuxNavigateLeft<cr>", desc = "Navigate left (window/tmux pane)" },
+      { "<C-j>", "<cmd>TmuxNavigateDown<cr>", desc = "Navigate down (window/tmux pane)" },
+      { "<C-k>", "<cmd>TmuxNavigateUp<cr>", desc = "Navigate up (window/tmux pane)" },
+      { "<C-l>", "<cmd>TmuxNavigateRight<cr>", desc = "Navigate right (window/tmux pane)" },
+    },
   },
 
   -- Undo history visualization
