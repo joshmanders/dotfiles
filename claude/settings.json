@@ -49,6 +49,10 @@
   "fastModePerSessionOptIn": false,
   "awaySummaryEnabled": false,
   "autoUpdatesChannel": "stable",
+  "voice": {
+    "enabled": true,
+    "mode": "hold"
+  },
   "prefersReducedMotion": false,
   "autoMemoryEnabled": true,
   "skipDangerousModePermissionPrompt": true,
@@ -56,11 +60,8 @@
   "verbose": false,
   "preferredNotifChannel": "auto",
   "terminalProgressBarEnabled": false,
-  "remoteControlAtStartup": false,
+  "agentPushNotifEnabled": true,
   "voiceEnabled": true,
   "mcpServers": {},
-  "voice": {
-    "enabled": true,
-    "mode": "hold"
-  }
+  "remoteControlAtStartup": true
 }
