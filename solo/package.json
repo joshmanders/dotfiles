@@ -1,0 +1,23 @@
+{
+  "name": "solo",
+  "version": "0.1.0",
+  "description": "Per-directory process-runner TUI",
+  "private": true,
+  "type": "module",
+  "main": "src/index.tsx",
+  "scripts": {
+    "start": "bun run src/index.tsx",
+    "dev": "bun --watch src/index.tsx"
+  },
+  "dependencies": {
+    "@opentui/core": "latest",
+    "@opentui/react": "latest",
+    "node-pty": "latest",
+    "react": "latest",
+    "yaml": "latest"
+  },
+  "devDependencies": {
+    "@types/react": "latest",
+    "typescript": "latest"
+  }
+}

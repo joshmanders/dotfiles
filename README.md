@@ -74,6 +74,7 @@ concierge add
 ├── npm/               # NPM configuration
 ├── rectangle/         # Window manager config
 ├── ripgrep/           # Ripgrep config
+├── solo/              # Process-runner TUI (Bun/React)
 ├── ssh/               # SSH configuration
 ├── tmux/              # Terminal multiplexer
 ├── vscode/            # VS Code settings
@@ -106,6 +107,7 @@ bash dnsmasq/install.sh     # Just DNS setup
 bash caddy/install.sh       # Just web server
 bash claude/install.sh      # Just Claude Code config
 bash cpanel/install.sh      # Just Claude Panel TUI (config symlink + bun install)
+bash solo/install.sh        # Just solo TUI (configs symlink + bun install)
 bash neovim/install.sh      # Just Neovim config
 bash tmux/install.sh        # Just tmux config
 bash vscode/install.sh      # Just VS Code settings
@@ -133,23 +135,25 @@ Each directory has its own README with detailed documentation:
 - [npm/README.md](npm/README.md) - NPM configuration
 - [rectangle/README.md](rectangle/README.md) - Window manager
 - [ripgrep/README.md](ripgrep/README.md) - Ripgrep
+- [solo/README.md](solo/README.md) - Process-runner TUI (per-cwd command set)
 - [ssh/README.md](ssh/README.md) - SSH configuration
 - [tmux/README.md](tmux/README.md) - Terminal multiplexer
 - [vscode/README.md](vscode/README.md) - VS Code settings
 
 ## Key Commands
 
-| Command          | Description                       |
-| ---------------- | --------------------------------- |
-| `concierge add`  | Add current project as a dev site |
-| `concierge list` | List all dev sites                |
-| `z <dir>`        | Smart directory jump              |
-| `Ctrl+R`         | Fuzzy history search              |
+| Command          | Description                        |
+| ---------------- | ---------------------------------- |
+| `concierge add`  | Add current project as a dev site  |
+| `concierge list` | List all dev sites                 |
+| `z <dir>`        | Smart directory jump               |
+| `Ctrl+R`         | Fuzzy history search               |
 | `nvim`           | Open Neovim (plugins auto-install) |
-| `git save "msg"` | Quick commit                      |
-| `git sync`       | Fetch and rebase on upstream      |
-| `git undo`       | Undo last commit                  |
-| `cpanel`         | TUI for everything in `~/.claude` |
+| `git save "msg"` | Quick commit                       |
+| `git sync`       | Fetch and rebase on upstream       |
+| `git undo`       | Undo last commit                   |
+| `cpanel`         | TUI for everything in `~/.claude`  |
+| `solo`           | Per-cwd process-runner TUI         |
 
 ## Contributing
 

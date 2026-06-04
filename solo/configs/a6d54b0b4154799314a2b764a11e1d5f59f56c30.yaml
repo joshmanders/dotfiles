@@ -1,0 +1,19 @@
+directory: /Users/josh/Code/joshmanders/ambitiousfounder.com
+commands:
+  - name: Vite
+    command: npx vite
+    autostart: true
+    restart: on-fail
+  - name: Queue
+    command: php artisan queue:listen --tries=1 --timeout=0
+    autostart: true
+    restart: on-fail
+  - name: Scheduler
+    command: php artisan schedule:work
+    autostart: true
+    restart: on-fail
+  - name: Logs
+    command: tail -n 100 -f laravel.log
+    cwd: storage/logs/
+    autostart: true
+    restart: on-fail

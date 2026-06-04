@@ -80,9 +80,9 @@ Custom shell scripts in `~/.files/bin/` for common development workflows.
 
 ## Claude Internals
 
-| Script   | Usage    | Purpose                                                                       |
-| -------- | -------- | ----------------------------------------------------------------------------- |
-| `cpanel` | `cpanel` | TUI for everything in `~/.claude/` — browse, search, mine, and clean         |
+| Script   | Usage    | Purpose                                                              |
+| -------- | -------- | -------------------------------------------------------------------- |
+| `cpanel` | `cpanel` | TUI for everything in `~/.claude/` — browse, search, mine, and clean |
 
 **cpanel:** React/Bun TUI built on `@opentui/react`. Source lives in `~/.files/cpanel/`; the `bin/` entry is a thin bash wrapper that `exec`s `bun run`. Requires `bun` (already in Brewfile). Full docs at `~/.files/cpanel/README.md`.
 
@@ -92,15 +92,24 @@ Config: `~/.config/cpanel/config.json` (symlinked from `~/.files/cpanel/config.j
 
 Safety: all destructive actions go through a confirm dialog with the exact path + size before deleting.
 
+## Per-cwd Process Runner
+
+| Script | Usage               | Purpose                                                           |
+| ------ | ------------------- | ----------------------------------------------------------------- |
+| `solo` | `solo`              | Launch the TUI for the current directory                          |
+| `solo` | `solo rekey [hash]` | Rename configs to match their `directory:` field (all if no hash) |
+
+**solo:** React/Bun TUI on `@opentui/react` + `node-pty`. Source at `~/.files/solo/`; the `bin/` entry is a thin bash wrapper. Each cwd has its own YAML at `~/.config/solo/<sha1(cwd)>.yaml` (symlinked from `~/.files/solo/configs/`), listing the commands to run for that project — dev server, queue worker, log tail, etc. Tabbed UI: one tab per command, full-width output pane per tab, start/stop/restart/clear from the bottom bar. First run in a new directory opens the **Add command** wizard. Full docs at `~/.files/solo/README.md`.
+
 ## tmux Session Management
 
-| Script | Usage                          | Purpose                                          |
-| ------ | ------------------------------ | ------------------------------------------------ |
-| `mux`  | `mux`                              | Create/attach session for CWD                |
-| `mux`  | `mux my-session`                   | Override session name                        |
-| `mux`  | `mux list`                         | List all registered sessions                 |
-| `mux`  | `mux show [session:window]`        | Show pane details (defaults to CWD)          |
-| `mux`  | `mux copy session:window`          | Copy pane layout from source to CWD          |
+| Script | Usage                       | Purpose                             |
+| ------ | --------------------------- | ----------------------------------- |
+| `mux`  | `mux`                       | Create/attach session for CWD       |
+| `mux`  | `mux my-session`            | Override session name               |
+| `mux`  | `mux list`                  | List all registered sessions        |
+| `mux`  | `mux show [session:window]` | Show pane details (defaults to CWD) |
+| `mux`  | `mux copy session:window`   | Copy pane layout from source to CWD |
 
 Projects are grouped by parent directory (e.g. `~/Code/primcloud/platform` → session `primcloud`, window `platform`). Pane layouts and running commands are saved automatically and restored on next `mux`.
 

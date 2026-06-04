@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+#
+# solo - process-runner TUI
+#
+# Per-directory YAML config in ~/.config/solo/ lists the commands to run.
+# Spawn each one in a PTY, switch between them in the TUI.
+
+set -euo pipefail
+
+DOTFILES="${DOTFILES:-$HOME/.files}"
+exec bun run "$DOTFILES/solo/src/index.tsx" "$@"

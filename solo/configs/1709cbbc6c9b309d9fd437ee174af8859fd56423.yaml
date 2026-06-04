@@ -1,0 +1,31 @@
+directory: /Users/josh/Code/primcloud/primcloud
+commands:
+  - name: Vite
+    command: npx vite
+    cwd: platform/
+    autostart: true
+    restart: on-fail
+  - name: Queue
+    command: php artisan queue:listen --tries=1 --timeout=0
+    cwd: platform
+    autostart: true
+    restart: on-fail
+  - name: Reverb
+    command: php artisan reverb:start
+    cwd: platform
+    autostart: true
+    restart: on-fail
+  - name: Scheduler
+    command: php artisan schedule:work
+    cwd: platform
+    autostart: true
+    restart: on-fail
+  - name: Logs
+    command: tail -f -n 100 laravel.log
+    cwd: platform/storage/logs/
+    autostart: true
+    restart: on-fail
+  - name: Agent
+    command: php artisan agent:listen
+    cwd: platform
+    restart: on-fail

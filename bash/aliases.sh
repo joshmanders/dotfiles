@@ -30,7 +30,6 @@ alias tinker='artisan tinker'
 alias fresh='artisan migrate:fresh'
 alias migrate='artisan migrate'
 alias rollback='artisan migrate:rollback'
-alias solo='artisan solo'
 
 # Git shortcuts
 alias wip='git save "WIP"'
