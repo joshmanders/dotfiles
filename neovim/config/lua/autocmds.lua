@@ -45,6 +45,20 @@ autocmd({ "BufRead", "BufNewFile" }, {
   end,
 })
 
+-- When launched on a directory, cd into it, show an empty buffer, and open lazygit
+autocmd("VimEnter", {
+  group = augroup("dir_to_empty_buffer", { clear = true }),
+  callback = function()
+    if vim.fn.argc() ~= 1 then return end
+    local arg = vim.fn.argv(0)
+    if vim.fn.isdirectory(arg) == 0 then return end
+    vim.cmd("cd " .. vim.fn.fnameescape(arg))
+    vim.cmd("enew")
+    vim.cmd("bd #")
+    vim.cmd("Lazygit")
+  end,
+})
+
 -- Suppress neovim defaults.lua "Did not detect DSR response" warning.
 -- Fired before user config loads, so we clear it right after UI attaches.
 autocmd("UIEnter", {

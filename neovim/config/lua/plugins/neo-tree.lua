@@ -25,6 +25,7 @@ return {
     filesystem = {
       use_libuv_file_watcher = true,
       follow_current_file = { enabled = true },
+      hijack_netrw_behavior = "disabled",
       filtered_items = {
         hide_dotfiles = false,
         hide_gitignored = false,
@@ -38,12 +39,4 @@ return {
       },
     },
   },
-  init = function()
-    vim.api.nvim_create_autocmd("VimEnter", {
-      callback = function()
-        vim.cmd("Neotree show")
-        vim.cmd("wincmd p")
-      end,
-    })
-  end,
 }

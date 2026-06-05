@@ -90,7 +90,7 @@ map("n", "<leader>cc", "<cmd>cclose<cr>", { desc = "Close quickfix list" })
 map("n", "<leader>u", "<cmd>UndotreeToggle<cr>", { desc = "Toggle undotree" })
 
 -- Lazygit
-map("n", "<leader>g", function()
+vim.api.nvim_create_user_command("Lazygit", function()
   local buf = vim.api.nvim_create_buf(false, true)
   local width = math.floor(vim.o.columns * 0.9)
   local height = math.floor(vim.o.lines * 0.9)
@@ -109,4 +109,5 @@ map("n", "<leader>g", function()
     end,
   })
   vim.cmd("startinsert")
-end, { desc = "Open lazygit" })
+end, {})
+map("n", "<leader>g", "<cmd>Lazygit<cr>", { desc = "Open lazygit" })
