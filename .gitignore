@@ -16,3 +16,7 @@ tmux/sessions.json
 
 # Neovim plugin lock file (machine-specific)
 neovim/config/lazy-lock.json
+
+# Solo per-cwd configs (machine-specific)
+solo/configs/*
+!solo/configs/.gitkeep
