@@ -121,6 +121,7 @@ Install via Homebrew (included in `homebrew/bundle`):
 | vim-tmux-navigator  | Seamless tmux pane navigation             |
 | undotree            | Undo history visualization                |
 | todo-comments.nvim  | Highlight TODO/FIXME/NOTE                 |
+| render-markdown.nvim| Inline markdown rendering                 |
 | laravel.nvim        | Laravel artisan, routes, resources        |
 
 ## LSP Servers
