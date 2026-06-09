@@ -19,10 +19,13 @@ export function ConfirmDialog({ message, detail, onConfirm, onCancel }: Props) {
     <box
       style={{
         position: "absolute",
-        top: 4,
-        left: 4,
-        right: 4,
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
         flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
         borderStyle: "double",
         border: true,
         borderColor: "#FF5555",

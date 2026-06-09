@@ -1,8 +1,15 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { useKeyboard, useRenderer } from "@opentui/react";
 import { StatusBar } from "./components/StatusBar.js";
 import { ConfirmDialog } from "./components/ConfirmDialog.js";
 import { Quitting } from "./components/Quitting.js";
+import { Toast, type ToastKind } from "./components/Toast.js";
 import { Dashboard } from "./panels/Dashboard.js";
 import { Wizard } from "./panels/Wizard.js";
 import {
@@ -53,6 +60,21 @@ export function App() {
   >([]);
   const [quitting, setQuitting] = useState(false);
   const [quitSnapshots, setQuitSnapshots] = useState<ProcSnapshot[]>([]);
+  const [toast, setToast] = useState<{
+    message: string;
+    kind: ToastKind;
+  } | null>(null);
+  const toastTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(
+    undefined,
+  );
+  const showToast = useCallback(
+    (message: string, kind: ToastKind = "info", durationMs = 2000) => {
+      if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
+      setToast({ message, kind });
+      toastTimerRef.current = setTimeout(() => setToast(null), durationMs);
+    },
+    [],
+  );
 
   useEffect(() => {
     const known = new Set<string>();
@@ -104,8 +126,12 @@ export function App() {
         return next;
       });
       setView({ kind: "dashboard" });
+      showToast(
+        replaceName ? `Updated ${cfg.name}` : `Added ${cfg.name}`,
+        "success",
+      );
     },
-    [],
+    [showToast],
   );
 
   const handleDelete = useCallback(
@@ -127,25 +153,40 @@ export function App() {
     setQuitting(true);
   }, [pm]);
 
+  const handleWizardCancel = useCallback(
+    (wasDirty: boolean) => {
+      if (config.commands.length === 0) quit();
+      else setView({ kind: "dashboard" });
+      // Only surface a toast when something was actually discarded. A clean
+      // cancel needs no announcement — the form closing is feedback enough.
+      if (wasDirty) showToast("Changes discarded", "warn");
+    },
+    [config.commands.length, quit, showToast],
+  );
+
+  const exitedRef = useRef(false);
+  const finishQuit = useCallback(() => {
+    if (exitedRef.current) return;
+    exitedRef.current = true;
+    try {
+      renderer?.destroy();
+    } catch {}
+    setImmediate(() => process.exit(0));
+  }, [renderer]);
+
   useEffect(() => {
     if (!quitting) return;
     const sync = () => setQuitSnapshots(pm.snapshot());
     pm.on("change", sync);
-    let done = false;
-    const finish = () => {
-      if (done) return;
-      done = true;
-      pm.off("change", sync);
-      try {
-        renderer?.destroy();
-      } catch {}
-      setImmediate(() => process.exit(0));
-    };
-    pm.shutdown().finally(finish);
+    pm.shutdown();
+    // Hard backstop — if a process refuses to die and stays in "running"
+    // forever, the visual queue can't drain. Exit anyway after 5s.
+    const hardTimeout = setTimeout(finishQuit, 5000);
     return () => {
+      clearTimeout(hardTimeout);
       pm.off("change", sync);
     };
-  }, [quitting, pm, renderer]);
+  }, [quitting, pm, finishQuit]);
 
   useKeyboard((k) => {
     if (confirm || quitting) return;
@@ -170,7 +211,7 @@ export function App() {
   if (quitting) {
     return (
       <box style={{ flexDirection: "column", width: "100%", height: "100%" }}>
-        <Quitting snapshots={quitSnapshots} />
+        <Quitting snapshots={quitSnapshots} onDone={finishQuit} />
       </box>
     );
   }
@@ -194,10 +235,8 @@ export function App() {
           active={!confirm}
           initial={view.initial}
           onSubmit={handleWizardSubmit}
-          onCancel={() => {
-            if (config.commands.length === 0) quit();
-            else setView({ kind: "dashboard" });
-          }}
+          onCancel={handleWizardCancel}
+          requestConfirm={requestConfirm}
         />
       )}
       <StatusBar
@@ -217,6 +256,7 @@ export function App() {
           onCancel={() => setConfirm(null)}
         />
       ) : null}
+      {toast ? <Toast message={toast.message} kind={toast.kind} /> : null}
     </box>
   );
 }

@@ -5,7 +5,7 @@ import { OutputPane } from "../components/OutputPane.js";
 import type { CommandConfig, SoloConfig } from "../lib/config.js";
 import type { ProcessManager, ProcSnapshot } from "../lib/process.js";
 import { openInEditor } from "../lib/editor.js";
-import { pathForCwd } from "../lib/config.js";
+import { pathForCwd, resolveCommand } from "../lib/config.js";
 
 interface Props {
   active: boolean;
@@ -87,7 +87,7 @@ export function Dashboard({
     } else {
       bindings.push(
         ["tab", "Next"],
-        ["⏎", "Start"],
+        ["s", "Start"],
         ["c", "Clear"],
         ["e", "Edit"],
         ["d", "Delete"],
@@ -120,9 +120,9 @@ export function Dashboard({
     else if (!cur) return;
     else if (n === "return" || n === "enter" || n === "space") {
       if (isRunning && cur.cfg.interactive) setStdinFocused(true);
-      else if (!isRunning) pm.start(cur.cfg.name);
-    } else if (n === "s" && isRunning) {
-      pm.stop(cur.cfg.name);
+    } else if (n === "s") {
+      if (isRunning) pm.stop(cur.cfg.name);
+      else pm.start(cur.cfg.name);
     } else if (n === "r") {
       pm.restart(cur.cfg.name);
     } else if (n === "c") {
@@ -159,16 +159,17 @@ export function Dashboard({
   const statusLine = (() => {
     if (!cur) return "";
     if (cur.proc.spawnError) return `Spawn failed: ${cur.proc.spawnError}`;
+    const display = resolveCommand(cur.cfg);
     switch (cur.proc.status) {
       case "running":
-        return `Running: ${cur.cfg.command}`;
+        return `Running: ${display}`;
       case "exited":
-        return `Stopped (exit ${cur.proc.exitCode ?? 0}): ${cur.cfg.command}`;
+        return `Stopped (exit ${cur.proc.exitCode ?? 0}): ${display}`;
       case "failed":
-        return `Failed (exit ${cur.proc.exitCode ?? "?"}): ${cur.cfg.command}`;
+        return `Failed (exit ${cur.proc.exitCode ?? "?"}): ${display}`;
       case "idle":
       default:
-        return `Stopped: ${cur.cfg.command}`;
+        return `Stopped: ${display}`;
     }
   })();
 
