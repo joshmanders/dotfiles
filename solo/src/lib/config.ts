@@ -6,9 +6,20 @@ import { parse, stringify } from "yaml";
 
 export type RestartPolicy = "never" | "on-fail" | "always";
 
+export interface TailConfig {
+  // File to tail. Resolved relative to the command's cwd if not absolute.
+  file: string;
+  // -n flag. Omitted from the tail invocation if not set.
+  lines?: number;
+  // --retry: keep trying if the file doesn't exist yet.
+  retry?: boolean;
+}
+
 export interface CommandConfig {
   name: string;
-  command: string;
+  // Exactly one of command / tail is required. Validated on load.
+  command?: string;
+  tail?: TailConfig;
   cwd?: string;
   autostart?: boolean;
   env?: Record<string, string>;
@@ -50,9 +61,36 @@ export function loadConfig(cwd: string): SoloConfig | null {
     directory: parsed.directory ?? cwd,
     commands: parsed.commands.filter(
       (c): c is CommandConfig =>
-        !!c && typeof c.name === "string" && typeof c.command === "string",
+        !!c &&
+        typeof c.name === "string" &&
+        // exactly one of command / tail.file must be present
+        (typeof c.command === "string") !==
+          (!!c.tail && typeof c.tail.file === "string"),
     ),
   };
+}
+
+// Build the shell-ready command line for an entry. `tail` config is expanded
+// to a `tail` invocation; otherwise the raw `command` string is used.
+export function resolveCommand(cfg: CommandConfig): string {
+  if (cfg.tail) return buildTailCommand(cfg.tail);
+  return cfg.command ?? "";
+}
+
+export function buildTailCommand(t: TailConfig): string {
+  // -F is always used: it follows by name and reopens on rotation/truncate,
+  // which is what you want for log tailing in every realistic scenario.
+  const parts = ["tail", "-F"];
+  if (typeof t.lines === "number") parts.push("-n", String(t.lines));
+  if (t.retry) parts.push("--retry");
+  // Quote the file path defensively in case of spaces.
+  parts.push(shellQuote(t.file));
+  return parts.join(" ");
+}
+
+function shellQuote(s: string): string {
+  if (/^[A-Za-z0-9_./-]+$/.test(s)) return s;
+  return `'${s.replace(/'/g, `'\\''`)}'`;
 }
 
 export function saveConfig(config: SoloConfig): void {

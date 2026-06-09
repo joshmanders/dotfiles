@@ -1,8 +1,9 @@
 import { EventEmitter } from "node:events";
-import { readSync } from "node:fs";
+import { readSync, truncateSync } from "node:fs";
+import { isAbsolute, join } from "node:path";
 import { spawn as ptySpawn } from "node-pty";
 import type { IPty } from "node-pty";
-import type { CommandConfig } from "./config.js";
+import { resolveCommand, type CommandConfig } from "./config.js";
 import { AnsiStream, type StyledLine } from "./ansi.js";
 
 // node-pty wraps the master fd in tty.ReadStream, which Bun's runtime fails
@@ -17,6 +18,32 @@ interface PtyInternal extends IPty {
 const POLL_INTERVAL_MS = 15;
 const READ_BUF_SIZE = 16384;
 const MAX_LINES = 5000;
+
+// node-pty's default kill sends SIGHUP to the shell's PID. With `bash -lc cmd`,
+// signals don't always propagate to the actual command (npm, php, node, etc.) —
+// the shell catches/ignores SIGHUP, or the child runs in its own session.
+// node-pty puts the child in a new session via setsid, so the pty pid is the
+// process-group leader. Sending SIGTERM to -pid hits every process in the
+// group, which is what you want when the user hits "stop" or "restart".
+function killTree(pty: IPty): void {
+  const pid = pty.pid;
+  try {
+    process.kill(-pid, "SIGTERM");
+  } catch {
+    try {
+      pty.kill();
+    } catch {}
+  }
+  // Escalate to SIGKILL if anything is still alive after 2s.
+  setTimeout(() => {
+    try {
+      process.kill(-pid, 0);
+      process.kill(-pid, "SIGKILL");
+    } catch {
+      // ESRCH — group already gone.
+    }
+  }, 2000);
+}
 
 export type ProcStatus = "idle" | "running" | "exited" | "failed";
 
@@ -44,6 +71,8 @@ interface ProcEntry {
   manualStop: boolean;
   spawnError?: string;
   pollTimer?: ReturnType<typeof setInterval>;
+  // One-shot callback fired after the next exit finalizes (used by restart).
+  onNextExit?: () => void;
 }
 
 export class ProcessManager extends EventEmitter {
@@ -77,9 +106,7 @@ export class ProcessManager extends EventEmitter {
     if (!entry) return;
     if (entry.pty) {
       entry.manualStop = true;
-      try {
-        entry.pty.kill();
-      } catch {}
+      killTree(entry.pty);
     }
     this.procs.delete(name);
     this.emit("change");
@@ -96,9 +123,10 @@ export class ProcessManager extends EventEmitter {
       : this.baseDir;
     const env = { ...process.env, ...(cfg.env ?? {}) };
     const shell = process.env.SHELL || "/bin/bash";
+    const cmd = resolveCommand(cfg);
     let pty: IPty;
     try {
-      pty = ptySpawn(shell, ["-lc", cfg.command], {
+      pty = ptySpawn(shell, ["-lc", cmd], {
         name: "xterm-256color",
         cols: 120,
         rows: 30,
@@ -118,8 +146,11 @@ export class ProcessManager extends EventEmitter {
     entry.manualStop = false;
     entry.spawnError = undefined;
 
-    // Detach node-pty's broken socket wrapper before it errors and closes
-    // the fd. We read the master fd ourselves via fs.readSync polling.
+    // node-pty's tty.ReadStream wrapper around the master fd doesn't work
+    // under Bun (read returns EAGAIN, the stream gives up, no 'data' events
+    // ever fire). Workaround: detach the wrapper and poll the raw fd. Side
+    // effect — the broken wrapper is also what fires `pty.onExit`, so we
+    // detect process death from polling errors (EBADF/EIO) instead.
     const ptyInternal = pty as PtyInternal;
     try {
       ptyInternal._socket?.removeAllListeners?.();
@@ -134,65 +165,73 @@ export class ProcessManager extends EventEmitter {
           if (n > 0) this.appendOutput(entry, buf.toString("utf8", 0, n));
         } catch (err) {
           const code = (err as NodeJS.ErrnoException).code;
-          // EAGAIN — no data this tick. EBADF/EIO — fd closed (process gone).
-          if (code !== "EAGAIN") {
-            if (entry.pollTimer) clearInterval(entry.pollTimer);
-            entry.pollTimer = undefined;
-          }
+          // EAGAIN — no data this tick. Anything else means the fd is gone,
+          // which means the process is gone.
+          if (code !== "EAGAIN") this.finalizeExit(entry, name);
         }
       }, POLL_INTERVAL_MS);
     }
-    pty.onExit(({ exitCode }) => {
-      if (entry.pollTimer) {
-        clearInterval(entry.pollTimer);
-        entry.pollTimer = undefined;
-      }
-      entry.exitCode = exitCode;
-      entry.pty = undefined;
-      entry.pid = undefined;
-      const wasManual = entry.manualStop;
-      entry.manualStop = false;
-      entry.status = exitCode === 0 ? "exited" : "failed";
-      this.emit("change");
-
-      if (wasManual) return;
-      const policy = entry.cfg.restart ?? "never";
-      const shouldRestart =
-        policy === "always" || (policy === "on-fail" && exitCode !== 0);
-      if (shouldRestart) {
-        entry.restarts++;
-        setTimeout(() => this.start(name), 300);
-      }
-    });
 
     this.emit("change");
+  }
+
+  // Triggered when polling detects the pty fd is dead. Cleans up the entry,
+  // emits state, and routes to either an explicit one-shot callback (restart),
+  // an auto-restart per the config policy, or just leaves it stopped.
+  private finalizeExit(entry: ProcEntry, name: string): void {
+    if (!entry.pty) return;
+    if (entry.pollTimer) {
+      clearInterval(entry.pollTimer);
+      entry.pollTimer = undefined;
+    }
+    entry.pty = undefined;
+    entry.pid = undefined;
+    const wasManual = entry.manualStop;
+    entry.manualStop = false;
+    // We can't read the real exit code from a dead fd, so infer: manual stop
+    // counts as clean, anything else is treated as failure.
+    entry.exitCode = wasManual ? 0 : 1;
+    entry.status = wasManual ? "exited" : "failed";
+    this.emit("change");
+
+    if (entry.onNextExit) {
+      const cb = entry.onNextExit;
+      entry.onNextExit = undefined;
+      cb();
+      return;
+    }
+
+    if (wasManual) return;
+    const policy = entry.cfg.restart ?? "never";
+    const shouldRestart =
+      policy === "always" || (policy === "on-fail" && entry.exitCode !== 0);
+    if (shouldRestart) {
+      entry.restarts++;
+      setTimeout(() => this.start(name), 300);
+    }
   }
 
   stop(name: string): void {
     const entry = this.procs.get(name);
     if (!entry?.pty) return;
     entry.manualStop = true;
-    try {
-      entry.pty.kill();
-    } catch {}
+    killTree(entry.pty);
   }
 
   restart(name: string): void {
     const entry = this.procs.get(name);
     if (!entry) return;
-    if (entry.pty) {
-      entry.manualStop = true;
-      const once = () => {
-        this.off("change", once);
-        if (!this.procs.get(name)?.pty) this.start(name);
-      };
-      this.on("change", once);
-      try {
-        entry.pty.kill();
-      } catch {}
-    } else {
+    // Wipe scrollback immediately so the user sees a fresh buffer instead of
+    // old output mixed with new on the next run.
+    entry.lines = [];
+    entry.parser = new AnsiStream();
+    if (!entry.pty) {
       this.start(name);
+      return;
     }
+    entry.manualStop = true;
+    entry.onNextExit = () => this.start(name);
+    killTree(entry.pty);
   }
 
   writeStdin(name: string, data: string): void {
@@ -212,6 +251,18 @@ export class ProcessManager extends EventEmitter {
   clear(name: string): void {
     const entry = this.procs.get(name);
     if (!entry) return;
+    // For tail-typed processes, "clear" means clear the log file itself —
+    // truncating it lets `tail -f` keep its fd and show fresh output. The
+    // buffer is also cleared.
+    if (entry.cfg.tail) {
+      const target = this.resolveTailPath(entry.cfg);
+      try {
+        truncateSync(target, 0);
+      } catch {
+        // File may not exist (with retry) or be unreadable; the buffer wipe
+        // still gives the user a fresh view.
+      }
+    }
     entry.lines = [];
     entry.parser = new AnsiStream();
     this.emit("change");
@@ -247,15 +298,26 @@ export class ProcessManager extends EventEmitter {
       };
       for (const entry of live) {
         entry.manualStop = true;
-        entry.pty!.onExit(() => done());
-        try {
-          entry.pty!.kill();
-        } catch {
-          done();
-        }
+        entry.onNextExit = done;
+        killTree(entry.pty!);
       }
+      // Backstop in case finalizeExit doesn't fire for one of them.
       setTimeout(resolve, 2000);
     });
+  }
+
+  // Resolve a tail target's absolute path, mirroring how `start` resolves the
+  // process cwd: absolute paths win; relative paths resolve against the
+  // entry's cwd, which itself resolves against the manager's baseDir.
+  private resolveTailPath(cfg: CommandConfig): string {
+    const file = cfg.tail!.file;
+    if (isAbsolute(file)) return file;
+    const cwd = cfg.cwd
+      ? isAbsolute(cfg.cwd)
+        ? cfg.cwd
+        : join(this.baseDir, cfg.cwd)
+      : this.baseDir;
+    return join(cwd, file);
   }
 
   private appendOutput(entry: ProcEntry, data: string): void {
