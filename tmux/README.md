@@ -101,6 +101,8 @@ Once inside a project window, split it up:
 ```
 Ctrl+; \             Split side-by-side
 Ctrl+; Enter         Split top/bottom
+Ctrl+; Left/Right    Split horizontally, before/after current pane
+Ctrl+; Up/Down       Split vertically, before/after current pane
 ```
 
 ### Moving between panes
@@ -134,8 +136,23 @@ Or drag pane borders with the mouse.
 
 ```
 Ctrl+; z             Zoom — toggle a pane fullscreen (again to restore)
-Ctrl+; x             Close the current pane
-Ctrl+; c             New empty window (tab) in current session
+Ctrl+; w             Close the current pane
+Ctrl+; t             Prompt for a tab name, opens it (mux-persisted)
+Ctrl+; W             Close the current tab (mux-persisted)
+```
+
+Tabs created with `Ctrl+; t` are tracked by `mux` — they're restored next time
+the tmux server restarts. Running `mux` from a subdirectory of an already-
+attached session opens a tab automatically rather than starting a new session,
+so `cd` + `mux` from a sibling package lands you in a new tab inside the
+existing project.
+
+Inspect or script tabs from the shell:
+
+```
+mux tab <name> [path]   Create or switch to a tab in the current session
+mux tab:show            List tabs in the current session
+mux tab:kill <name>     Remove a tab from the registry (kills it if running)
 ```
 
 ### Leaving and returning
@@ -156,21 +173,24 @@ Scroll up with mouse wheel or trackpad. To copy text:
 
 | Binding              | Action                |
 | -------------------- | --------------------- |
-| `Ctrl+; \`           | Split side-by-side    |
-| `Ctrl+; Enter`       | Split top/bottom      |
-| `Ctrl+h/j/k/l`       | Navigate panes        |
-| `Ctrl+; -/=/[/]`     | Resize panes          |
-| `Ctrl+; Delete`      | Equalize panes        |
-| `Ctrl+; z`           | Zoom pane             |
-| `Ctrl+; x`           | Close pane            |
-| `Ctrl+; c`           | New window (tab)      |
-| `Ctrl+; 1-9`         | Jump to window number |
-| `Ctrl+; n/p`         | Next/previous window  |
-| `Ctrl+; s`           | Session picker        |
-| `Ctrl+; d`           | Detach session        |
-| `Ctrl+; v`           | Enter copy mode       |
-| `Ctrl+; r`           | Reload config         |
-| `Ctrl+; Ctrl+k`      | Clear screen + scrollback |
+| `Ctrl+; \`             | Split side-by-side                |
+| `Ctrl+; Enter`         | Split top/bottom                  |
+| `Ctrl+; Left/Right`    | Split horizontal, before/after    |
+| `Ctrl+; Up/Down`       | Split vertical, before/after      |
+| `Ctrl+h/j/k/l`         | Navigate panes                    |
+| `Ctrl+; -/=/[/]`       | Resize panes                      |
+| `Ctrl+; Delete`        | Equalize panes                    |
+| `Ctrl+; z`             | Zoom pane                         |
+| `Ctrl+; w`             | Close pane                        |
+| `Ctrl+; t`             | New tab (mux-persisted, named)    |
+| `Ctrl+; W`             | Close tab (mux-persisted)         |
+| `Ctrl+; 1-9`           | Jump to window number             |
+| `Ctrl+; n/p`           | Next/previous window              |
+| `Ctrl+; s`             | Session picker                    |
+| `Ctrl+; d`             | Detach session                    |
+| `Ctrl+; v`             | Enter copy mode                   |
+| `Ctrl+; r`             | Reload config                     |
+| `Ctrl+; Ctrl+k`        | Clear screen + scrollback         |
 
 ## Plugins
 

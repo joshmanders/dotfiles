@@ -103,15 +103,19 @@ Safety: all destructive actions go through a confirm dialog with the exact path 
 
 ## tmux Session Management
 
-| Script | Usage                       | Purpose                             |
-| ------ | --------------------------- | ----------------------------------- |
-| `mux`  | `mux`                       | Create/attach session for CWD       |
-| `mux`  | `mux my-session`            | Override session name               |
-| `mux`  | `mux list`                  | List all registered sessions        |
-| `mux`  | `mux show [session:window]` | Show pane details (defaults to CWD) |
-| `mux`  | `mux copy session:window`   | Copy pane layout from source to CWD |
+| Script | Usage                       | Purpose                                            |
+| ------ | --------------------------- | -------------------------------------------------- |
+| `mux`  | `mux`                       | Create/attach session for CWD                      |
+| `mux`  | `mux my-session`            | Override session name                              |
+| `mux`  | `mux list`                  | List all registered sessions                       |
+| `mux`  | `mux show [session:window]` | Show pane details (defaults to CWD)                |
+| `mux`  | `mux copy session:window`   | Copy pane layout from source to CWD                |
+| `mux`  | `mux tab <name> [path]`     | Create/switch to a named tab in current session    |
+| `mux`  | `mux tab:show [session]`    | List tabs in a session (defaults to current)       |
+| `mux`  | `mux tab:kill <name>`       | Remove a tab from registry (kills window if alive) |
+| `mux`  | `mux tab:at <path>`         | Create a tab from a path; name = basename of path  |
 
-Projects are grouped by parent directory (e.g. `~/Code/primcloud/platform` → session `primcloud`, window `platform`). Pane layouts and running commands are saved automatically and restored on next `mux`.
+Projects are grouped by parent directory (e.g. `~/Code/primcloud/platform` → session `primcloud`, window `platform`). Pane layouts and running commands are saved automatically and restored on next `mux`. Each session has a primary window (the project itself) plus any tabs the user adds — tabs persist across tmux restarts the same way panes do. Running `mux` from a subdirectory of an already-attached session opens a tab automatically instead of creating a new session.
 
 ## Not Documented
 
