@@ -40,6 +40,7 @@ Install via Homebrew (included in `homebrew/bundle`):
 | `jk`               | Exit insert mode      |
 | `<leader>s`        | Save file             |
 | `<leader>w`        | Close buffer          |
+| `<leader>W`        | Close all buffers     |
 | `<leader>q`        | Quit all              |
 | `Ctrl+h/j/k/l`    | Navigate windows/tmux |
 | `[b` / `]b`        | Previous/next buffer  |

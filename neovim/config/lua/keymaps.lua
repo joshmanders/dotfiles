@@ -59,6 +59,33 @@ map("n", "<leader>w", function()
   end
 end, { desc = "Close buffer" })
 
+map("n", "<leader>W", function()
+  local bufs = vim.tbl_filter(function(b) return vim.bo[b].buflisted end, vim.api.nvim_list_bufs())
+  local has_modified = false
+  for _, b in ipairs(bufs) do
+    if vim.bo[b].modified then has_modified = true; break end
+  end
+
+  local function close_all(force)
+    vim.cmd("enew")
+    for _, b in ipairs(bufs) do
+      if vim.api.nvim_buf_is_valid(b) then
+        vim.api.nvim_buf_delete(b, { force = force })
+      end
+    end
+  end
+
+  if has_modified then
+    vim.ui.select({ "Save all", "Discard all", "Cancel" }, { prompt = "Unsaved changes:" }, function(choice)
+      if not choice or choice == "Cancel" then return end
+      if choice == "Save all" then vim.cmd("wall") end
+      close_all(true)
+    end)
+  else
+    close_all(false)
+  end
+end, { desc = "Close all buffers" })
+
 -- Move lines in visual mode
 map("v", "J", ":m '>+1<cr>gv=gv", { desc = "Move selection down" })
 map("v", "K", ":m '<-2<cr>gv=gv", { desc = "Move selection up" })
