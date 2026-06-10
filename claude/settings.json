@@ -5,7 +5,8 @@
     "DOTFILES": "/Users/josh/.files",
     "BASH_ENV": "/Users/josh/.files/bash/bashrc",
     "DISABLE_AUTOUPDATER": "1",
-    "CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY": "1"
+    "CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY": "1",
+    "CLAUDE_CODE_ENABLE_AWAY_SUMMARY": "0"
   },
   "attribution": {
     "commit": "Co-Authored-By: Dunnbot <dunnbot@joshmanders.com>",
@@ -13,13 +14,7 @@
   },
   "includeGitInstructions": true,
   "permissions": {
-    "defaultMode": "bypassPermissions",
-    "additionalDirectories": [
-      "../agent",
-      "../ingress",
-      "../placeholder",
-      "../builder"
-    ]
+    "defaultMode": "bypassPermissions"
   },
   "enableAllProjectMcpServers": false,
   "disabledMcpjsonServers": [],
