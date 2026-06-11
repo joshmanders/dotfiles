@@ -28,6 +28,7 @@
 #   bash lazygit/install.sh
 #   bash neovim/install.sh
 #   bash tmux/install.sh
+#   bash macos/install.sh
 
 set -euo pipefail
 
@@ -79,6 +80,7 @@ source "$DOTFILES/vscode/install.sh"
 source "$DOTFILES/lazygit/install.sh"
 source "$DOTFILES/neovim/install.sh"
 source "$DOTFILES/tmux/install.sh"
+source "$DOTFILES/macos/install.sh"
 
 echo ""
 echo "╔═══════════════════════════════════════════════════════════════════╗"

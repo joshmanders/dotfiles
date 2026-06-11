@@ -70,6 +70,7 @@ concierge add
 ├── homebrew/          # Package management
 ├── hyperkey/          # Hyperkey config
 ├── lib/               # Installer utilities
+├── macos/             # macOS system preferences
 ├── neovim/            # Neovim configuration
 ├── npm/               # NPM configuration
 ├── rectangle/         # Window manager config
@@ -111,6 +112,7 @@ bash solo/install.sh        # Just solo TUI (configs symlink + bun install)
 bash neovim/install.sh      # Just Neovim config
 bash tmux/install.sh        # Just tmux config
 bash vscode/install.sh      # Just VS Code settings
+bash macos/install.sh       # Just macOS system preferences
 ```
 
 ## Documentation
@@ -130,6 +132,7 @@ Each directory has its own README with detailed documentation:
 - [homebrew/README.md](homebrew/README.md) - Package management
 - [hyperkey/README.md](hyperkey/README.md) - Hyperkey
 - [lib/README.md](lib/README.md) - Installer utilities
+- [macos/README.md](macos/README.md) - macOS system preferences
 - [neovim/README.md](neovim/README.md) - Neovim configuration
 - [lazygit/README.md](lazygit/README.md) - Lazygit
 - [npm/README.md](npm/README.md) - NPM configuration
