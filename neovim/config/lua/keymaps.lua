@@ -104,9 +104,6 @@ map("n", "<Esc>", "<cmd>nohlsearch<cr>", { desc = "Clear search highlight" })
 -- File explorer
 map("n", "<leader>e", "<cmd>Neotree toggle<cr>", { desc = "Toggle file explorer" })
 
--- Telescope
-map("n", "<leader>p", "<cmd>Telescope find_files<cr>", { desc = "Find files" })
-
 -- Quickfix list
 map("n", "]q", "<cmd>cnext<cr>zz", { desc = "Next quickfix item" })
 map("n", "[q", "<cmd>cprev<cr>zz", { desc = "Previous quickfix item" })
