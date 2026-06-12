@@ -1,6 +1,6 @@
 # Documentation Maintenance
 
-**Keep documentation current as code changes.**
+Keep documentation current as code changes.
 
 ## What to Update
 

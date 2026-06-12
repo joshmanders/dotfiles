@@ -1,6 +1,6 @@
 # Leave Code Better
 
-**When touching a file, improve what you find.**
+When touching a file, improve what you find — but only what you find. Don't expand scope to hunt for things to fix.
 
 ## Opportunistic Refactoring
 

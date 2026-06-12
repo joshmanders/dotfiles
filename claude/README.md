@@ -33,18 +33,17 @@ This will:
 
 Modular rules in `rules/` directory, auto-loaded by Claude Code:
 
-| Rule                | Purpose                                         |
-| ------------------- | ----------------------------------------------- |
-| `prime-directives`  | Non-negotiable rules (verify, test, don't push) |
-| `task-lifecycle`    | Step-by-step task workflow                      |
-| `code-standards`    | Before-writing checks, naming, errors           |
-| `boundaries`        | Decision authority, what to ask first           |
-| `leave-code-better` | Opportunistic refactoring while touching files  |
-| `documentation`     | Keep docs current as code changes               |
-| `committing`        | Commit format and prefixes                      |
-| `cleanup`           | Debug code removal before presenting work       |
-| `pr-format`         | PR title, body, and final checklist             |
-| `test-quality`      | Test assertions, determinism, signal            |
+| Rule                | Purpose                                                  |
+| ------------------- | -------------------------------------------------------- |
+| `prime-directives`  | Non-negotiable rules (verify, review gate, hard nos)     |
+| `code-standards`    | Before-writing checks, naming, errors                    |
+| `leave-code-better` | Opportunistic refactoring while touching files           |
+| `documentation`     | Keep docs current as code changes                        |
+| `committing`        | Atomic commits, format, prefixes                         |
+| `cleanup`           | Debug code removal before presenting work                |
+| `pr-format`         | PR title, body, and final checklist                      |
+| `test-quality`      | Test assertions, determinism, signal                     |
+| `code-review-output`| Actionable items only — no narration or affirmations     |
 
 ## Skills
 
