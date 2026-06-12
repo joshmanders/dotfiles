@@ -31,7 +31,7 @@ How it works:
 - `install.sh` sets `DOTFILES="$SCRIPT_DIR"` and propagates it to every module install script.
 - `bash/bashrc` resolves its own symlinked location to set `$DOTFILES` for every interactive (and `BASH_ENV`-loaded) shell.
 - `claude/settings.json` is generated at install time from `claude/settings.json.template`, substituting the actual `$DOTFILES` path into the hardcoded slots Claude Code requires (env vars, hook commands).
-- All bin scripts and module installers use `DOTFILES="${DOTFILES:-$HOME/.files}"` — they consume the env var when set, fall back to `$HOME/.files` only when not.
+- All bin scripts and module installers read `$DOTFILES` directly from the environment. They don't fall back to a hardcoded default — if `$DOTFILES` isn't set when you run one, that's a setup problem (your shell isn't loading bashrc, or you didn't go through `install.sh`).
 
 If you move the repo after install, re-run `bash install.sh` from the new location to refresh symlinks and regenerate the templated files.
 

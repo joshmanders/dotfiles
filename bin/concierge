@@ -19,7 +19,6 @@
 
 set -euo pipefail
 
-DOTFILES="${DOTFILES:-$HOME/.files}"
 SITES_DIR="$DOTFILES/caddy/sites"
 CADDYFILE="$(brew --prefix)/etc/Caddyfile"
 

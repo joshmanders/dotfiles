@@ -27,7 +27,6 @@
 
 set -euo pipefail
 
-DOTFILES="${DOTFILES:-$HOME/.files}"
 REGISTRY="$DOTFILES/tmux/sessions.json"
 
 if [[ ! -f "$REGISTRY" ]]; then

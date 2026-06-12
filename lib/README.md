@@ -8,7 +8,6 @@ Source `index.sh` in your install script to get access to all utilities:
 
 ```bash
 #!/usr/bin/env bash
-DOTFILES="${DOTFILES:-$HOME/.files}"
 source "$DOTFILES/lib/index.sh"
 
 symlink "$DOTFILES/bash/bashrc" "$HOME/.bashrc"

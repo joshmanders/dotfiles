@@ -41,7 +41,6 @@ Use this skill when:
 # What this module does
 set -euo pipefail
 
-DOTFILES="${DOTFILES:-$HOME/.files}"
 source "$DOTFILES/lib/index.sh"
 
 # Check dependencies (optional)

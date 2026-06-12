@@ -45,7 +45,6 @@ Each module in its own directory with:
 # Module description
 set -euo pipefail
 
-DOTFILES="${DOTFILES:-$HOME/.files}"
 source "$DOTFILES/lib/index.sh"
 
 # Check dependencies (optional)

@@ -527,7 +527,7 @@ echo
 # simulated state with reality.
 ###############################################
 
-BREWFILE="${DOTFILES:-$HOME/.files}/homebrew/bundle"
+BREWFILE="$DOTFILES/homebrew/bundle"
 
 if $DRY_RUN; then
   echo "Dry run: skipping Brewfile generation (no actual changes made)."

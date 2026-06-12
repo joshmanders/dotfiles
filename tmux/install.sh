@@ -14,7 +14,6 @@
 
 set -euo pipefail
 
-DOTFILES="${DOTFILES:-$HOME/.files}"
 source "$DOTFILES/lib/index.sh"
 
 echo ""

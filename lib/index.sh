@@ -6,8 +6,11 @@
 # Source this file from install scripts to get access to all utilities.
 #
 # Usage:
-#   DOTFILES="${DOTFILES:-$HOME/.files}"
 #   source "$DOTFILES/lib/index.sh"
+#
+# DOTFILES must be set in the environment before sourcing — bashrc sets it for
+# any interactive (or BASH_ENV-loaded) shell, and the main install.sh sets it
+# from its own script location.
 #
 # After sourcing, you have access to:
 #   - symlink <source> <destination>  Create symlinks with conflict handling
@@ -27,9 +30,6 @@
 #   ./install.sh                                    # Interactive
 #   ./install.sh --non-interactive --skip --deny    # Skip everything
 #   ./install.sh --non-interactive --overwrite --allow  # Do everything
-
-# Determine DOTFILES location if not set
-DOTFILES="${DOTFILES:-$HOME/.files}"
 
 # Source utilities in order
 source "$DOTFILES/lib/flags.sh"

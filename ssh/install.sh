@@ -18,7 +18,6 @@
 
 set -euo pipefail
 
-DOTFILES="${DOTFILES:-$HOME/.files}"
 source "$DOTFILES/lib/index.sh"
 
 # Get email from config (with fallback for standalone runs)
