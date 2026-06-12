@@ -5,8 +5,20 @@
 # This file is symlinked to ~/.bashrc and ~/.bash_profile.
 # It sources modular configuration files for a clean, maintainable setup.
 
-# Define dotfiles location
-export DOTFILES="${HOME}/.files"
+# Derive DOTFILES from this file's location, resolving symlinks (this file is
+# typically sourced via the ~/.bashrc symlink). No hardcoded path — the repo
+# can live anywhere and this still works.
+__src="${BASH_SOURCE[0]}"
+while [[ -L "$__src" ]]; do
+    __dir="$(cd -P "$(dirname "$__src")" && pwd)"
+    __src="$(readlink "$__src")"
+    [[ "$__src" != /* ]] && __src="$__dir/$__src"
+done
+export DOTFILES="$(cd -P "$(dirname "$__src")/.." && pwd)"
+unset __src __dir
+
+# Load personal config first — sets DOTFILES_* prefs consumed by everything below.
+[[ -f "$DOTFILES/config.sh" ]] && source "$DOTFILES/config.sh"
 
 # Environment and PATH are needed by non-interactive shells (e.g. Claude Code)
 source "${DOTFILES}/bash/exports.sh"

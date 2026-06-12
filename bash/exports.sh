@@ -3,13 +3,7 @@
 # exports.sh - Environment variables
 #
 # This file sets up environment variables for the shell.
-# Sourced by bashrc.
-
-# Where are my dotfiles?
-export DOTFILES="${HOME}/.files"
-
-# Source config if it exists (for personal overrides)
-[[ -f "$DOTFILES/config.sh" ]] && source "$DOTFILES/config.sh"
+# Sourced by bashrc, which sets DOTFILES and loads config.sh first.
 
 # Editor (from config or default)
 export EDITOR="${DOTFILES_EDITOR}"
