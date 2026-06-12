@@ -11,7 +11,7 @@ My dotfiles, without me, are useless. Without my dotfiles, I am useless. I must 
 ## Quick Start
 
 ```bash
-# Clone the repo
+# Clone the repo (anywhere — see "Install location" below)
 git clone https://github.com/YOUR_USERNAME/.files ~/.files
 
 # Create your config file
@@ -21,6 +21,19 @@ $EDITOR ~/.files/config.sh  # Set your name, email, etc.
 # Run the installer
 bash ~/.files/install.sh
 ```
+
+## Install location
+
+The dotfiles repo can live anywhere on disk — `~/.files`, `~/Code/<username>/dotfiles`, `/opt/dotfiles`, whatever. The installer derives `$DOTFILES` from its own script location, so symlinks, env vars, and hooks all resolve correctly relative to wherever you cloned it.
+
+How it works:
+
+- `install.sh` sets `DOTFILES="$SCRIPT_DIR"` and propagates it to every module install script.
+- `bash/bashrc` resolves its own symlinked location to set `$DOTFILES` for every interactive (and `BASH_ENV`-loaded) shell.
+- `claude/settings.json` is generated at install time from `claude/settings.json.template`, substituting the actual `$DOTFILES` path into the hardcoded slots Claude Code requires (env vars, hook commands).
+- All bin scripts and module installers use `DOTFILES="${DOTFILES:-$HOME/.files}"` — they consume the env var when set, fall back to `$HOME/.files` only when not.
+
+If you move the repo after install, re-run `bash install.sh` from the new location to refresh symlinks and regenerate the templated files.
 
 ## What's Included
 

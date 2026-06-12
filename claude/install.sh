@@ -10,7 +10,8 @@
 #   2. Symlinks rules/ to ~/.claude/rules/
 #   3. Symlinks skills/ to ~/.claude/skills/
 #   4. Symlinks agents/ to ~/.claude/agents/
-#   5. Symlinks settings.json to ~/.claude/settings.json
+#   5. Renders settings.json.template into settings.json with the actual
+#      $DOTFILES path, then symlinks it to ~/.claude/settings.json
 #   6. Symlinks keybindings.json to ~/.claude/keybindings.json
 #
 # Usage:
@@ -30,6 +31,13 @@ echo ""
 if [[ ! -d "$HOME/.claude" ]]; then
     mkdir -p "$HOME/.claude"
 fi
+
+# Render settings.json from template with the actual $DOTFILES path so the
+# install works regardless of where the repo is cloned. The rendered file is
+# gitignored.
+sed "s|\${DOTFILES}|$DOTFILES|g" \
+    "$DOTFILES/claude/settings.json.template" \
+    > "$DOTFILES/claude/settings.json"
 
 # Symlink config files
 symlink "$DOTFILES/claude/CLAUDE.md" "$HOME/.claude/CLAUDE.md"
