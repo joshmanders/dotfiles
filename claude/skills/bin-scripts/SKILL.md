@@ -1,12 +1,12 @@
 ---
 name: bin-scripts
-description: Use when performing git operations, running Laravel/Composer commands, managing local dev sites, or killing processes on ports. Custom scripts in ~/.files/bin/ provide shortcuts for common workflows.
+description: Use when performing git operations, running Laravel/Composer commands, managing local dev sites, or killing processes on ports. Custom scripts in your PATH provide shortcuts for common workflows.
 user-invocable: false
 ---
 
 # Bin Scripts
 
-Custom shell scripts in `~/.files/bin/` for common development workflows.
+Custom shell scripts available on your PATH for common development workflows.
 
 ## Committing
 
@@ -84,11 +84,11 @@ Custom shell scripts in `~/.files/bin/` for common development workflows.
 | -------- | -------- | -------------------------------------------------------------------- |
 | `cpanel` | `cpanel` | TUI for everything in `~/.claude/` — browse, search, mine, and clean |
 
-**cpanel:** React/Bun TUI built on `@opentui/react`. Source lives in `~/.files/cpanel/`; the `bin/` entry is a thin bash wrapper that `exec`s `bun run`. Requires `bun` (already in Brewfile). Full docs at `~/.files/cpanel/README.md`.
+**cpanel:** React/Bun TUI for everything in `~/.claude/` — browse, search, mine, and clean. Requires `bun`.
 
 Panels (in tab order): **Dashboard** (overview cards) · **Insights** (correction/pattern/stuck-loop/wasted-work miners with `s` to scaffold rules + skills) · **Conversations** (chat-rendered reader for every session) · **Live** (real-time monitor of running Claude Code sessions) · **Search** (ripgrep over all jsonls) · **Cost** ($ per day/project/session from token×rate) · **Digest** (daily activity rollup) · **Plans** · **Sessions** (with `r` to resume in a new terminal) · **Projects** · **Settings** (incl. backup restore) · **Cleanup**.
 
-Config: `~/.config/cpanel/config.json` (symlinked from `~/.files/cpanel/config.json`). Currently one option: `ignoreProjects: string[]` — path prefixes hidden from UI lists; aggregates still include them. Press `.` from any panel to toggle showing them temporarily.
+Config: `~/.config/cpanel/config.json`. Currently one option: `ignoreProjects: string[]` — path prefixes hidden from UI lists; aggregates still include them. Press `.` from any panel to toggle showing them temporarily.
 
 Safety: all destructive actions go through a confirm dialog with the exact path + size before deleting.
 
@@ -99,7 +99,7 @@ Safety: all destructive actions go through a confirm dialog with the exact path 
 | `solo` | `solo`              | Launch the TUI for the current directory                          |
 | `solo` | `solo rekey [hash]` | Rename configs to match their `directory:` field (all if no hash) |
 
-**solo:** React/Bun TUI on `@opentui/react` + `node-pty`. Source at `~/.files/solo/`; the `bin/` entry is a thin bash wrapper. Each cwd has its own YAML at `~/.config/solo/<sha1(cwd)>.yaml` (symlinked from `~/.files/solo/configs/`), listing the commands to run for that project — dev server, queue worker, log tail, etc. Tabbed UI: one tab per command, full-width output pane per tab, start/stop/restart/clear from the bottom bar. First run in a new directory opens the **Add command** wizard. Full docs at `~/.files/solo/README.md`.
+**solo:** React/Bun TUI on `@opentui/react` + `node-pty`. Each cwd has its own YAML at `~/.config/solo/<sha1(cwd)>.yaml`, listing the commands to run for that project — dev server, queue worker, log tail, etc. Tabbed UI: one tab per command, full-width output pane per tab, start/stop/restart/clear from the bottom bar. First run in a new directory opens the **Add command** wizard.
 
 ## tmux Session Management
 
