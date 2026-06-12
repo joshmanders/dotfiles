@@ -2,6 +2,19 @@
 
 Claude Code settings and skills for consistent AI assistance.
 
+## Two `claude` directories — read this first
+
+There are two distinct Claude configuration directories in the dotfiles repo. They look similar and are easy to confuse:
+
+| Directory             | Scope     | Symlinked to    | Purpose                                                                                                   |
+| --------------------- | --------- | --------------- | --------------------------------------------------------------------------------------------------------- |
+| `$DOTFILES/claude/`   | Global    | `~/.claude/`    | Source of truth for **global** rules, skills, agents, settings. Applies in every project.                  |
+| `$DOTFILES/.claude/`  | Project   | (not symlinked) | **Project-scoped** rules and skills for working with the dotfiles repo itself. Only loads when CWD is inside the repo. |
+
+`$DOTFILES` is exported by the dotfiles config and points at the repo root (defaults to `$HOME/.files`). Use it in references so paths don't break if the repo lives elsewhere.
+
+When you add a rule or skill, ask: *does this apply everywhere, or only when editing this repo?* Universal guidance goes in `claude/` (global). Dotfiles-specific maintenance goes in `.claude/` (project).
+
 ## Files
 
 | File               | Purpose                                                 |
