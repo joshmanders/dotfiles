@@ -1,7 +1,7 @@
 ---
 name: finalize
 description: "Pre-commit quality gate. Re-reads config, verifies work matches rules and codebase patterns, fixes violations. Run before presenting work for review."
-user-invocable: true
+disable-model-invocation: true
 ---
 
 # Finalize

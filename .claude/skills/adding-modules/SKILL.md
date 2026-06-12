@@ -1,6 +1,7 @@
 ---
 name: adding-modules
 description: Use when adding new modules, configs, or tools to dotfiles
+user-invocable: false
 ---
 
 # Adding Dotfiles Modules
