@@ -78,14 +78,17 @@ Remove anything that wasn't requested.
 
 ### 5. Cleanup
 
-Remove from changed files:
+Remove from changed files. Categories apply regardless of language:
 
-| Language | Remove                                                |
-| -------- | ----------------------------------------------------- |
-| JS/TS    | `console.log`, `console.warn`, `debugger`             |
-| PHP      | `dd()`, `dump()`, `var_dump()`, `ray()`               |
-| Python   | `print()`, `breakpoint()`, `pprint()`                 |
-| All      | Commented-out code, unused imports, TODOs/FIXMEs added during this session |
+| Category                       | What to look for                                                                                  |
+| ------------------------------ | ------------------------------------------------------------------------------------------------- |
+| **Inspection output**          | Any statement added during development to dump state to a console, log, or terminal.              |
+| **Breakpoints / pauses**       | Anything that halts execution to let you poke around.                                             |
+| **Commented-out code**         | Lines disabled with comments instead of deleted.                                                  |
+| **Unused imports / requires**  | Anything imported while exploring and never ended up used.                                        |
+| **Session markers**            | `TODO`, `FIXME`, `XXX`, `HACK`, and equivalents added during this session. Existing markers in the codebase aren't your problem; new ones are. |
+
+If unsure what counts as debug noise in this codebase's language, look at how the rest of the codebase debugs and match that pattern. Don't assume any specific tool's name or syntax.
 
 ### 6. Dispatch Code Scrutiny Agent
 
