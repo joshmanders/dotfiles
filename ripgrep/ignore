@@ -1,0 +1,11 @@
+# Global .ignore — read by ripgrep, fd, and fff during directory traversal.
+# Symlinked to ~/.ignore, so it applies to anything searched under $HOME.
+#
+# The ignore crate ranks .ignore above .gitignore, so a negation here
+# re-includes a file that .gitignore excludes WITHOUT disabling the rest of
+# .gitignore (node_modules, vendor, … stay filtered). This is what lets fff's
+# <leader>p surface gitignored files like .env.
+
+# Env files — gitignored in projects, but I want them one keystroke away.
+!.env
+!.env.*
