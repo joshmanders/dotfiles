@@ -29,6 +29,7 @@ source "${DOTFILES}/bash/path.sh"
 
 # Interactive-only configuration
 source "${DOTFILES}/bash/aliases.sh"
+source "${DOTFILES}/bash/functions.sh"
 source "${DOTFILES}/bash/plugins.sh"
 source "${DOTFILES}/bash/completion.sh"
 source "${DOTFILES}/bash/prompt.sh"
