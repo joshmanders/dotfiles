@@ -126,7 +126,7 @@ mutation {
 ### Creating PRs
 
 ```bash
-gh pr create \
+PR_URL=$(gh pr create \
   --repo <org>/<repo> \
   --title "feat: short description" \
   --body "## Summary
@@ -136,7 +136,10 @@ What was done.
 - Change 1
 - Change 2
 
-Closes #<issue-number>"
+Closes #<issue-number>")
+
+printf '%s' "$PR_URL" | pbcopy   # PR URL copied to clipboard, ready to paste
+echo "$PR_URL"
 ```
 
 ### PR Operations

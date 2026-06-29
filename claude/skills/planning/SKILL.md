@@ -202,7 +202,7 @@ When work is complete and approved for commit:
 ### 1. Create PR with Issue Reference
 
 ```bash
-gh pr create \
+PR_URL=$(gh pr create \
   --repo <org>/<repo> \
   --title "feat: clear description" \
   --body "## Summary
@@ -216,7 +216,10 @@ What was done.
 - [ ] Tests pass
 - [ ] Manual testing done
 
-Closes #<issue-number>"
+Closes #<issue-number>")
+
+printf '%s' "$PR_URL" | pbcopy   # PR URL copied to clipboard, ready to paste
+echo "$PR_URL"
 ```
 
 ### 2. PR Summary Format
