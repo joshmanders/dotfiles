@@ -70,7 +70,7 @@ return {
           map("gr", vim.lsp.buf.references, "Go to references")
           map("gi", vim.lsp.buf.implementation, "Go to implementation")
           map("K", vim.lsp.buf.hover, "Hover documentation")
-          map("<leader>ca", vim.lsp.buf.code_action, "Code action")
+          map("<leader>.", vim.lsp.buf.code_action, "Code action")
           map("<leader>rn", vim.lsp.buf.rename, "Rename symbol")
           map("<leader>D", vim.lsp.buf.type_definition, "Type definition")
           map("[d", function() vim.diagnostic.jump({ count = -1 }) end, "Previous diagnostic")
