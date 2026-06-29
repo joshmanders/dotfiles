@@ -178,7 +178,7 @@ See also [journalist-pitching.md](journalist-pitching.md) for the full discovery
 
 ### Source list
 
-For repeatable monitoring, add a "Newsjacking topics" section to `.agents/listening-sources.md` (template in the `social` skill's references):
+For repeatable monitoring, add a "Newsjacking topics" section to `.claude/listening-sources.md` (template in the `social` skill's references):
 
 ```markdown
 ## Newsjacking topics (Google News RSS)

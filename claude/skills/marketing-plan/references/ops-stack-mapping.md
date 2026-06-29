@@ -86,7 +86,7 @@ The plan's Section 11 makes this thesis explicit by:
 
 | Skill | What it does | Primary use |
 |---|---|---|
-| `product-marketing` | Set up the `.agents/product-marketing.md` context file (positioning, ICP, voice) | Foundational — run first; every section of the plan references this |
+| `product-marketing` | Set up the `.claude/product-marketing.md` context file (positioning, ICP, voice) | Foundational — run first; every section of the plan references this |
 | `customer-research` | Conduct customer interviews + surveys | Section 2 + Section 3 (Current state) |
 | `marketing-psychology` | Apply behavioral science | Cross-cuts copy, CRO, paywalls |
 | `marketing-ideas` | The 139-idea library | Section 12 of plan (Idea bank) |

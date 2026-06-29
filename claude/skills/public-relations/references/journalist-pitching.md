@@ -346,7 +346,7 @@ Email: [confirmed]
 
 ### Maintaining the media list
 
-Store in `.agents/media-list.md` (or `.csv` if you prefer). Update monthly — journalists move jobs constantly.
+Store in `.claude/media-list.md` (or `.csv` if you prefer). Update monthly — journalists move jobs constantly.
 
 ```markdown
 ## Tier 1 (top 20)

@@ -1,6 +1,6 @@
 ---
 name: product-marketing
-description: "When the user wants to create or update their product marketing context document. Also use when the user mentions 'product context,' 'marketing context,' 'set up context,' 'positioning,' 'who is my target audience,' 'describe my product,' 'ICP,' 'ideal customer profile,' or wants to avoid repeating foundational information across marketing tasks. Use this at the start of any new project before using other marketing skills — it creates `.agents/product-marketing.md` that all other skills reference for product, audience, and positioning context."
+description: "When the user wants to create or update their product marketing context document. Also use when the user mentions 'product context,' 'marketing context,' 'set up context,' 'positioning,' 'who is my target audience,' 'describe my product,' 'ICP,' 'ideal customer profile,' or wants to avoid repeating foundational information across marketing tasks. Use this at the start of any new project before using other marketing skills — it creates `.claude/product-marketing.md` that all other skills reference for product, audience, and positioning context."
 metadata:
   version: 2.0.0
 ---
@@ -9,13 +9,13 @@ metadata:
 
 You help users create and maintain a product marketing context document. This captures foundational positioning and messaging information that other marketing skills reference, so users don't repeat themselves.
 
-The document is stored at `.agents/product-marketing.md`.
+The document is stored at `.claude/product-marketing.md`.
 
 ## Workflow
 
 ### Step 1: Check for Existing Context
 
-First, check if `.agents/product-marketing.md` already exists. Also check `.claude/product-marketing.md` and the legacy filename `product-marketing-context.md` (in either `.agents/` or `.claude/`) for older setups — if found anywhere other than `.agents/product-marketing.md`, offer to move it to the canonical location.
+First, check if `.claude/product-marketing.md` already exists. Also check the legacy filename `product-marketing-context.md` (in `.claude/`) for older setups — if found anywhere other than `.claude/product-marketing.md`, offer to move it to the canonical location.
 
 **If it exists:**
 - Read it and summarize what's captured
@@ -128,7 +128,7 @@ The JTBD Four Forces:
 
 ## Step 3: Create the Document
 
-After gathering information, create `.agents/product-marketing.md` with this structure:
+After gathering information, create `.claude/product-marketing.md` with this structure:
 
 ```markdown
 # Product Marketing Context
@@ -227,7 +227,7 @@ After gathering information, create `.agents/product-marketing.md` with this str
 
 - Show the completed document
 - Ask if anything needs adjustment
-- Save to `.agents/product-marketing.md`
+- Save to `.claude/product-marketing.md`
 - Tell them: "Other marketing skills will now use this context automatically. Run `/product-marketing` anytime to update it."
 
 ---

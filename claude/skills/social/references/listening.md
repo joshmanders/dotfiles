@@ -267,17 +267,17 @@ LinkedIn and X don't expose useful public APIs, but you can drive a real browser
 
 ## Setting Up the Source List
 
-The user should maintain a list of sources somewhere persistent at `.agents/listening-sources.md` (or `.claude/listening-sources.md`). Claude reads it when running the daily loop.
+The user should maintain a list of sources somewhere persistent at `.claude/listening-sources.md`. Claude reads it when running the daily loop.
 
 **A ready-to-fill template lives at [listening-sources-template.md](listening-sources-template.md).** Copy it into the project and edit. The source path depends on how the skill was installed:
 
 ```bash
 # Plugin / marketplace install (most common):
-cp .agents/skills/social/references/listening-sources-template.md .agents/listening-sources.md
+cp .claude/skills/social/references/listening-sources-template.md .claude/listening-sources.md
 # .claude/ install:
-cp .claude/skills/social/references/listening-sources-template.md .agents/listening-sources.md
+cp .claude/skills/social/references/listening-sources-template.md .claude/listening-sources.md
 # Working inside the marketingskills repo:
-cp skills/social/references/listening-sources-template.md .agents/listening-sources.md
+cp skills/social/references/listening-sources-template.md .claude/listening-sources.md
 ```
 
 The template covers: brand/category, ICP (for scoring), target accounts per platform, intent keywords, subreddits, saved-search URLs, and a do-not-engage list.

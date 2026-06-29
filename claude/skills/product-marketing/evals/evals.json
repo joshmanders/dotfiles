@@ -4,20 +4,20 @@
     {
       "id": 1,
       "prompt": "I want to set up my product marketing context. We're a B2B SaaS company that sells a customer feedback platform to product teams.",
-      "expected_output": "Should check if .agents/product-marketing.md already exists. If not, should offer two options: (1) Auto-draft from codebase (recommended) or (2) Start from scratch. If user chooses start from scratch, should walk through sections conversationally one at a time. Should cover all applicable sections: Product Overview, Target Audience, Personas, Problems You Solve, Competitive Landscape, Differentiation, Objections, Switching Dynamics, Customer Language, Brand Voice, Proof Points, and Goals. Should create the file at .agents/product-marketing.md when complete.",
+      "expected_output": "Should check if .claude/product-marketing.md already exists. If not, should offer two options: (1) Auto-draft from codebase (recommended) or (2) Start from scratch. If user chooses start from scratch, should walk through sections conversationally one at a time. Should cover all applicable sections: Product Overview, Target Audience, Personas, Problems You Solve, Competitive Landscape, Differentiation, Objections, Switching Dynamics, Customer Language, Brand Voice, Proof Points, and Goals. Should create the file at .claude/product-marketing.md when complete.",
       "assertions": [
         "Checks for existing product-marketing.md",
         "Offers two options: auto-draft or start from scratch",
         "Covers applicable sections",
         "Walks through sections conversationally one at a time",
-        "Creates file at .agents/product-marketing.md"
+        "Creates file at .claude/product-marketing.md"
       ],
       "files": []
     },
     {
       "id": 2,
       "prompt": "Update our product marketing context. We just added a new enterprise tier and our target audience has expanded to include VP of Engineering, not just Product Managers.",
-      "expected_output": "Should check for existing .agents/product-marketing.md and read it. Should identify which sections need updating based on the changes: Target Audience (add VP of Engineering), Personas (add new persona), Product Overview (new enterprise tier, including pricing updates within that section), Objections (enterprise-specific), and Competitive Landscape (enterprise competitors). Should update only the relevant sections, preserving existing content that hasn't changed.",
+      "expected_output": "Should check for existing .claude/product-marketing.md and read it. Should identify which sections need updating based on the changes: Target Audience (add VP of Engineering), Personas (add new persona), Product Overview (new enterprise tier, including pricing updates within that section), Objections (enterprise-specific), and Competitive Landscape (enterprise competitors). Should update only the relevant sections, preserving existing content that hasn't changed.",
       "assertions": [
         "Reads existing product-marketing.md",
         "Identifies sections that need updating",
@@ -39,7 +39,7 @@
         "Adapts questions for early-stage B2C mobile app",
         "Notes some sections may be sparse early on",
         "Skips non-applicable sections rather than forcing all 12",
-        "Creates file at .agents/product-marketing.md"
+        "Creates file at .claude/product-marketing.md"
       ],
       "files": []
     },
@@ -59,7 +59,7 @@
     {
       "id": 5,
       "prompt": "Do we have a product marketing context set up? I want to make sure the other marketing skills have context about our product.",
-      "expected_output": "Should check for .agents/product-marketing.md (and the older .claude/product-marketing.md location). Should report whether it exists and summarize its contents if found. If it doesn't exist, should offer to create one and explain why it's valuable (other skills like copywriting, cro, seo-audit check for it first). Should explain how other skills use this context document.",
+      "expected_output": "Should check for .claude/product-marketing.md (and the older .claude/product-marketing.md location). Should report whether it exists and summarize its contents if found. If it doesn't exist, should offer to create one and explain why it's valuable (other skills like copywriting, cro, seo-audit check for it first). Should explain how other skills use this context document.",
       "assertions": [
         "Checks both file locations",
         "Reports whether context doc exists",

@@ -204,4 +204,4 @@ This list will go stale. Recommended cadence:
 - **Monthly:** add new outlets/newsletters relevant to your category
 - **Per pitch:** confirm the journalist is still there before sending (check X / LinkedIn for "joined [new place]")
 
-Store your live, working version in `.agents/media-list.md` (per [journalist-pitching.md](journalist-pitching.md)).
+Store your live, working version in `.claude/media-list.md` (per [journalist-pitching.md](journalist-pitching.md)).
