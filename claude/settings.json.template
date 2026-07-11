@@ -58,6 +58,7 @@
   "fastModePerSessionOptIn": false,
   "awaySummaryEnabled": false,
   "autoUpdatesChannel": "stable",
+  "tui": "fullscreen",
   "voice": {
     "enabled": true,
     "mode": "hold"
@@ -69,8 +70,8 @@
   "verbose": false,
   "preferredNotifChannel": "auto",
   "terminalProgressBarEnabled": false,
+  "remoteControlAtStartup": true,
   "agentPushNotifEnabled": true,
   "voiceEnabled": true,
-  "mcpServers": {},
-  "remoteControlAtStartup": true
+  "mcpServers": {}
 }
