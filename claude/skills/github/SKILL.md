@@ -127,6 +127,7 @@ mutation {
 
 ```bash
 PR_URL=$(gh pr create \
+  --draft \
   --repo <org>/<repo> \
   --title "feat: short description" \
   --body "## Summary
@@ -138,7 +139,7 @@ What was done.
 
 Closes #<issue-number>")
 
-printf '%s' "$PR_URL" | pbcopy   # PR URL copied to clipboard, ready to paste
+printf '%s' "$PR_URL" | pbcopy   # draft PR URL copied to clipboard, ready to paste
 echo "$PR_URL"
 ```
 
@@ -255,4 +256,4 @@ mutation {
 | List issues    | `gh issue list --repo <org>/<repo>`           |
 | View issue     | `gh issue view <num> --repo <org>/<repo>`     |
 | Search org     | `gh search issues --owner <org> "query"`      |
-| Create PR      | `gh pr create --repo <org>/<repo> ...`        |
+| Create PR      | `gh pr create --draft --repo <org>/<repo> ...` (pbcopy URL) |

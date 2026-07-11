@@ -203,6 +203,7 @@ When work is complete and approved for commit:
 
 ```bash
 PR_URL=$(gh pr create \
+  --draft \
   --repo <org>/<repo> \
   --title "feat: clear description" \
   --body "## Summary
@@ -218,7 +219,7 @@ What was done.
 
 Closes #<issue-number>")
 
-printf '%s' "$PR_URL" | pbcopy   # PR URL copied to clipboard, ready to paste
+printf '%s' "$PR_URL" | pbcopy   # draft PR URL copied to clipboard, ready to paste
 echo "$PR_URL"
 ```
 
@@ -258,7 +259,7 @@ The `Closes #123` automatically:
 | View issue   | `gh issue view <num> --repo <org>/<repo>`              |
 | Edit issue   | `gh issue edit <num> --repo <org>/<repo>`              |
 | Add comment  | `gh issue comment <num> --repo <org>/<repo> --body ""` |
-| Create PR    | `gh pr create --repo <org>/<repo> ... Closes #N`       |
+| Create PR    | `gh pr create --draft --repo <org>/<repo> ... Closes #N` (pbcopy URL) |
 
 ---
 
