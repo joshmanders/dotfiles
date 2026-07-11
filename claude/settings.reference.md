@@ -608,7 +608,7 @@ Keys sometimes suggested in blog posts but **not** in the schema:
 
 The following documented keys are intentionally left unset in our `settings.json` because setting them to their "default" would either change behavior or restrict defaults that are better inherited dynamically:
 
-- `model`, `availableModels`, `modelOverrides` — tier/account-dependent; hardcoding restricts.
+- `availableModels`, `modelOverrides` — tier/account-dependent; hardcoding restricts.
 - `apiKeyHelper`, `awsCredentialExport`, `awsAuthRefresh`, `gcpAuthRefresh`, `otelHeadersHelper` — unset = no helper; empty string could break.
 - `language`, `spinnerVerbs`, `spinnerTipsOverride` — unset uses built-ins.
 - `autoMemoryDirectory` — auto-derived from git repo; setting breaks auto-derivation.
