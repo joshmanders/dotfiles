@@ -13,13 +13,26 @@
     "pr": ""
   },
   "includeGitInstructions": true,
-  "model": "claude-opus-4-7",
   "permissions": {
     "defaultMode": "bypassPermissions"
   },
+  "model": "claude-opus-4-7",
   "enableAllProjectMcpServers": false,
   "disabledMcpjsonServers": [],
-  "deniedMcpServers": [],
+  "deniedMcpServers": [
+    {
+      "serverName": "claude.ai Expedia"
+    },
+    {
+      "serverName": "claude.ai Gmail"
+    },
+    {
+      "serverName": "claude.ai Google Drive"
+    },
+    {
+      "serverName": "claude.ai Google Calendar"
+    }
+  ],
   "hooks": {
     "PreToolUse": [
       {
