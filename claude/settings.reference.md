@@ -188,6 +188,25 @@ Managed (MDM/policy) > CLI flags > Local (.claude/settings.local.json)
 - **Requires:** Claude.ai account (not API keys/Bedrock/Vertex). v2.1.69+. Does not work in remote/SSH/WSL-without-WSLg.
 - **Keybind:** default hold key is `Space`, rebindable via `~/.claude/keybindings.json`.
 
+### `voice`
+
+- **Type:** `{ enabled?: boolean, mode?: "hold" | "toggle" }`
+- **Default:** unset
+- **Purpose:** Voice dictation configuration. `enabled` mirrors `voiceEnabled`; `mode` controls whether the mic activates on hold (push-to-talk) or toggle (tap once to start, tap again to stop).
+- **Gotcha:** Coexists with the top-level `voiceEnabled` flag — set both to the same value to avoid surprises.
+
+### `tui`
+
+- **Type:** `"fullscreen" | "inline"`
+- **Default:** `"inline"` (terminal-scrollback rendering)
+- **Purpose:** Terminal UI rendering mode. `"fullscreen"` takes over the entire terminal window (alt-screen) so the prompt/transcript stay pinned and don't mingle with the scrollback; `"inline"` renders in the normal scrollback buffer.
+
+### `agentPushNotifEnabled`
+
+- **Type:** `boolean`
+- **Default:** `false`
+- **Purpose:** Send OS/mobile push notifications when a background subagent or task finishes, in addition to the terminal notification channel. Complements `preferredNotifChannel`, which controls the local terminal alert.
+
 ### `spinnerTipsEnabled`
 
 - **Type:** `boolean`
