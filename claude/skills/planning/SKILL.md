@@ -1,23 +1,23 @@
 ---
 name: planning
-description: "Work planning through GitHub issues. Invoke when: starting new work, planning a feature, or when asked 'let's plan X'. Every session = one issue = one PR."
+description: "Work planning through GitHub issues, including creating and refining them. Invoke when: starting new work, drafting or editing an issue, or when asked 'let's plan X'. Each issue covers one coherent thing."
 user-invocable: false
 ---
 
 # Planning Workflow
 
-**Every unit of work gets a GitHub issue. One session = one issue = one PR.**
+**Every unit of work gets a GitHub issue. Each issue covers one coherent thing — not a mix of unrelated concerns. A session may span multiple issues (planning several, working through several); an issue may not span multiple concerns.**
 
 ---
 
 ## When to Create an Issue
 
-| Situation                  | Action                      |
-| -------------------------- | --------------------------- |
-| Starting new work          | Create issue first          |
-| "Let's plan X"             | Create detailed issue       |
-| Scope creep mid-session    | Pause → ask about new issue |
-| Quick fix / trivial change | Ask if issue needed         |
+| Situation                        | Action                      |
+| -------------------------------- | --------------------------- |
+| Starting new work                | Create issue first          |
+| "Let's plan X"                   | Create detailed issue       |
+| New work discovered mid-session  | Pause → ask about new issue |
+| Quick fix / trivial change       | Ask if issue needed         |
 
 ---
 
@@ -38,7 +38,7 @@ user-invocable: false
 5. Create the issue (first step after approval)
 6. Track issue as session context
 7. Do the work (core-workflow)
-8. If scope expands → STOP, ask about new issue
+8. If new work surfaces → see Discovered Work
 9. Finalize → PR closes the issue
 ```
 
@@ -46,56 +46,64 @@ user-invocable: false
 
 ## Creating the Issue
 
+> **High level, always.** An issue describes an *outcome* — what needs to be true when it's resolved. Never *how*. Files, function names, refactor steps, migration order, code snippets, "first do X then Y": none of it belongs in the body. If you catch yourself typing an implementation detail, delete it. The future session picking this up must investigate the code as it exists then — not follow a recipe you baked in now, which is almost certainly stale or wrong.
+
 > **Plan Mode:** During planning, draft the issue content and include it in your plan file. Do NOT run `gh issue create` until after plan approval.
 
 ### Before Creating
 
-Gather all context needed to do the work:
+Gather what you need to describe the outcome — not how to reach it:
 
-- What problem are we solving?
-- What's the approach?
-- What are the acceptance criteria?
-- What files/areas will be touched?
-- Any risks or open questions?
+- What problem are we solving, and why?
+- What does "done" look like — what observable outcomes prove it?
+- Are there constraints that must be honored (existing behavior to preserve, APIs not to break, invariants to hold)?
+
+Do not draft an approach. Do not enumerate files. Do not sketch implementation steps. The future session picking this up needs to investigate the codebase itself, not follow a recipe you baked into the body.
 
 ### Issue Format
 
+The body shape depends on whether the issue is a leaf or a tracker.
+
+**Leaf issues** — Task, Bug, Feature, or anything else meant to be resolved in a single PR. Body = Summary + Acceptance Criteria.
+
 ```bash
-gh issue create \
+ISSUE_URL=$(gh issue create \
   --repo <org>/<repo> \
   --title "Brief description" \
   --body "## Summary
-What we're doing and why.
-
-## Approach
-How we'll implement this.
-- Step 1
-- Step 2
-- Step 3
+High-level overview of what we need to achieve and why. Include only
+constraints that must be honored (e.g. \"must not break the public v1 API\",
+\"must preserve existing session behavior\"). No approach, no files,
+no implementation steps.
 
 ## Acceptance Criteria
-- [ ] Criterion 1
-- [ ] Criterion 2
-- [ ] Tests written
+- [ ] Observable outcome 1
+- [ ] Observable outcome 2
+- [ ] Tests written")
 
-## Files/Areas
-- \`path/to/file.ts\`
-- \`path/to/other.php\`
-
-## Notes
-Any additional context, decisions, risks."
+printf '%s' "$ISSUE_URL" | pbcopy   # issue URL copied to clipboard
+echo "$ISSUE_URL"
 ```
 
-**In plan mode:** Include this draft in your plan file and exit plan mode.
-**After approval:** Run `gh issue create` as the first execution step.
+Acceptance criteria are the source of truth for "done" on a leaf — each item should be something you can point at and verify, not an implementation task.
 
-### After Creating
+**Tracker issues** — Epic, or any parent issue whose purpose is to group sub-issues under one initiative. Body = Summary only. **No acceptance criteria** — the acceptance lives on the children. The tracker describes what the initiative is about; the sub-issues are the work.
 
-1. Note the issue number
-2. Set issue type if applicable (Task or Bug)
-3. Add to project board (if not auto-added)
-4. Move to "In Progress"
-5. **Store internally:** "Working on #N - [title]"
+```bash
+ISSUE_URL=$(gh issue create \
+  --repo <org>/<repo> \
+  --title "Brief description" \
+  --body "## Summary
+High-level overview of the initiative — what are we trying to achieve overall,
+and why. Constraints that span all children (e.g. \"no child PR may break
+the public v1 API\") go here.")
+
+printf '%s' "$ISSUE_URL" | pbcopy
+echo "$ISSUE_URL"
+```
+
+**In plan mode:** Include the draft in your plan file and exit plan mode.
+**After approval:** Run `gh issue create`, capture the URL, and hand it back. Do not assume the next step is starting work on it.
 
 ---
 
@@ -161,37 +169,47 @@ Summary, approach, acceptance criteria...
 
 ---
 
-## Scope Creep Handling
+## Discovered Work
 
-**When additional work is discovered mid-session:**
+When additional work surfaces mid-session, judge it against the acceptance criteria — not against a "scope" boundary.
 
-1. **STOP** — Don't just do it
-2. **Assess** — Is this part of the current issue or separate?
-3. **Ask:**
+- **If it's needed to meet acceptance criteria** — it's part of the work. Do it. Don't defer under "out of scope" language.
+- **If it's unrelated to acceptance criteria but small and adjacent** (per `leave-code-better`) — do it.
+- **If it's genuinely a separate initiative** — STOP and ask:
 
-   ```
-   I've discovered we also need to [X]. This seems outside the scope of #123.
+  ```
+  I've discovered we also need to [X], and it's unrelated to the acceptance
+  criteria on #123.
 
-   Options:
-   1. Add to current issue (if small and related)
-   2. Create new issue for separate work
-   3. Note it and skip for now
+  Options:
+  1. Fold into current issue (update acceptance criteria)
+  2. Create a new issue and defer
+  3. Note it and skip
 
-   How do you want to handle this?
-   ```
+  How do you want to handle this?
+  ```
 
-4. **If new issue:** Create it, but don't work on it this session
-5. **If adding to current:** Update the issue body with new scope
+If folding in, update the issue body so the acceptance criteria reflect the new expected outcome — don't just leave it stale.
 
-### Updating Current Issue
+### Updating an Existing Issue Body
 
 ```bash
 # View current body
 gh issue view <number> --repo <org>/<repo>
 
-# Edit to add scope (opens editor)
+# Edit (opens editor)
 gh issue edit <number> --repo <org>/<repo>
 ```
+
+## Refining an Existing Issue
+
+Same rules apply. When editing an issue that already exists:
+
+- Strip any `## Approach`, `## Files/Areas`, `## Notes`, `## Scope`, or step-by-step implementation sections. They short-circuit investigation.
+- Rewrite the summary as a high-level overview + constraints only.
+- For leaf issues: rewrite acceptance criteria as observable outcomes, not implementation tasks.
+- For tracker issues (Epic, etc.): remove any acceptance criteria — the acceptance belongs on the child issues, not the umbrella.
+- Keep constraints that materially shape what "done" means; drop everything else.
 
 ---
 
@@ -267,8 +285,13 @@ The `Closes #123` automatically:
 
 - Start work without an issue
 - Create issue during plan mode (draft only, create after approval)
-- Expand scope without asking
+- Include implementation steps, an approach, or a step-by-step recipe in the body
+- List files, function names, or areas in the body
+- Include code snippets, refactor plans, or migration order in the body
+- Add a `## Scope` section — the concept doesn't exist here
+- Attach acceptance criteria to a tracker issue (Epic, etc.) — acceptance lives on the children
+- Defer work that's needed to meet acceptance criteria under an "out of scope" excuse
 - Create PR without `Closes #N`
-- Work on multiple issues in one session
+- Mix unrelated concerns into a single issue
 - Forget to track the active issue
 - Amend commits unless explicitly told to
