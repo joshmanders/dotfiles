@@ -7,9 +7,7 @@ disable-model-invocation: true
 
 ## Task: Work on Issue $ARGUMENTS
 
-Pull the specified GitHub issue, create a working branch, and start.
-
-**Related skills:** Use `github` skill patterns for CLI commands.
+Pull the specified GitHub issue, gather its full context, create a working branch, and start.
 
 ### Step 0: Parse arguments
 
@@ -35,29 +33,94 @@ To get the current repo's owner:
 gh repo view --json owner -q '.owner.login'
 ```
 
-### Step 2: Fetch issue details
+### Step 2: Fetch issue context
+
+Gather everything the issue has attached. Any of it may carry relevant context; interpretation isn't this skill's job — pull it all first, then read.
+
+- The issue: title, body, comments, assignees, state
+- Labels and their descriptions (label names can be opaque; descriptions often carry the meaning)
+- Milestone and its description
+- Issue type, if set
+- Parent issue, if this is a sub-issue
+- Sub-issues, if this issue has any
+- Linked PRs
+- Project board fields, if the issue is on a board
+
+`gh issue view` returns names but not label/milestone descriptions or type/parent/sub-issue/project data. Reach further for the rest:
 
 ```bash
-gh issue view <number> --repo <owner/repo>
-```
+# The issue itself
+gh issue view <number> --repo <owner/repo> \
+  --json number,title,body,state,assignees,labels,milestone,comments
 
-Read the full issue: description, comments, linked issues/PRs, acceptance criteria.
+# Label descriptions (issue view returns only names)
+gh label list --repo <owner/repo> --limit 200 --json name,description
+
+# Milestone description (issue view returns only title)
+gh api repos/<owner/repo>/milestones/<milestone-number>
+
+# Issue type, parent, sub-issues, linked PRs, project fields
+gh api graphql -f query='
+query($url: URI!) {
+  resource(url: $url) {
+    ... on Issue {
+      issueType { name description }
+      parent { number title url state }
+      subIssues(first: 50) { nodes { number title state url } }
+      closedByPullRequestsReferences(first: 20, includeClosedPrs: true) {
+        nodes { number title state url }
+      }
+      projectItems(first: 10) {
+        nodes {
+          project { title number }
+          fieldValues(first: 20) {
+            nodes {
+              ... on ProjectV2ItemFieldSingleSelectValue {
+                field { ... on ProjectV2SingleSelectField { name } }
+                name
+              }
+              ... on ProjectV2ItemFieldTextValue {
+                field { ... on ProjectV2Field { name } }
+                text
+              }
+              ... on ProjectV2ItemFieldNumberValue {
+                field { ... on ProjectV2Field { name } }
+                number
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}' -f url="https://github.com/<owner/repo>/issues/<number>"
+```
 
 ### Step 3: Create working branch
 
-Ensure you're on the base branch (usually `master` or `main`), then create the working branch:
+Ensure you're on the base branch (usually `master` or `main`), then:
 
 ```bash
 git issue <number>
 ```
 
-This uses the `git-issue` helper which creates a branch named `TYPE-<number>` based on the issue's type field.
+### Step 4: Set session context
 
-### Step 4: Assess and begin
+Track the issue as active session context: `Active Issue: #<number> - <title>`.
 
-Read the issue requirements and assess complexity:
+### Step 5: Assess and begin
 
-**Straightforward** — the requirements are clear, the approach is obvious, no architectural decisions needed:
+Read the fetched context and assess.
+
+**If any signal suggests this is a bug** — issue type set to a bug variant, a label indicating a defect, body or comments describing broken or regressed behavior, a linked PR that reverted something, or the note frames it as an investigation:
+
+- Invoke the `systematic-debugging` skill.
+- Trace the root cause before proposing a fix. Do not jump to a patch based on the symptom.
+- Once the root cause is understood, continue to the complexity assessment below to decide how to proceed with the fix.
+
+**Otherwise, assess complexity:**
+
+**Straightforward** — requirements clear, approach obvious, no architectural decisions needed:
 
 - Skip planning. Start working immediately.
 - Follow the task lifecycle (read nearby code, implement, test, clean up).
@@ -67,11 +130,10 @@ Read the issue requirements and assess complexity:
 - Use the `planning` skill to draft a plan.
 - Exit plan mode for approval before executing.
 
-Use your judgment. Default to just starting. Only plan when the work genuinely needs it.
+Default to just starting. Only plan when the work genuinely needs it.
 
-### Step 5: Execute
+### Step 6: Execute
 
-- Track the issue as session context: `Active Issue: #<number> - <title>`
 - Do the work following the task lifecycle
 - If scope expands → STOP, ask about a new issue
 - When done, present the work and wait for review
