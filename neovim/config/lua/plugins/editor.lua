@@ -37,10 +37,10 @@ return {
       "TmuxNavigatePrevious",
     },
     keys = {
-      { "<C-h>", "<cmd>TmuxNavigateLeft<cr>", desc = "Navigate left (window/tmux pane)" },
-      { "<C-j>", "<cmd>TmuxNavigateDown<cr>", desc = "Navigate down (window/tmux pane)" },
-      { "<C-k>", "<cmd>TmuxNavigateUp<cr>", desc = "Navigate up (window/tmux pane)" },
-      { "<C-l>", "<cmd>TmuxNavigateRight<cr>", desc = "Navigate right (window/tmux pane)" },
+      { "<S-Left>",  "<cmd>TmuxNavigateLeft<cr>",  mode = { "n", "i", "v", "t" }, desc = "Navigate left (window/tmux pane)" },
+      { "<S-Down>",  "<cmd>TmuxNavigateDown<cr>",  mode = { "n", "i", "v", "t" }, desc = "Navigate down (window/tmux pane)" },
+      { "<S-Up>",    "<cmd>TmuxNavigateUp<cr>",    mode = { "n", "i", "v", "t" }, desc = "Navigate up (window/tmux pane)" },
+      { "<S-Right>", "<cmd>TmuxNavigateRight<cr>", mode = { "n", "i", "v", "t" }, desc = "Navigate right (window/tmux pane)" },
     },
   },
 

@@ -110,10 +110,10 @@ Ctrl+; Up/Down       Split vertically, before/after current pane
 Pane navigation is prefix-free thanks to vim-tmux-navigator — these also jump in and out of Neovim splits:
 
 ```
-Ctrl+h               Move left
-Ctrl+j               Move down
-Ctrl+k               Move up
-Ctrl+l               Move right
+Shift+Left           Move left
+Shift+Down           Move down
+Shift+Up             Move up
+Shift+Right          Move right
 ```
 
 Or click a pane with the mouse.
@@ -177,7 +177,7 @@ Scroll up with mouse wheel or trackpad. To copy text:
 | `Ctrl+; Enter`         | Split top/bottom                  |
 | `Ctrl+; Left/Right`    | Split horizontal, before/after    |
 | `Ctrl+; Up/Down`       | Split vertical, before/after      |
-| `Ctrl+h/j/k/l`         | Navigate panes                    |
+| `Shift+arrows`         | Navigate panes                    |
 | `Ctrl+; -/=/[/]`       | Resize panes                      |
 | `Ctrl+; Delete`        | Equalize panes                    |
 | `Ctrl+; z`             | Zoom pane                         |
@@ -197,4 +197,4 @@ Scroll up with mouse wheel or trackpad. To copy text:
 - **tmux-resurrect** — saves/restores sessions across tmux server restarts
 - **tmux-continuum** — auto-saves every 15 minutes
 - **tmux-better-mouse-mode** — natural scroll-to-exit behavior in copy mode
-- **vim-tmux-navigator** — seamless `Ctrl+h/j/k/l` between Neovim splits and tmux panes
+- **vim-tmux-navigator** — seamless `Shift+arrows` between Neovim splits and tmux panes
