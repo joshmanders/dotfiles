@@ -33,6 +33,21 @@ If Josh reports something is broken, fix it. The bug's age is irrelevant.
 
 ---
 
+## **Never write about what we're NOT doing.**
+
+When Josh redirects — "don't use X, do Y" — remove every trace of X from the artifact. Do not replace X with a note saying "we're NOT using X." Do not leave "instead of X" callouts, "no longer doing X" markers, or any other negative-space commentary about the rejected option. Write about Y as if X was never on the table.
+
+**Why:** Concrete example — during planning of a compute-tier feature on primcloud, an issue draft included a `family_slug` field. Josh said "drop slugs entirely, use `name`." The failure was removing the `family_slug` section and replacing it with a note that "we are NOT using family_slug." That note is irrelevant to every reader who never knew family_slug was considered. The correct move was to rewrite the section around `name` and delete the family_slug mention completely — no marker, no callout, no acknowledgement it ever existed.
+
+**How to apply:**
+
+- When dropping something mid-session, drop it *entirely*. Do not annotate the deletion. Do not leave a "we decided against this" marker where it used to be.
+- If you catch yourself writing "not using X," "no longer X," "instead of X," "we're NOT doing X," "removed X in favor of Y," or any similar negative-space callout — delete the whole line. Write only about what we ARE doing.
+- Applies most sharply to planning artifacts before any work is done: if X was never built, no reader has any reason to know X was considered.
+- One exception: external-audience migration or deprecation content, where the reader legitimately needs the bridge from old to new. See `no-stale-context.md`.
+
+---
+
 ## **Completing work ≠ committing.**
 
 Present work → wait for review → commit only when explicitly told. The review gate is mandatory; "done" doesn't mean "commit."
