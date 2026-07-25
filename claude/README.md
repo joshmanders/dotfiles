@@ -64,6 +64,10 @@ Modular rules in `rules/` directory, auto-loaded by Claude Code:
 | `test-quality`      | Test assertions, determinism, signal                     |
 | `code-review-output`| Actionable items only — no narration or affirmations     |
 | `presenting-work`   | Hand finished work back conversationally, not file-by-file |
+| `output-shape`      | Payload first, numbered steps, flat errors               |
+| `no-lecturing`      | Answer what was asked, skip the tutorial                 |
+| `no-stale-context`  | Write the present state, not the history of the change   |
+| `memory-vs-codification` | What belongs in the repo vs personal memory         |
 
 ## Skills
 
