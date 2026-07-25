@@ -63,6 +63,7 @@ Modular rules in `rules/` directory, auto-loaded by Claude Code:
 | `pr-format`         | PR title, body, and final checklist                      |
 | `test-quality`      | Test assertions, determinism, signal                     |
 | `code-review-output`| Actionable items only — no narration or affirmations     |
+| `presenting-work`   | Hand finished work back conversationally, not file-by-file |
 
 ## Skills
 

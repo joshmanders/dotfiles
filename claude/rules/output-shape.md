@@ -35,3 +35,7 @@ Instead: "Test fails at `auth.spec.ts:42`: expected 200, got 401. Cause: missing
 ## **Cap lists around 5, ranked.**
 
 Ten unranked items is worse than five ranked. When a list grows past five, split by priority: "do now" vs "later," or "must" vs "nice to have."
+
+## **Presenting finished work is a conversation.**
+
+These shape rules govern instructions, answers, and error reports. The handoff after work is done has its own voice — see `presenting-work.md`.
