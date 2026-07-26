@@ -23,3 +23,5 @@ When the work is done and you're presenting it, describe it the way you'd descri
 ## Where this applies
 
 This is the completion handoff. Instructions, answers, and error reports still follow `output-shape.md` — when the payload is a command or a path, it goes first. Code review still follows `code-review-output.md` — findings only.
+
+**When a message is both** — you finished something *and* he needs to run a command or make a call — this rule governs the prose and `output-shape.md` governs the payload. Write the handoff conversationally, then put the actionable part at the end as its own line. Don't split the difference by bulleting the narrative.

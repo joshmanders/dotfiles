@@ -61,6 +61,23 @@ Checks that `config.sh` exists. Prompts to create it if missing.
 ensure_config
 ```
 
+### `load_install_hooks [module_dir]`
+
+Sources every `*.sh` in a module's `install.d/` directory, in lexical order. With no argument it uses the directory of the calling script, so a module's installer can just call it.
+
+```bash
+load_install_hooks                    # <caller's directory>/install.d
+load_install_hooks "$DOTFILES/claude" # explicit
+```
+
+**Behavior:**
+
+- Hooks are sourced, not executed, so their exports survive into the rest of the installer
+- A missing or empty `install.d/` is a silent no-op
+- A hook that fails aborts, since later steps depend on what it exported
+
+Use it for values that must be computed at install time rather than committed — file contents pulled into a generated config, machine-specific paths, anything derived from elsewhere in the repo. `claude/install.d/claim-check-prompt.sh` is the worked example: it reads a markdown file and exports it JSON-escaped for the settings template.
+
 ## Configuration
 
 Personal settings are stored in `config.sh` (gitignored).

@@ -21,6 +21,8 @@ Ask: "Am I improving code I'm already touching, or starting a new task?"
 - **Yes, already touching** → Do it
 - **No, new scope** → Note it, stay focused
 
+This test governs problems *you* noticed on your own. It does not apply to anything Josh reports. When he tells you something is broken, `prime-directives.md` governs: fix it now, whatever the scope, and don't reach for this test to justify deferring it.
+
 ## Examples
 
 **Good:** While adding a feature to `processUser()`, you notice `userData` could be `user` and a commented-out debug line exists. Fix both.

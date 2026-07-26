@@ -18,6 +18,7 @@
 #   - env_get <var> [default]         Get config variable with fallback
 #   - env_require <var> <prompt> [default]  Require config, prompt if missing
 #   - ensure_config                   Check config.sh exists
+#   - load_install_hooks [module_dir] Source a module's install.d/*.sh
 #
 # Flags (passed to script or set via environment):
 #   --non-interactive  Disable all prompts
@@ -36,6 +37,7 @@ source "$DOTFILES/lib/flags.sh"
 source "$DOTFILES/lib/env.sh"
 source "$DOTFILES/lib/symlink.sh"
 source "$DOTFILES/lib/run.sh"
+source "$DOTFILES/lib/install_hooks.sh"
 
 # Source user config if it exists
 if [[ -f "$DOTFILES/config.sh" ]]; then

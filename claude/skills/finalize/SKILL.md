@@ -100,10 +100,13 @@ Provide the subagent with:
 3. The git diff output (branch diff if on a feature branch, otherwise uncommitted diff)
 4. The changed file list (all committed + uncommitted changes)
 5. The issue URL or original ask (if available)
+6. **The factual claims you made this session.** Go back through your own messages and pull every statement you made about how a tool, flag, env var, API, config key, or library behaves. Quote them verbatim. Include the ones you're most confident about — confidence is the thing being tested, so filtering by it defeats the check.
 
 When findings come back:
 - Fix every item — no cherry-picking, no skipping
-- If a finding seems wrong, verify it (read the files the subagent referenced) before dismissing
+- If a code finding seems wrong, verify it (read the files the subagent referenced) before dismissing
+- If a claim finding seems wrong, the only way to dismiss it is to run the check yourself and show the output. Arguing that the claim is correct doesn't clear it
+- A claim returned as `UNVERIFIABLE` isn't cleared by leaving it alone — either verify it, or go correct what you told the user
 - Re-run tests after fixes
 
 ### 7. Test Coverage
@@ -148,9 +151,12 @@ Finalize complete.
 Changes reviewed: <file list>
 Fixed: <what was fixed, or "nothing">
 Tests: <pass/fail>
+Corrections: <claims retracted or relabelled, or "none">
 ```
 
 Keep the summary short. Only mention what was actually fixed — don't list steps where nothing changed.
+
+`Corrections` is exempt from that trim. A disproven claim changes nothing in the diff, so the "only mention what was fixed" rule would delete it — and that line is the one thing in the summary Josh can't get from reading the code. If the scrutiny agent disproved something you told him, say so here in plain words, even when the fix was purely to your own understanding.
 
 ---
 

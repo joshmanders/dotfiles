@@ -506,6 +506,16 @@ Managed (MDM/policy) > CLI flags > Local (.claude/settings.local.json)
 - **Manual alternative:** `claude --remote-control`, `claude remote-control`, or `/remote-control` (alias `/rc`) within a session.
 - **Gotcha:** Requires full-scope authentication (not API keys or limited tokens). On Team/Enterprise, an admin must enable Remote Control in admin settings. Known VS Code extension bug (issue #41036): the extension ignores this setting — use `/remote-control` manually.
 
+### `remote.defaultEnvironmentId`
+
+- **Type:** `string` (`env_…`)
+- **Default:** unset
+- **Purpose:** Which cloud environment new cloud sessions attach to by default. The binary's schema describes the parent `remote` object as "Cloud session configuration". Distinct from `remoteControlAtStartup`, where execution stays on this machine.
+- **Written at runtime.** Selecting an environment clears the local-settings copy and writes the chosen id into user settings (`~/.claude/settings.json`). Not hand-authored.
+- **Deliberately absent from `settings.json.template`.** The template is committed and this repo is public; the value is account-scoped.
+- **Safe to lose.** `install.sh` overwrites `settings.json` from the template, so this key is discarded on every install. The resolver then reports no default, and selecting an environment writes it back. A stale id is worse than a missing one — a default that no longer resolves produces `Error: Selected environment not found`.
+- **Gotcha:** Not present in the published JSON schema on schemastore. It exists only in the settings schema inside the binary, so `--help` and the online schema are both dead ends for it.
+
 ---
 
 ## Updates
