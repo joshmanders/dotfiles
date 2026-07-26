@@ -119,6 +119,7 @@ These are the reasons the Rust rewrite exists. The Rust port should resolve them
 5. **Cold-start latency.** React reconciler + Bun import graph + native module loading add noticeable startup cost for a tool you launch frequently. A Rust binary with a TUI library (`ratatui` + `crossterm`, or similar) starts in tens of milliseconds.
 6. **PTY initial size is hardcoded** at 120×30 until the first resize. Should query the host terminal size at spawn time.
 7. **Per-tab line cap is a hard ring buffer.** Once you hit 5000 lines, history scrolls off and there's no spillover to disk. A bounded in-memory window with optional on-disk overflow would let long-running processes keep usable history.
+8. **node-pty is pinned to a prerelease.** `1.2.0-beta.14`, not `latest`. On macOS, node-pty's `posix_spawn` path opens a `/dev/ptmx` fd per spawn that the parent never closes, so every restart burns one of the system's `kern.tty.ptmx_max` (511) ptys until nothing on the machine can allocate one. Fixed in [microsoft/node-pty#882](https://github.com/microsoft/node-pty/pull/882), which has only shipped in the 1.2.0 betas — the `latest` tag is still 1.1.0. Don't loosen the pin until 1.2.0 is stable.
 
 ---
 
