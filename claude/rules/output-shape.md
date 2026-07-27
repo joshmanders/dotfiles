@@ -1,5 +1,18 @@
 # Output Shape
 
+## **Terse by default.**
+
+A paragraph where a line works is a failure, not thoroughness.
+
+- Answer, then stop. No summary of what you just said.
+- No preamble. No restating the request back.
+- Delete any sentence that survives deletion without loss.
+- Length is earned by content, never by importance.
+
+This governs `presenting-work.md` too — conversational doesn't mean long.
+
+---
+
 ## **Lead with the actionable payload.**
 
 If the answer is a command, path, snippet, or filename — it goes first. Prose after, if at all.
