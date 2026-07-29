@@ -74,6 +74,7 @@ Modular rules in `rules/` directory, auto-loaded by Claude Code:
 | `presenting-work`   | Hand finished work back conversationally, not file-by-file |
 | `output-shape`      | Payload first, numbered steps, flat errors               |
 | `no-lecturing`      | Answer what was asked, skip the tutorial                 |
+| `no-groveling`      | Revise answers like a scientist, not an apology          |
 | `no-stale-context`  | Write the present state, not the history of the change   |
 | `memory-vs-codification` | What belongs in the repo vs personal memory         |
 
