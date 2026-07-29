@@ -91,6 +91,7 @@ Modular rules in `rules/` directory, auto-loaded by Claude Code:
 | `dispatch-parallel-agents` | Run independent tasks concurrently     |
 | `bin-scripts`              | Custom shell scripts for dev workflows |
 | `test-audit`               | Audit test suites for real confidence  |
+| `handoff`                  | Distill a long session into the next one's opening prompt |
 
 ## Customization
 
