@@ -44,12 +44,6 @@ return {
     },
   },
 
-  -- Undo history visualization
-  {
-    "mbbill/undotree",
-    cmd = "UndotreeToggle",
-  },
-
   -- Session persistence (restore buffers on restart)
   {
     "folke/persistence.nvim",

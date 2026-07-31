@@ -110,8 +110,8 @@ map("n", "[q", "<cmd>cprev<cr>zz", { desc = "Previous quickfix item" })
 map("n", "<leader>co", "<cmd>copen<cr>", { desc = "Open quickfix list" })
 map("n", "<leader>cc", "<cmd>cclose<cr>", { desc = "Close quickfix list" })
 
--- Undotree
-map("n", "<leader>u", "<cmd>UndotreeToggle<cr>", { desc = "Toggle undotree" })
+-- Undo
+map("n", "<leader>u", "u", { desc = "Undo" })
 
 -- Lazygit
 vim.api.nvim_create_user_command("Lazygit", function()
