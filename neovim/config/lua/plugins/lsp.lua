@@ -64,6 +64,24 @@ return {
         end,
       })
 
+      -- Laravel LSP, installed via composer rather than Mason. Framework awareness
+      -- only (routes, config keys, views, translations), so it layers on top of
+      -- intelephense instead of competing with it. The server refuses to initialize
+      -- without a workspace root, so leave it unstarted when there's no artisan
+      -- above the file rather than letting it error out.
+      vim.lsp.config("laravel_lsp", {
+        cmd = { "laravel-lsp" },
+        filetypes = { "php", "blade" },
+        root_dir = function(bufnr, on_dir)
+          local start = vim.fs.dirname(vim.api.nvim_buf_get_name(bufnr))
+          local artisan = vim.fs.find("artisan", { path = start, upward = true })[1]
+          if artisan then
+            on_dir(vim.fs.dirname(artisan))
+          end
+        end,
+      })
+      vim.lsp.enable("laravel_lsp")
+
       require("mason-lspconfig").setup(opts)
 
       -- LSP keymaps (attach on LSP connect)

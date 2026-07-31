@@ -11,7 +11,7 @@ Modern Neovim setup with LSP, completion, fuzzy finding, and format-on-save.
 | `config/lua/keymaps.lua`  | Key mappings                                       |
 | `config/lua/autocmds.lua` | Autocommands (yank highlight, trim whitespace)     |
 | `config/lua/plugins/`     | Plugin specs (auto-discovered by lazy.nvim)         |
-| `install.sh`              | Symlinks config directory                          |
+| `install.sh`              | Symlinks config directory, installs Laravel LSP    |
 
 ## Installation
 
@@ -28,6 +28,7 @@ Install via Homebrew (included in `homebrew/bundle`):
 - `tree-sitter-cli` — required by nvim-treesitter to compile parsers
 - `fd` — file finder for Telescope
 - `ripgrep` — content search for Telescope
+- `composer` — installs the Laravel language server (`composer global require laravel/lsp`)
 
 ## Keybindings
 
@@ -142,6 +143,13 @@ Auto-installed via Mason on first launch:
 - `astro` — Astro
 - `vue_ls` — Vue
 - `yamlls` — YAML
+
+Installed via `composer global require laravel/lsp` and enabled directly in
+`config/lua/plugins/lsp.lua`:
+
+- `laravel_lsp` — framework awareness on top of intelephense: routes, config keys, view paths,
+  translations, Eloquent. Starts only when there's an `artisan` file above the current file, so it
+  stays out of non-Laravel PHP projects.
 
 Blade files report their language id to intelephense as `php`, which it otherwise ignores them for.
 That covers `<?php ?>` blocks; intelephense doesn't parse blade syntax, so `{{ }}` and `@php` regions
