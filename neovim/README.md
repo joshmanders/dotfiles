@@ -136,12 +136,16 @@ Auto-installed via Mason on first launch:
 - `lua_ls` — Lua
 - `ts_ls` — TypeScript/JavaScript
 - `gopls` — Go
-- `intelephense` — PHP
+- `intelephense` — PHP, including blade files (see note under LSP Servers)
 - `rust_analyzer` — Rust
 - `tailwindcss` — Tailwind CSS
 - `astro` — Astro
 - `vue_ls` — Vue
 - `yamlls` — YAML
+
+Blade files report their language id to intelephense as `php`, which it otherwise ignores them for.
+That covers `<?php ?>` blocks; intelephense doesn't parse blade syntax, so `{{ }}` and `@php` regions
+get no completion.
 
 ## Configuration
 

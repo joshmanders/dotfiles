@@ -54,6 +54,16 @@ return {
         },
       })
 
+      -- Intelephense ignores any document whose languageId isn't "php", so blade
+      -- buffers need both the filetype and the language id remapped to get PHP
+      -- intelligence inside their <?php ?> blocks.
+      vim.lsp.config("intelephense", {
+        filetypes = { "php", "blade" },
+        get_language_id = function(_, ft)
+          return ft == "blade" and "php" or ft
+        end,
+      })
+
       require("mason-lspconfig").setup(opts)
 
       -- LSP keymaps (attach on LSP connect)
