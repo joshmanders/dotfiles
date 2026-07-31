@@ -56,15 +56,19 @@ Install via Homebrew (included in `homebrew/bundle`):
 
 ### Code
 
-| Binding            | Action                                   |
-| ------------------ | ---------------------------------------- |
-| `Ctrl+Click`       | Go to definition/references              |
-| `gd` / `gr` / `gi` | Definition / references / implementation |
-| `K`                | Hover docs                               |
-| `<leader>.`        | Code action                              |
-| `<leader>rn`       | Rename symbol                            |
-| `<leader>D`        | Type definition                          |
-| `[d` / `]d`        | Previous/next diag                       |
+| Binding            | Action                                       |
+| ------------------ | -------------------------------------------- |
+| `.`                | Toggle diagnostic under cursor, or hover docs |
+| `Ctrl+Click`       | Go to definition/references                  |
+| `gd` / `gr` / `gi` | Definition / references / implementation     |
+| `K`                | Hover docs                                   |
+| `<leader>.`        | Code action                                  |
+| `<leader>rn`       | Rename symbol                                |
+| `<leader>D`        | Type definition                              |
+| `[d` / `]d`        | Previous/next diag                           |
+
+`.` is bound to code inspection rather than repeat-last-change. Tap it to show what's under the
+cursor, tap again to dismiss. `<leader>.` then offers fixes for whatever it showed you.
 
 ### Git
 

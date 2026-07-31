@@ -25,6 +25,24 @@ map("n", "<C-LeftMouse>", function()
   end)
 end, { desc = "Go to definition/references" })
 
+-- Toggle info for what's under the cursor: diagnostics if the line has any,
+-- otherwise hover docs. The CursorHold float is unfocusable, so checking
+-- focusable distinguishes floats this key opened from that automatic one.
+map("n", ".", function()
+  local open = vim.b.lsp_floating_preview
+  if open and vim.api.nvim_win_is_valid(open) and vim.api.nvim_win_get_config(open).focusable then
+    vim.api.nvim_win_close(open, true)
+    return
+  end
+
+  local line = vim.api.nvim_win_get_cursor(0)[1] - 1
+  if #vim.diagnostic.get(0, { lnum = line }) > 0 then
+    vim.diagnostic.open_float({ scope = "line", border = "rounded", source = "if_many" })
+  else
+    vim.lsp.buf.hover()
+  end
+end, { desc = "Toggle diagnostic or hover info" })
+
 -- Save & quit
 map("n", "<leader>s", "<cmd>silent w<cr>", { desc = "Save file" })
 map("n", "<leader>q", "<cmd>qa<cr>", { desc = "Quit all" })
