@@ -31,7 +31,7 @@ Install via Homebrew (included in `homebrew/bundle`):
 
 ## Keybindings
 
-`<leader>` is `Space`.
+`<leader>` is `,`.
 
 ### General
 
@@ -55,14 +55,15 @@ Install via Homebrew (included in `homebrew/bundle`):
 
 ### Code
 
-| Binding            | Action             |
-| ------------------ | ------------------ |
-| `Ctrl+Click`       | Go to definition/references |
-| `K`                | Hover docs         |
-| `<leader>ca`       | Code action        |
-| `<leader>rn`       | Rename symbol      |
-| `<leader>D`        | Type definition    |
-| `[d` / `]d`        | Previous/next diag |
+| Binding            | Action                                   |
+| ------------------ | ---------------------------------------- |
+| `Ctrl+Click`       | Go to definition/references              |
+| `gd` / `gr` / `gi` | Definition / references / implementation |
+| `K`                | Hover docs                               |
+| `<leader>.`        | Code action                              |
+| `<leader>rn`       | Rename symbol                            |
+| `<leader>D`        | Type definition                          |
+| `[d` / `]d`        | Previous/next diag                       |
 
 ### Git
 
@@ -80,7 +81,7 @@ Install via Homebrew (included in `homebrew/bundle`):
 | ------------------ | -------------------- |
 | `<leader>e`        | Toggle file explorer |
 | `<leader>u`        | Toggle undotree      |
-| `<leader>lg`       | Open lazygit         |
+| `<leader>g`        | Open lazygit         |
 | `J` / `K` (vis)    | Move selection       |
 
 ### Laravel (in PHP/Blade files)
