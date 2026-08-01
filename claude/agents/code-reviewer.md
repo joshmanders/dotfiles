@@ -20,6 +20,7 @@ When reviewing completed work, you will:
    - Check for proper error handling, type safety, and defensive programming
    - Evaluate code organization, naming conventions, and maintainability
    - Assess test coverage and quality of test implementations
+   - Flag any test whose failure would be a dependency's bug rather than ours — framework helpers returning documented shapes, build tools emitting files they promised, ORMs persisting a field with no logic in between. Deleting all of our code should break the test; if it wouldn't, the test isn't ours to keep
    - Look for potential security vulnerabilities or performance issues
 
 3. **Architecture and Design Review**:
