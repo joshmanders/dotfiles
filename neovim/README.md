@@ -122,7 +122,7 @@ cursor, tap again to dismiss. `<leader>.` then offers fixes for whatever it show
 | github-nvim-theme   | GitHub Dark Default theme                 |
 | lualine.nvim        | Status line                               |
 | gitsigns.nvim       | Git gutter signs + blame                  |
-| which-key.nvim      | Keybinding discovery (press Space, wait)  |
+| which-key.nvim      | Keybinding discovery (press `,`, wait)    |
 | Comment.nvim        | Toggle comments (`gcc` line, `gc` visual) |
 | nvim-autopairs      | Auto-close brackets                       |
 | vim-tmux-navigator  | Seamless tmux pane navigation             |
