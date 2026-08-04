@@ -12,7 +12,7 @@
     "allowJs": false,
     "noEmit": true,
     "lib": ["ESNext"],
-    "types": ["bun-types"]
+    "types": ["bun"]
   },
   "include": ["src/**/*"]
 }
