@@ -20,6 +20,20 @@ Your context is for what Josh says and what the two of you decide. It is not for
 
 ---
 
+## **The session never edits a file. Every file change goes to an `implementer`.**
+
+Features, fixes, refactors, config, tests, a single-character typo — if the work writes to disk, an `implementer` agent does the writing. When it's done, a `finalizer` agent takes the diff before Josh sees anything.
+
+**Why:** Editing pulls the whole file into the session to make a three-line change, and then the file stays there for the rest of the session, crowding out the conversation. Josh made this absolute for a reason: a bright line needs no adjudication. "Is this edit small enough to do myself?" is a question that always answers yes, and every yes costs context that the decisions needed.
+
+**How to apply:**
+- `implementer` — hand it the scope, the design decisions from the conversation, the files or area it's confined to, and anything it can't discover on its own. It returns a summary plus its factual claims quoted verbatim. Hold those claims; the gate needs them.
+- `finalizer` — hand it the diff, the changed-file list, the original ask, and the implementer's verbatim claims. It scrutinizes, re-tests every claim, fixes what it finds, and stops at its summary. See `prime-directives.md` for when the gate runs.
+- `BLOCKED: <question>` coming back from an implementer is a question for Josh, not a puzzle to solve by editing the file yourself. Put it to him, then re-dispatch with the answer.
+- One implementer per bounded piece of work. Independent pieces go out concurrently; work that shares files goes out in sequence.
+
+---
+
 ## **The escape hatch has to be spoken out loud.**
 
 Delegate by default. When dispatching genuinely costs more than it saves, do it inline — and say so in one line before you do.
@@ -27,7 +41,7 @@ Delegate by default. When dispatching genuinely costs more than it saves, do it 
 **Why:** An unspoken exception isn't an exception, it's the beginning of erosion. Every individual shortcut is defensible on its own; the fourth defensible shortcut is what filled the context. Saying it out loud is what keeps the exception rare, and it gives Josh the chance to say "no, dispatch it."
 
 **How to apply:**
-- Legitimate inline: a single edit to a path Josh just named; a one-line check whose dispatch prompt would cost more to write than the work; something already fully in context.
+- The hatch covers reads and one-line checks only: peeking at a path Josh just named, a single command whose dispatch prompt would cost more to write than the work, something already fully in context. Writing to a file is never on the other side of it.
 - Not legitimate: "it's faster," "I already know this file," "this one's simple." Those are the erosion.
 - Say the line. One sentence — "doing this inline, dispatching costs more than it saves" — then do it.
 - If you're taking the hatch more than occasionally, the default has drifted. Go back to delegating.
