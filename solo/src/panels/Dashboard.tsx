@@ -60,6 +60,7 @@ export function Dashboard({
           status: "idle" as const,
           lines: [],
           restarts: 0,
+          revision: 0,
         };
         return { cfg, proc };
       }),
@@ -191,7 +192,11 @@ export function Dashboard({
       <box style={{ paddingLeft: 1, paddingRight: 1, height: 1 }}>
         <text fg={statusColor}>{statusLine}</text>
       </box>
-      <OutputPane title={outputTitle} lines={cur?.proc.lines ?? []} />
+      <OutputPane
+        title={outputTitle}
+        lines={cur?.proc.lines ?? []}
+        revision={cur?.proc.revision ?? 0}
+      />
       {cur?.cfg.interactive && isRunning ? (
         <box
           style={{

@@ -1,10 +1,14 @@
-import React, { forwardRef, useEffect, useRef } from "react";
+import React, { forwardRef, memo, useEffect, useRef } from "react";
 import type { ScrollBoxRenderable } from "@opentui/core";
 import type { StyledLine } from "../lib/ansi.js";
 
 interface Props {
   title?: string;
   lines: StyledLine[];
+  // The manager appends to `lines` in place, so its identity never moves.
+  // This is what tells memo the visible process actually produced something —
+  // without it, a chatty background tab would re-reconcile every line here.
+  revision: number;
 }
 
 const VISIBLE_TAIL = 1000;
@@ -14,8 +18,11 @@ const VISIBLE_TAIL = 1000;
 // the lines stacked from the top with empty space below, which is what
 // you want when output has barely started. After overflow, we pin scroll
 // to the bottom so the latest line stays visible.
-export const OutputPane = forwardRef<ScrollBoxRenderable, Props>(
-  function OutputPane({ title, lines }, ref) {
+export const OutputPane = memo(
+  forwardRef<ScrollBoxRenderable, Props>(function OutputPane(
+    { title, lines },
+    ref,
+  ) {
     const localRef = useRef<ScrollBoxRenderable | null>(null);
 
     useEffect(() => {
@@ -81,5 +88,5 @@ export const OutputPane = forwardRef<ScrollBoxRenderable, Props>(
         </scrollbox>
       </box>
     );
-  },
+  }),
 );

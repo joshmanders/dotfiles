@@ -25,10 +25,26 @@ const READ_BUF_SIZE = 16384;
 // EAGAIN keeps up without letting one process starve the event loop.
 const MAX_READS_PER_TICK = 16;
 const MAX_LINES = 5000;
+// Trimming to MAX_LINES on every append shifts the whole array per line.
+// Letting it overshoot by this much amortizes the cost across the slack.
+const TRIM_SLACK = 512;
 // node-pty defers its exit event behind a 200ms socket-destroy timer, and
 // destroying the socket is what closes our fd. If a poll error beats the exit
 // event, wait this long for the real status before finalizing without one.
 const EXIT_GRACE_MS = 500;
+
+const DEFAULTS = {
+  // One renderer frame. The CLI renderer is created with targetFps: 30, so
+  // flushing faster than this only buys React reconciliation passes whose
+  // output is thrown away before it reaches the screen.
+  flushIntervalMs: 33,
+};
+
+export interface ProcessManagerOptions {
+  // Minimum gap between "change" emissions. Output arrives far faster than
+  // any terminal can draw it, so emissions coalesce to roughly one frame.
+  flushIntervalMs?: number;
+}
 
 // node-pty's default kill sends SIGHUP to the shell's PID. With `bash -lc cmd`,
 // signals don't always propagate to the actual command (npm, php, node, etc.) —
@@ -64,9 +80,13 @@ export interface ProcSnapshot {
   pid?: number;
   exitCode?: number;
   startedAt?: number;
+  // Live buffer, owned by the manager and appended to in place. Read it, don't
+  // mutate it, and don't use its identity to detect change — `revision` is what
+  // moves when this process's state or output changes.
   lines: StyledLine[];
   restarts: number;
   spawnError?: string;
+  revision: number;
 }
 
 interface ProcEntry {
@@ -82,9 +102,14 @@ interface ProcEntry {
   manualStop: boolean;
   spawnError?: string;
   pollTimer?: ReturnType<typeof setInterval>;
+  // True when lines' last element is the parser's in-progress line, which is
+  // swapped out on the next append rather than duplicated.
+  partialShown: boolean;
   // Real exit status from node-pty's native callback, pending finalization.
   pendingExit?: { code: number; signal?: number };
   exitTimer?: ReturnType<typeof setTimeout>;
+  revision: number;
+  snap?: ProcSnapshot;
   // One-shot callback fired after the next exit finalizes (used by restart).
   onNextExit?: () => void;
 }
@@ -92,16 +117,23 @@ interface ProcEntry {
 export class ProcessManager extends EventEmitter {
   private procs = new Map<string, ProcEntry>();
   private baseDir: string;
+  private opts: Required<ProcessManagerOptions>;
+  private snapArray?: ProcSnapshot[];
+  private flushTimer?: ReturnType<typeof setTimeout>;
+  private flushPending = false;
 
-  constructor(baseDir: string) {
+  constructor(baseDir: string, options: ProcessManagerOptions = {}) {
     super();
     this.baseDir = baseDir;
+    this.opts = { ...DEFAULTS, ...options };
   }
 
   register(cfg: CommandConfig): void {
-    if (this.procs.has(cfg.name)) {
-      this.procs.get(cfg.name)!.cfg = cfg;
-      this.emit("change");
+    const existing = this.procs.get(cfg.name);
+    if (existing) {
+      existing.cfg = cfg;
+      this.invalidate(existing);
+      this.emitChange();
       return;
     }
     this.procs.set(cfg.name, {
@@ -111,8 +143,11 @@ export class ProcessManager extends EventEmitter {
       parser: new AnsiStream(),
       restarts: 0,
       manualStop: false,
+      partialShown: false,
+      revision: 0,
     });
-    this.emit("change");
+    this.invalidate();
+    this.emitChange();
   }
 
   unregister(name: string): void {
@@ -123,7 +158,8 @@ export class ProcessManager extends EventEmitter {
       killTree(entry.pty);
     }
     this.procs.delete(name);
-    this.emit("change");
+    this.invalidate();
+    this.emitChange();
   }
 
   start(name: string): void {
@@ -150,7 +186,8 @@ export class ProcessManager extends EventEmitter {
     } catch (err) {
       entry.status = "failed";
       entry.spawnError = (err as Error).message;
-      this.emit("change");
+      this.invalidate(entry);
+      this.emitChange();
       return;
     }
     entry.pty = pty;
@@ -204,7 +241,8 @@ export class ProcessManager extends EventEmitter {
       }, POLL_INTERVAL_MS);
     }
 
-    this.emit("change");
+    this.invalidate(entry);
+    this.emitChange();
   }
 
   // The fd died before node-pty reported a status. It destroys the socket
@@ -257,7 +295,8 @@ export class ProcessManager extends EventEmitter {
       entry.exitCode = wasManual ? 0 : undefined;
     }
     entry.status = wasManual || entry.exitCode === 0 ? "exited" : "failed";
-    this.emit("change");
+    this.invalidate(entry);
+    this.emitChange();
 
     if (entry.onNextExit) {
       const cb = entry.onNextExit;
@@ -289,8 +328,7 @@ export class ProcessManager extends EventEmitter {
     if (!entry) return;
     // Wipe scrollback immediately so the user sees a fresh buffer instead of
     // old output mixed with new on the next run.
-    entry.lines = [];
-    entry.parser = new AnsiStream();
+    this.resetBuffer(entry);
     if (!entry.pty) {
       this.start(name);
       return;
@@ -329,29 +367,35 @@ export class ProcessManager extends EventEmitter {
         // still gives the user a fresh view.
       }
     }
-    entry.lines = [];
-    entry.parser = new AnsiStream();
-    this.emit("change");
+    this.resetBuffer(entry);
+    this.invalidate(entry);
+    this.emitChange();
   }
 
+  // Snapshots are cached per entry and per manager. Nothing changed means the
+  // same array and the same objects come back, so subscribers can bail out
+  // without diffing — and the buffers are handed over by reference instead of
+  // being copied on every chunk of output.
   snapshot(): ProcSnapshot[] {
-    return Array.from(this.procs.values()).map((e) => {
-      const partial = e.parser.partialLine();
-      return {
-        name: e.cfg.name,
-        status: e.status,
-        pid: e.pid,
-        exitCode: e.exitCode,
-        startedAt: e.startedAt,
-        lines: partial.length > 0 ? [...e.lines, partial] : e.lines,
-        restarts: e.restarts,
-        spawnError: e.spawnError,
-      };
-    });
+    if (this.snapArray) return this.snapArray;
+    const out: ProcSnapshot[] = [];
+    for (const entry of this.procs.values())
+      out.push(this.entrySnapshot(entry));
+    this.snapArray = out;
+    return out;
   }
 
   get(name: string): ProcSnapshot | undefined {
-    return this.snapshot().find((s) => s.name === name);
+    const entry = this.procs.get(name);
+    return entry ? this.entrySnapshot(entry) : undefined;
+  }
+
+  runningCount(): number {
+    let n = 0;
+    for (const entry of this.procs.values()) {
+      if (entry.status === "running") n++;
+    }
+    return n;
   }
 
   shutdown(): Promise<void> {
@@ -372,6 +416,58 @@ export class ProcessManager extends EventEmitter {
     });
   }
 
+  private entrySnapshot(entry: ProcEntry): ProcSnapshot {
+    if (entry.snap) return entry.snap;
+    entry.snap = {
+      name: entry.cfg.name,
+      status: entry.status,
+      pid: entry.pid,
+      exitCode: entry.exitCode,
+      startedAt: entry.startedAt,
+      lines: entry.lines,
+      restarts: entry.restarts,
+      spawnError: entry.spawnError,
+      revision: entry.revision,
+    };
+    return entry.snap;
+  }
+
+  private invalidate(entry?: ProcEntry): void {
+    if (entry) {
+      entry.revision++;
+      entry.snap = undefined;
+    }
+    this.snapArray = undefined;
+  }
+
+  // Lifecycle transitions are rare and worth showing right away, so they skip
+  // the coalescing window and cancel any flush already queued behind them.
+  private emitChange(): void {
+    if (this.flushTimer) {
+      clearTimeout(this.flushTimer);
+      this.flushTimer = undefined;
+    }
+    this.flushPending = false;
+    this.emit("change");
+  }
+
+  // Output arrives faster than any terminal can draw it. Emit on the leading
+  // edge, then at most once per window — the trailing emit guarantees the last
+  // chunk of a burst still reaches subscribers.
+  private scheduleChange(): void {
+    if (this.flushTimer) {
+      this.flushPending = true;
+      return;
+    }
+    this.emit("change");
+    this.flushTimer = setTimeout(() => {
+      this.flushTimer = undefined;
+      if (!this.flushPending) return;
+      this.flushPending = false;
+      this.scheduleChange();
+    }, this.opts.flushIntervalMs);
+  }
+
   // Resolve a tail target's absolute path, mirroring how `start` resolves the
   // process cwd: absolute paths win; relative paths resolve against the
   // entry's cwd, which itself resolves against the manager's baseDir.
@@ -386,14 +482,32 @@ export class ProcessManager extends EventEmitter {
     return join(cwd, file);
   }
 
+  private resetBuffer(entry: ProcEntry): void {
+    entry.lines = [];
+    entry.parser = new AnsiStream();
+    entry.partialShown = false;
+  }
+
   private appendOutput(entry: ProcEntry, data: string): void {
     const completed = entry.parser.feed(data);
-    if (completed.length > 0) {
-      for (const line of completed) entry.lines.push(line);
-      if (entry.lines.length > MAX_LINES) {
-        entry.lines.splice(0, entry.lines.length - MAX_LINES);
-      }
+    const { lines } = entry;
+    // The parser's in-progress line sits at the tail so subscribers see output
+    // before its newline arrives. Drop it before appending: `feed` either
+    // handed it back in `completed` or is still mutating that same array.
+    if (entry.partialShown) {
+      lines.pop();
+      entry.partialShown = false;
     }
-    this.emit("change");
+    for (const line of completed) lines.push(line);
+    if (lines.length > MAX_LINES + TRIM_SLACK) {
+      lines.splice(0, lines.length - MAX_LINES);
+    }
+    const partial = entry.parser.partialLine();
+    if (partial.length > 0) {
+      lines.push(partial);
+      entry.partialShown = true;
+    }
+    this.invalidate(entry);
+    this.scheduleChange();
   }
 }

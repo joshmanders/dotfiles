@@ -95,11 +95,7 @@ export function App() {
   }, [pm, config.commands]);
 
   useEffect(() => {
-    const update = () => {
-      setRunningCount(
-        pm.snapshot().filter((s) => s.status === "running").length,
-      );
-    };
+    const update = () => setRunningCount(pm.runningCount());
     pm.on("change", update);
     update();
     return () => {
