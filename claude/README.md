@@ -88,6 +88,7 @@ Modular rules in `rules/` directory, auto-loaded by Claude Code:
 | `planning`                 | Work planning through GitHub issues    |
 | `github`                   | GitHub CLI patterns for issues/PRs     |
 | `issue`                    | Start work on a GitHub issue           |
+| `epic`                     | Orchestrate a parent issue's sub-issues through dispatched agents |
 | `requesting-code-review`   | Verify work before merging             |
 | `receiving-code-review`    | Handle review feedback with rigor      |
 | `dispatch-parallel-agents` | Run independent tasks concurrently     |
