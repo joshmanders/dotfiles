@@ -24,7 +24,7 @@ const READ_BUF_SIZE = 16384;
 // ~1MB/s and drops the tail of a burst when the fd closes; draining until
 // EAGAIN keeps up without letting one process starve the event loop.
 const MAX_READS_PER_TICK = 16;
-const MAX_LINES = 5000;
+export const MAX_LINES = 5000;
 // Trimming to MAX_LINES on every append shifts the whole array per line.
 // Letting it overshoot by this much amortizes the cost across the slack.
 const TRIM_SLACK = 512;
