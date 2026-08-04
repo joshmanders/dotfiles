@@ -127,6 +127,7 @@ export class AnsiStream {
   private style: Style = {};
   private partial: StyledLine = [];
   private prepend = ""; // bytes from previous feed() that ended mid-sequence
+  private overwrite = false; // a \r moved the write position back to column 0
 
   feed(chunk: string): StyledLine[] {
     const data = this.prepend + chunk;
@@ -137,6 +138,10 @@ export class AnsiStream {
 
     const flush = () => {
       if (!buf) return;
+      if (this.overwrite) {
+        this.partial = [];
+        this.overwrite = false;
+      }
       const last = this.partial[this.partial.length - 1];
       if (last && styleEq(last, this.style)) last.text += buf;
       else this.partial.push({ text: buf, ...this.style });
@@ -194,18 +199,20 @@ export class AnsiStream {
         flush();
         out.push(this.partial);
         this.partial = [];
+        this.overwrite = false;
         i++;
       } else if (c === "\r") {
-        // Two cases:
         //   \r\n — just a line ending. Skip the \r; the \n handler emits.
-        //   \r alone — progress-bar overwrite. Clear the in-progress line so
-        //   the next overwrite frame replaces it instead of stacking.
+        //   \r alone — the write position goes back to column 0, so whatever
+        //   comes next replaces the line (progress bars). Arm the overwrite
+        //   instead of clearing now: a pty emits \r\r\n for a plain newline,
+        //   and clearing on sight would eat the line it was ending.
         if (data[i + 1] === "\n") {
           i++;
           continue;
         }
         flush();
-        this.partial = [];
+        this.overwrite = true;
         i++;
       } else if (c === "\x08") {
         // Backspace — strip last char of last run.
