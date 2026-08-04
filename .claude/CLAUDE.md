@@ -20,7 +20,7 @@ Read these before writing an install script — don't work from memory:
 ### Conventions
 
 - Use `set -euo pipefail` in scripts
-- Use `brew --prefix` not hardcoded paths
+- Use `$(brew --prefix)` not hardcoded paths
 - Config vars prefixed with `DOTFILES_`
 
 ### GitHub CLI Commands
