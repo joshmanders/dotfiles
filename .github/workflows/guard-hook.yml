@@ -1,4 +1,4 @@
-name: Guard Hook Tests
+name: Hook Tests
 
 on:
   push:
@@ -16,3 +16,4 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: bash claude/hooks/guard.test.sh
+      - run: bash claude/hooks/skill-gate.test.sh
