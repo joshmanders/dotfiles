@@ -73,7 +73,8 @@ Parse a ref to determine the repo and PR number:
 Get current repo owner if needed:
 
 ```bash
-gh repo view --json owner -q '.owner.login'
+GH_TOKEN=$(gh auth token --user "$DOTFILES_GITHUB_USERNAME") \
+  gh repo view --json owner -q '.owner.login'
 ```
 
 ### Step 2: Confirm authorship, then announce
@@ -105,7 +106,8 @@ Otherwise announce the run in one line, then proceed without waiting for confirm
 ```bash
 ORIGINAL_BRANCH=$(git branch --show-current)
 STASH_RESULT=$(git stash --include-untracked 2>&1)
-gh pr checkout <number> --repo <owner/repo>
+GH_TOKEN=$(gh auth token --user "$DOTFILES_GITHUB_USERNAME") \
+  gh pr checkout <number> --repo <owner/repo>
 ```
 
 Track whether stash saved anything (check if `$STASH_RESULT` contains "No local changes").
@@ -114,16 +116,20 @@ Track whether stash saved anything (check if `$STASH_RESULT` contains "No local 
 
 ```bash
 # PR metadata and body
-gh pr view <number> --repo <owner/repo> --json title,body,state,author,baseRefName,headRefName,reviewDecision,labels
+GH_TOKEN=$(gh auth token --user "$DOTFILES_GITHUB_USERNAME") \
+  gh pr view <number> --repo <owner/repo> --json title,body,state,author,baseRefName,headRefName,reviewDecision,labels
 
 # Reviews (approval status, review bodies)
-gh api repos/<owner>/<repo>/pulls/<number>/reviews
+GH_TOKEN=$(gh auth token --user "$DOTFILES_GITHUB_USERNAME") \
+  gh api repos/<owner>/<repo>/pulls/<number>/reviews
 
 # Inline review comments (the actual feedback on code)
-gh api repos/<owner>/<repo>/pulls/<number>/comments
+GH_TOKEN=$(gh auth token --user "$DOTFILES_GITHUB_USERNAME") \
+  gh api repos/<owner>/<repo>/pulls/<number>/comments
 
 # Issue-level comments
-gh api repos/<owner>/<repo>/issues/<number>/comments
+GH_TOKEN=$(gh auth token --user "$DOTFILES_GITHUB_USERNAME") \
+  gh api repos/<owner>/<repo>/issues/<number>/comments
 ```
 
 ### Step 5: Categorize feedback
