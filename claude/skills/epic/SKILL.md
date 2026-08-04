@@ -1,8 +1,7 @@
 ---
 name: epic
-description: "Close out an entire epic in one session. Every child issue of a parent issue, worked by dispatched agents, one commit each."
-argument-hint: "<epic-ref> [note]"
-disable-model-invocation: true
+description: "Close out an entire epic in one session — every open child issue of a parent issue, worked by dispatched agents, reviewed and committed one at a time. Use when Josh points at a parent issue and wants the whole thing finished: 'close out the epic', 'let's do epic 40', 'knock out the children of #40', 'work through all of #40's sub-issues', 'finish the whole epic'. Also use when a ref he named — even plain 'let's work on #40' — turns out to have open sub-issues. Routing: if the ref has no open sub-issues it is a single issue, so hand off to the `issue` skill with that ref."
+argument-hint: "[epic-ref] [note]"
 ---
 
 ## Task: Close out epic $ARGUMENTS
@@ -27,6 +26,8 @@ Workers are dispatched fresh; what Josh said during issue 2 never reaches issue 
 
 First token is the ref, everything after is a note: `/epic 437 harden before GA, skip anything cosmetic` → ref `437`, note `harden before GA, skip anything cosmetic`. A note is standing guidance for every issue in the epic; log it under Decisions. Ref formats, parsed as `/issue` does — `437` (current repo), `foo/bar#437` (that repo), `bar#437` (current owner, repo `bar`). Resolve the owner with `gh repo view --json owner -q '.owner.login'`.
 
+`$ARGUMENTS` may be empty. Take the ref from the first source that yields one: a ref in `$ARGUMENTS`, then a ref Josh named in the conversation, then the issue tracked by the current branch — `git rev-parse --abbrev-ref HEAD` gives `<TYPE>-<number>`, e.g. `FEATURE-40`. Nothing resolves → ask which epic, one line, no preamble.
+
 ## Step 1: Fetch the epic
 
 ```bash
@@ -43,7 +44,13 @@ gh label list --repo <owner/repo> --limit 200 --json name,description
 gh api repos/<owner/repo>/milestones/<milestone-number>
 ```
 
-**No sub-issues → stop.** Tell Josh, suggest `/issue <number>`.
+`subIssues` carries a `state` on every node. **No sub-issue is `OPEN` → this is a single issue.** Say so in one line and invoke the `issue` skill with the same ref and note.
+
+At least one `OPEN` sub-issue → announce what's running, one line, then continue without waiting for confirmation:
+
+```
+Running the epic close-out on #40 — <title>
+```
 
 ## Step 2: Present the queue
 

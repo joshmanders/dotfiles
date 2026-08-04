@@ -1,19 +1,28 @@
 ---
 name: issue
-description: Start working on a GitHub issue
-argument-hint: "<issue-ref> [note]"
-disable-model-invocation: true
+description: "Work a single GitHub issue end to end — fetch its full context, branch, and start. Use when Josh points at an issue and wants it worked: 'let's look at issue 43', 'work on #43', 'start 43', 'pick up foo/bar#43', 'what's next?', 'grab the next issue', 'let's fix that bug'. Also use with no ref when he says 'let's get started' or 'what am I on?' — the ref resolves from the conversation or from the current git branch. Routing: if the issue has at least one open sub-issue it is a parent, so hand off to the `epic` skill with that ref; `epic` covers 'close out the epic', 'work through all of #40's children', 'do the whole epic'."
+argument-hint: "[issue-ref] [note]"
 ---
 
 ## Task: Work on Issue $ARGUMENTS
 
 Pull the specified GitHub issue, gather its full context, create a working branch, and start.
 
-### Step 0: Parse arguments
+### Step 0: Resolve the ref and note
 
 `$ARGUMENTS` is the issue ref optionally followed by a note. The first token is the issue ref, everything after is a note providing additional context.
 
 Example: `/issue 123 focus on the api endpoint, ignore the frontend for now` → issue ref: `123`, note: `focus on the api endpoint, ignore the frontend for now`
+
+`$ARGUMENTS` may be empty. Resolve the ref from the first source that yields one:
+
+| Order | Source                                                                                                    |
+| ----- | --------------------------------------------------------------------------------------------------------- |
+| 1     | A ref in `$ARGUMENTS`                                                                                     |
+| 2     | A ref Josh named in the conversation                                                                      |
+| 3     | The issue tracked by the current branch — `git rev-parse --abbrev-ref HEAD` gives `<TYPE>-<number>`, e.g. `FEATURE-43` |
+
+Nothing resolves → ask which issue, one line, no preamble.
 
 If a note is present, treat it as guidance throughout planning and execution — it may narrow scope, set priorities, or provide context not in the issue itself.
 
@@ -96,7 +105,19 @@ query($url: URI!) {
 }' -f url="https://github.com/<owner/repo>/issues/<number>"
 ```
 
-### Step 3: Create working branch
+### Step 3: Route and announce
+
+The GraphQL call returns `subIssues` with a `state` on every node. If at least one sub-issue is `OPEN`, this is a parent with work left in it and the `epic` skill owns it — say so in one line and invoke `epic` with the same ref and note.
+
+Otherwise announce what's running, one line:
+
+```
+Working issue #43 — <title>
+```
+
+Wait for Josh to confirm before branching.
+
+### Step 4: Create working branch
 
 Ensure you're on the base branch (usually `master` or `main`), then:
 
@@ -104,11 +125,11 @@ Ensure you're on the base branch (usually `master` or `main`), then:
 git issue <number>
 ```
 
-### Step 4: Set session context
+### Step 5: Set session context
 
 Track the issue as active session context: `Active Issue: #<number> - <title>`.
 
-### Step 5: Assess and begin
+### Step 6: Assess and begin
 
 Read the fetched context and assess.
 
@@ -132,7 +153,7 @@ Read the fetched context and assess.
 
 Default to just starting. Only plan when the work genuinely needs it.
 
-### Step 6: Execute
+### Step 7: Execute
 
 - Do the work following the task lifecycle
 - If scope expands → STOP, ask about a new issue

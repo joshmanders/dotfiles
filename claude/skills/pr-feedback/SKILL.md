@@ -1,8 +1,7 @@
 ---
 name: pr-feedback
-description: Respond to review feedback on your GitHub PR - fetch comments, understand feedback, implement fixes
+description: "Address review feedback on a PR Josh authored - fetch the review comments, understand them, implement the fixes locally. Never posts on his behalf. Invoke when Josh says things like 'we got some feedback on our PR', 'address the review comments', 'the reviewer said X', 'my PR has comments on it', 'can you handle the feedback on #12', 'fix what the review flagged', or mentions someone reviewing a PR of his. Disambiguation with pr-review: authorship decides. A PR Josh authored with review comments to act on belongs here - cues are 'our PR', 'my PR', 'feedback we got', 'address the review', 'reviewer said'. A PR authored by someone else that he wants read belongs to pr-review - cues are 'review this PR', \"take a look at Dave's PR\", 'can you review #12'. When the phrasing is ambiguous ('look at PR 12'), check the PR author with gh before choosing. Takes an optional PR ref and note; with no ref, resolves the PR from the conversation or the current branch."
 argument-hint: "[pr-ref] [note]"
-disable-model-invocation: true
 ---
 
 ## Task: Address review feedback on PR $ARGUMENTS
@@ -34,7 +33,7 @@ You implement fixes locally. Josh decides what to post and when to push.
 - `owner/repo#number`: `foo/bar#123`
 - `repo#number`: `bar#123`
 
-If the first token is NOT a PR ref, the entire `$ARGUMENTS` is a note and the PR is detected from the current branch.
+If the first token is NOT a PR ref, the entire `$ARGUMENTS` is a note. `$ARGUMENTS` may also be empty. Step 1 covers resolving the PR when no ref is given.
 
 **Examples:**
 
@@ -49,21 +48,27 @@ If a note is present, treat it as guidance — it may narrow which reviews to ad
 
 ### Step 1: Resolve the PR reference
 
-**If a PR ref was provided**, parse it to determine the repo and PR number:
+Resolve in this order, stopping at the first that produces a PR:
+
+1. A PR ref in `$ARGUMENTS`
+2. A PR ref or URL Josh named in the conversation
+3. The PR for the current branch:
+
+   ```bash
+   GH_TOKEN=$(gh auth token --user "$DOTFILES_GITHUB_USERNAME") \
+     gh pr view --json number,headRepository -q '.number'
+   ```
+
+If none of these resolve, ask in one line — no preamble: `Which PR?`
+
+Parse a ref to determine the repo and PR number:
 
 | Format              | Example       | Meaning                            |
 | ------------------- | ------------- | ---------------------------------- |
 | Number only         | `123`         | Current repo, PR 123               |
 | `owner/repo#number` | `foo/bar#123` | Repo `foo/bar`, PR 123             |
 | `repo#number`       | `bar#123`     | Current owner + repo `bar`, PR 123 |
-
-**If no PR ref was provided**, detect from the current branch:
-
-```bash
-gh pr view --json number,headRepository -q '.number'
-```
-
-If no PR is found for the current branch, stop and tell Josh.
+| URL                 | `https://github.com/foo/bar/pull/123` | Repo `foo/bar`, PR 123 |
 
 Get current repo owner if needed:
 
@@ -71,7 +76,31 @@ Get current repo owner if needed:
 gh repo view --json owner -q '.owner.login'
 ```
 
-### Step 2: Save state and checkout PR branch
+### Step 2: Confirm authorship, then announce
+
+This skill handles PRs Josh authored. Check the author before doing anything else:
+
+```bash
+GH_TOKEN=$(gh auth token --user "$DOTFILES_GITHUB_USERNAME") \
+  gh pr view <number> --repo <owner/repo> --json author,title,headRefName
+```
+
+Compare `.author.login` against `$DOTFILES_GITHUB_USERNAME`:
+
+| Author                      | Action                                                     |
+| --------------------------- | ---------------------------------------------------------- |
+| `$DOTFILES_GITHUB_USERNAME` | Continue here                                               |
+| Anyone else                 | Say so in one line and invoke `pr-review` with the same ref |
+
+The handoff line when the author is someone else:
+
+> PR #123 is octocat's — switching to pr-review.
+
+Otherwise announce the run in one line, then proceed without waiting for confirmation:
+
+> Addressing review feedback on PR #123 — Add bandwidth endpoint
+
+### Step 3: Save state and checkout PR branch
 
 ```bash
 ORIGINAL_BRANCH=$(git branch --show-current)
@@ -81,7 +110,7 @@ gh pr checkout <number> --repo <owner/repo>
 
 Track whether stash saved anything (check if `$STASH_RESULT` contains "No local changes").
 
-### Step 3: Fetch all review feedback
+### Step 4: Fetch all review feedback
 
 ```bash
 # PR metadata and body
@@ -97,7 +126,7 @@ gh api repos/<owner>/<repo>/pulls/<number>/comments
 gh api repos/<owner>/<repo>/issues/<number>/comments
 ```
 
-### Step 4: Categorize feedback
+### Step 5: Categorize feedback
 
 Separate feedback into:
 
@@ -109,7 +138,7 @@ For unresolved items, group by reviewer and present a summary to Josh:
 - What each reviewer is asking for
 - Which items are clear vs. need clarification
 
-### Step 5: Apply `receiving-code-review` skill
+### Step 6: Apply `receiving-code-review` skill
 
 This skill governs how to handle all feedback. Key principles:
 
@@ -123,7 +152,7 @@ This skill governs how to handle all feedback. Key principles:
 
 **If a suggestion seems wrong:** Say so with technical reasoning. Check if it breaks existing functionality, contradicts architecture decisions, or violates YAGNI.
 
-### Step 6: Implement fixes
+### Step 7: Implement fixes
 
 For items Josh agrees should be addressed:
 
@@ -137,7 +166,7 @@ For items Josh agrees should be addressed:
 2. Simple fixes (typos, imports)
 3. Complex fixes (refactoring, logic)
 
-### Step 7: Present results
+### Step 8: Present results
 
 For each addressed item, show:
 
@@ -151,7 +180,7 @@ For items you recommend pushing back on:
 - Why it shouldn't be done (technical reasoning)
 - Draft reply text for Josh to review and post himself if he agrees
 
-### Step 8: Restore original state (if needed)
+### Step 9: Restore original state (if needed)
 
 If Josh wants to return to the original branch:
 

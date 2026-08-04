@@ -1,8 +1,7 @@
 ---
 name: pr-review
-description: Review a colleague's GitHub PR - checkout locally, deep review, output actionable findings (READ-ONLY)
-argument-hint: "<pr-ref> [note]"
-disable-model-invocation: true
+description: "Review someone else's GitHub PR - checkout locally, deep read-only review, output copyable findings. Never posts, approves, or merges. Invoke when Josh says things like 'review this PR', 'can you look at Dave's PR', 'take a look at #12', 'review PR 340 for me', 'what do you think of this pull request', 'look over their changes', or drops a PR link and asks for a look. Disambiguation with pr-feedback: authorship decides. A PR authored by someone else belongs here. A PR Josh authored that has review comments to act on belongs to pr-feedback - cues for that are 'our PR', 'my PR', 'feedback we got', 'address the review', 'reviewer said'. When the phrasing is ambiguous ('look at PR 12'), check the PR author with gh before choosing. Takes a PR ref plus an optional note; with no ref, resolves the PR from the conversation or the current branch."
+argument-hint: "[pr-ref] [note]"
 ---
 
 ## Task: Review PR $ARGUMENTS
@@ -28,21 +27,37 @@ Your job is to present findings locally. Josh decides what to post.
 
 ### Step 0: Parse arguments
 
-`$ARGUMENTS` is the PR ref optionally followed by a note. The first token is the PR ref, everything after is a note providing additional context for the review.
+`$ARGUMENTS` is a PR ref optionally followed by a note. The first token is the PR ref, everything after is a note providing additional context for the review.
 
 Example: `/pr-review 123 focus on the auth changes` → PR ref: `123`, note: `focus on the auth changes`
 
+If the first token is not a PR ref, the whole of `$ARGUMENTS` is a note. `$ARGUMENTS` may also be empty.
+
 If a note is present, treat it as guidance throughout the review — it may narrow scope, highlight concerns, or provide context.
 
-### Step 1: Parse the PR reference
+### Step 1: Resolve the PR reference
 
-Parse the PR ref to determine the repo and PR number:
+Resolve in this order, stopping at the first that produces a PR:
+
+1. A PR ref in `$ARGUMENTS`
+2. A PR ref or URL Josh named in the conversation
+3. The PR for the current branch:
+
+   ```bash
+   GH_TOKEN=$(gh auth token --user "$DOTFILES_GITHUB_USERNAME") \
+     gh pr view --json number,headRepository -q '.number'
+   ```
+
+If none of these resolve, ask in one line — no preamble: `Which PR?`
+
+Parse a ref to determine the repo and PR number:
 
 | Format              | Example       | Meaning                            |
 | ------------------- | ------------- | ---------------------------------- |
 | Number only         | `123`         | Current repo, PR 123               |
 | `owner/repo#number` | `foo/bar#123` | Repo `foo/bar`, PR 123             |
 | `repo#number`       | `bar#123`     | Current owner + repo `bar`, PR 123 |
+| URL                 | `https://github.com/foo/bar/pull/123` | Repo `foo/bar`, PR 123 |
 
 Get current repo owner if needed:
 
@@ -50,7 +65,31 @@ Get current repo owner if needed:
 gh repo view --json owner -q '.owner.login'
 ```
 
-### Step 2: Save state and checkout PR branch
+### Step 2: Confirm authorship, then announce
+
+This skill reviews PRs authored by someone other than Josh. Check the author before doing anything else:
+
+```bash
+GH_TOKEN=$(gh auth token --user "$DOTFILES_GITHUB_USERNAME") \
+  gh pr view <number> --repo <owner/repo> --json author,title,headRefName
+```
+
+Compare `.author.login` against `$DOTFILES_GITHUB_USERNAME`:
+
+| Author                          | Action                                                       |
+| ------------------------------- | ------------------------------------------------------------ |
+| Anyone other than Josh          | Continue here                                                 |
+| `$DOTFILES_GITHUB_USERNAME`     | Say so in one line and invoke `pr-feedback` with the same ref |
+
+The handoff line when the author is Josh:
+
+> PR #123 is yours — switching to pr-feedback.
+
+Otherwise announce the run in one line, then proceed without waiting for confirmation:
+
+> Reviewing PR #123 (read-only) — Add bandwidth endpoint
+
+### Step 3: Save state and checkout PR branch
 
 ```bash
 ORIGINAL_BRANCH=$(git branch --show-current)
@@ -60,7 +99,7 @@ gh pr checkout <number> --repo <owner/repo>
 
 Track whether stash saved anything (check if `$STASH_RESULT` contains "No local changes").
 
-### Step 3: Gather PR context from GitHub
+### Step 4: Gather PR context from GitHub
 
 ```bash
 # PR metadata
@@ -87,7 +126,7 @@ gh issue view <issue-number> --repo <owner/repo> --json title,body,state,labels,
 
 **Resolved review threads:** These are context only. Read what was requested and what was done to resolve it. Do NOT re-raise resolved items as findings. Use them to inform your understanding of the PR's evolution if relevant, otherwise discard.
 
-### Step 4: Compute local diff (source of truth)
+### Step 5: Compute local diff (source of truth)
 
 ```bash
 BASE_REF=<baseRefName from PR metadata>
@@ -101,7 +140,7 @@ git diff --name-only "$BASE_SHA"..HEAD
 
 **Never use `gh pr diff`** — API diffs can be inaccurate. Local diff is the source of truth.
 
-### Step 5: Read changed files and deep review
+### Step 6: Read changed files and deep review
 
 Use `git diff --name-only` output to get the file list. Apply the `requesting-code-review` skill:
 
@@ -110,7 +149,7 @@ Use `git diff --name-only` output to get the file list. Apply the `requesting-co
 - Use the review criteria from `code-reviewer.md` (bugs, regressions, security, pattern violations, etc.)
 - Follow the skill's output rules: only actionable items, nothing else
 
-### Step 6: Output
+### Step 7: Output
 
 **If the PR is clean** — no bugs, no regressions, nothing substantial:
 
@@ -147,7 +186,7 @@ Or if findings are minor enough to not block:
 
 > Approve with comments — [N] items above worth addressing.
 
-### Step 7: Restore original state
+### Step 8: Restore original state
 
 After completing the review, ALWAYS return to the original branch and restore stash:
 

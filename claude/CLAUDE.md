@@ -34,6 +34,26 @@ Invoke these skills when their triggers apply:
 
 **Invoke when:** Multiple independent tasks that can run concurrently without shared state.
 
+### `issue` — Work a Single Issue
+
+**Invoke when:** Josh points at an issue and wants it worked, or asks what's next. Hands off to `epic` if the ref turns out to have sub-issues.
+
+### `epic` — Work an Entire Epic
+
+**Invoke when:** Josh wants a parent issue and all its children finished in one session.
+
+### `pr-review` — Review Someone Else's PR
+
+**Invoke when:** Josh wants a PR authored by someone else read and reviewed. Read-only; never posts.
+
+### `pr-feedback` — Address Review Feedback
+
+**Invoke when:** A PR Josh authored has review comments to act on.
+
+### `handoff` — Session Handoff Prompt
+
+**Invoke when:** Josh signals the session itself is ending or moving to a fresh one.
+
 ---
 
 ## Agents
