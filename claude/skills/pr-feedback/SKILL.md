@@ -158,21 +158,29 @@ This skill governs how to handle all feedback. Key principles:
 
 **If a suggestion seems wrong:** Say so with technical reasoning. Check if it breaks existing functionality, contradicts architecture decisions, or violates YAGNI.
 
-### Step 7: Implement fixes
+### Step 7: Dispatch the implementer
 
-For items Josh agrees should be addressed:
+For items Josh agrees should be addressed, dispatch an `implementer` agent. It starts cold, so everything bearing on the fixes goes in the prompt:
 
-1. Implement one at a time
-2. Test each fix individually
-3. Verify no regressions
+```
+Address review feedback on PR #<n> in <owner/repo>: <title>
+## The feedback
+<each agreed item verbatim, with the file and line it points at>
+## Direction
+<the note, and anything Josh decided about how to handle an item>
+## Order
+Blocking issues (breaks, security), then simple fixes (typos, imports), then complex fixes (refactoring, logic). One at a time, tested individually, no regressions.
+## Your scope
+Only these items, in the current working tree on branch <branch>. Do not push.
+```
 
-**Implementation order:**
+`BLOCKED: <question>` comes back — **100% confident** from the conversation or the review thread → answer it and resume the same agent with `SendMessage` so its context survives. **Anything less** → put the question to Josh verbatim with the context needed to answer it; don't soften it, don't answer around it, don't hand him a guess to confirm.
 
-1. Blocking issues (breaks, security)
-2. Simple fixes (typos, imports)
-3. Complex fixes (refactoring, logic)
+### Step 8: Finalize
 
-### Step 8: Present results
+Dispatch a `finalizer` agent with the diff (the uncommitted working tree on branch `<branch>`), the list of changed files, the PR URL, and the implementer's claims quoted verbatim. Fix-ups it hands back go to the implementer via `SendMessage`. **Tests failing means the feedback isn't addressed** — it does not go to Josh with a caveat.
+
+### Step 9: Present results
 
 For each addressed item, show:
 
@@ -186,7 +194,7 @@ For items you recommend pushing back on:
 - Why it shouldn't be done (technical reasoning)
 - Draft reply text for Josh to review and post himself if he agrees
 
-### Step 9: Restore original state (if needed)
+### Step 10: Restore original state (if needed)
 
 If Josh wants to return to the original branch:
 

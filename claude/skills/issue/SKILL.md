@@ -8,6 +8,8 @@ argument-hint: "[issue-ref] [note]"
 
 Pull the specified GitHub issue, gather its full context, create a working branch, and start.
 
+`orchestrating.md` governs, without its escape hatch — work touching code always goes to an agent, however small it looks. Your exceptions are metadata: `gh` calls fetching issue context, `git` calls managing the branch. What you keep is the conversation.
+
 ### Step 0: Resolve the ref and note
 
 `$ARGUMENTS` is the issue ref optionally followed by a note. The first token is the issue ref, everything after is a note providing additional context.
@@ -129,7 +131,7 @@ git issue <number>
 
 Track the issue as active session context: `Active Issue: #<number> - <title>`.
 
-### Step 6: Assess and begin
+### Step 6: Assess and route
 
 Read the fetched context and assess.
 
@@ -143,18 +145,39 @@ Read the fetched context and assess.
 
 **Straightforward** — requirements clear, approach obvious, no architectural decisions needed:
 
-- Skip planning. Start working immediately.
-- Follow the task lifecycle (read nearby code, implement, test, clean up).
+- Skip planning. Go straight to step 7.
 
 **Complex** — ambiguous requirements, multiple approaches possible, architectural decisions needed, or the note asks to plan first:
 
 - Use the `planning` skill to draft a plan.
-- Exit plan mode for approval before executing.
+- Exit plan mode for approval, then go to step 7 with the approved plan as direction.
 
 Default to just starting. Only plan when the work genuinely needs it.
 
-### Step 7: Execute
+### Step 7: Dispatch the implementer
 
-- Do the work following the task lifecycle
-- If scope expands → STOP, ask about a new issue
-- When done, present the work and wait for review
+Dispatch an `implementer` agent. It starts cold, so everything bearing on the work goes in the prompt:
+
+```
+Work GitHub issue #<n> in <owner/repo>: <title>
+## The issue
+<full body>
+## Discussion
+<comments carrying requirements or constraints>
+## Direction
+<the note, the approved plan, the root cause traced in triage — whatever applies>
+## Your scope
+Only this issue, in the current working tree on branch <branch>.
+```
+
+`BLOCKED: <question>` comes back — **100% confident** from the conversation or the issue → answer it and resume the same agent with `SendMessage` so its context survives. **Anything less** → put the question to Josh verbatim with the context needed to answer it; don't soften it, don't answer around it, don't hand him a guess to confirm.
+
+Scope expands past the issue → stop and ask about a new issue.
+
+### Step 8: Finalize
+
+Dispatch a `finalizer` agent with the diff (the uncommitted working tree on branch `<branch>`), the list of changed files, the issue URL, and the implementer's claims quoted verbatim. Fix-ups it hands back go to the implementer via `SendMessage`. **Tests failing means the issue isn't done** — it does not go to Josh with a caveat.
+
+### Step 9: Present and stop
+
+Hand it over per `presenting-work.md`: a short plain-language paragraph, not a file listing. Then **stop** and wait for review. Changes requested → implementer via `SendMessage`, feedback verbatim, then back through steps 8 and 9.

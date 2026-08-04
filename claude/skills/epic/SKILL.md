@@ -12,14 +12,14 @@ Finish this epic: every open child issue, one commit each, in one sitting. Nothi
 
 ## The Ledger
 
-Workers are dispatched fresh; what Josh said during issue 2 never reaches issue 7 unless you carry it. Update after every exchange. Every dispatch carries only the slice bearing on that issue.
+Agents are dispatched fresh; what Josh said during issue 2 never reaches issue 7 unless you carry it. Update after every exchange. Every dispatch carries only the slice bearing on that issue.
 
 | Track                 | What goes in it                                                    |
 | --------------------- | ------------------------------------------------------------------ |
 | **Decisions**         | Direction Josh gave, approaches ruled out, preferences stated       |
-| **Answers**           | Questions workers raised, how they resolved, and by whom            |
+| **Answers**           | Questions agents raised, how they resolved, and by whom             |
 | **Constraints**       | Invariants, APIs that must not break, things left alone on purpose  |
-| **Cross-issue facts** | Discoveries a later worker will need                                |
+| **Cross-issue facts** | Discoveries a later agent will need                                 |
 | **Deferred work**     | Out-of-scope work that surfaced, parked for Josh                    |
 
 ## Step 0: Parse arguments
@@ -72,7 +72,7 @@ From the base branch, branch off the **parent** with `git issue <epic-number>`. 
 
 ## Step 4: The per-issue loop
 
-**4a. Gather and dispatch.** Fetch the sub-issue's body, comments, labels, type, and linked PRs yourself — metadata. Dispatch one worker, subject to the same rules you are:
+**4a. Gather and dispatch.** Fetch the sub-issue's body, comments, labels, type, and linked PRs yourself — metadata. Dispatch an `implementer` agent:
 
 ```
 Work GitHub issue #<n> in <owner/repo>: <title>
@@ -86,25 +86,21 @@ Sub-issue of epic #<parent> — <parent title>.
 ## What's already been decided
 <the relevant slice of the ledger>
 ## Your scope
-Only this issue, in the current working tree on branch <branch>. Do not commit. Do not push. Do not touch files outside this issue's scope — other sub-issues own their own commits on this branch.
-## If you get stuck
-Return `BLOCKED: <the question>` and stop. Do not guess, do not pick an approach and note the uncertainty, do not implement both.
-## Return
-What you changed and why, the files you touched, and every factual claim you make about how a tool, flag, env var, API, or library behaves — quoted verbatim, for independent verification.
+Only this issue, in the current working tree on branch <branch>. Other sub-issues own their own commits on this branch — leave files outside this issue's scope alone.
 ```
 
-**4b. Handle a block.** **100% confident** from the conversation, ledger, issue, or epic → answer it. **Anything less** → put the question to Josh verbatim with the context needed to answer it; don't soften it, don't answer around it, don't hand him a guess to confirm. Never invent an answer. Resume the same worker with `SendMessage` so its context survives, and log the resolution.
+**4b. Handle a block.** **100% confident** from the conversation, ledger, issue, or epic → answer it. **Anything less** → put the question to Josh verbatim with the context needed to answer it; don't soften it, don't answer around it, don't hand him a guess to confirm. Never invent an answer. Resume the same implementer with `SendMessage` so its context survives, and log the resolution.
 
-**4c. Scrutinize until clean.** Dispatch a reviewer with: (1) the full contents of `adversarial-review.md` in this skill's directory, (2) the sub-issue number, URL, and body, (3) the branch name and the fact that the diff is the uncommitted working tree, (4) the worker's summary and its verbatim claims, (5) the relevant ledger slice.
+**4c. Scrutinize until clean.** Dispatch a reviewer with: (1) the full contents of `adversarial-review.md` in this skill's directory, (2) the sub-issue number, URL, and body, (3) the branch name and the fact that the diff is the uncommitted working tree, (4) the implementer's summary and its verbatim claims, (5) the relevant ledger slice.
 
-- **Code findings** → back to the worker via `SendMessage`. All of them, no cherry-picking. If one looks wrong, dispatch an agent to check it before dismissing it.
+- **Code findings** → back to the implementer via `SendMessage`. All of them, no cherry-picking. If one looks wrong, dispatch an agent to check it before dismissing it.
 - **Claims findings** → to Josh, in your own message, immediately.
 
 Dispatch a **fresh** scrutinizer on the fixed work — one that already blessed its own findings isn't reviewing. Exit when both hold: `findings: 0`, and every acceptance criterion on the sub-issue met. Three rounds without converging → stop and bring it to Josh; the issue is underspecified or the approach is wrong, and more rounds fix neither.
 
-**4d. Finalize the issue.** Dispatch an agent to run the `finalize` skill against this issue's uncommitted work — **skip its scrutiny-agent step**, 4c covered it — and execute the rest: scope (nothing built beyond what the issue asked for), cleanup (no debug output, breakpoints, commented-out code, stray session markers), tests (new behavior covered, the project's suite run and green), formatters (whatever the config actually documents, nothing invented), docs (README, CLAUDE.md, or skills updated if behavior changed). It fixes what it can and reports the rest to the worker. **Tests failing means the issue isn't done** — it does not go to Josh with a caveat.
+**4d. Finalize the issue.** Dispatch a `finalizer` agent with the diff (the uncommitted working tree on branch `<branch>`), the list of changed files, the sub-issue URL, and the implementer's claims quoted verbatim. Fix-ups it hands back go to the implementer via `SendMessage`. **Tests failing means the issue isn't done** — it does not go to Josh with a caveat.
 
-**4e. Present and stop.** Hand it over per `presenting-work.md`: a short plain-language paragraph, not a file listing. Then **stop**. Changes requested → worker via `SendMessage`, feedback verbatim, then back through 4c and 4d. Signed off → commit.
+**4e. Present and stop.** Hand it over per `presenting-work.md`: a short plain-language paragraph, not a file listing. Then **stop**. Changes requested → implementer via `SendMessage`, feedback verbatim, then back through 4c and 4d. Signed off → commit.
 
 **4f. Commit.**
 
@@ -117,7 +113,7 @@ One commit per sub-issue, prefix and subject per `committing.md`. If the subject
 
 ## Step 5: Close out the epic
 
-Queue empty → dispatch an agent to run the full `finalize` skill against the branch diff, **scrutiny step included** this time, since no single-issue reviewer saw the commits together. Fix what it returns; a fix to already-committed work is a new commit, never an amend. Then present: `Epic #437 done. 7 commits on <branch>.`, one line per issue (number and subject), and a `Deferred:` line carrying anything parked for Josh, or "nothing".
+Queue empty → dispatch a `finalizer` agent with the whole branch diff (every commit on `<branch>` against the base branch), the list of changed files, the epic URL, and the implementers' claims quoted verbatim — no single-issue reviewer saw the commits together. Fix what it returns; a fix to already-committed work is a new commit, never an amend. Then present: `Epic #437 done. 7 commits on <branch>.`, one line per issue (number and subject), and a `Deferred:` line carrying anything parked for Josh, or "nothing".
 
 **Stop there.** No push, no PR, no merge until Josh signs off on the branch as a whole — and then only what he asked for.
 
@@ -126,7 +122,7 @@ Queue empty → dispatch an agent to run the full `finalize` skill against the b
 - **Dispatch, don't do.** Work touching code goes to an agent. You have no business reading a source file.
 - **Sequential, not parallel.** Sub-issues share a branch and usually a blast radius. One at a time, reviewed between each.
 - **The review gate is per issue.** Never commit two issues on one approval. Never commit without one.
-- **Josh sees finished work.** Scrutiny clean, finalize run, tests passing, acceptance criteria met. He should be able to LGTM on a skim.
+- **Josh sees finished work.** Scrutiny clean, `finalizer` run, tests passing, acceptance criteria met. He should be able to LGTM on a skim.
 - **Nothing leaves without a sign-off.** No commit without his per-issue approval. No push, PR, or merge without his approval of the finished branch.
 - **100% or ask.** Anything short of certainty goes to Josh.
 - **Scope expands → stop.** Out-of-issue work gets reported, logged as deferred, and decided by Josh. It does not get quietly fixed.
