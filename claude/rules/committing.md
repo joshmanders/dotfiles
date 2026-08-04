@@ -1,6 +1,6 @@
 # Committing
 
-**Only when explicitly asked to finalize/commit.** See `prime-directives.md` for the trigger words and the gating rule.
+**Only when Josh explicitly asks for it.** See `prime-directives.md` for the trigger words and the gating rule.
 
 ---
 

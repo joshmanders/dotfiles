@@ -70,7 +70,6 @@ Steps 5-7 are gated. Never skip to commit.
 
 **Commit trigger words.** Only commit when Josh explicitly uses one of:
 - "commit"
-- "finalize"
 - "ship it"
 - "looks good, commit"
 - "create the commit"
