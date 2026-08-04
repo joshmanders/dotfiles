@@ -58,17 +58,15 @@ Present work → wait for review → commit only when explicitly told. The revie
 
 ```
 1. Understand the ask
-2. Read nearby code to learn patterns
-3. Implement following those patterns
-4. Run tests, fix failures
-5. Clean up (debug code, unused imports)
-6. Present what was done
-7. STOP — wait for review
-8. Iterate if needed
-9. Commit ONLY when explicitly asked to finalize/commit
+2. Dispatch an `implementer` agent with the scope, the decisions, and the constraints
+3. Dispatch a `finalizer` agent with the diff and the implementer's claims
+4. Present what was done
+5. STOP — wait for review
+6. Iterate if needed — each round trips through steps 2 and 3
+7. Commit ONLY when Josh explicitly asks for it
 ```
 
-Steps 7-9 are gated. Never skip to commit.
+Steps 5-7 are gated. Never skip to commit.
 
 **Commit trigger words.** Only commit when Josh explicitly uses one of:
 - "commit"
@@ -78,6 +76,42 @@ Steps 7-9 are gated. Never skip to commit.
 - "create the commit"
 
 **Not triggers:** "done", "good", "thanks", "nice" — these mean wait for review.
+
+---
+
+## **The `finalizer` gate runs before you present.**
+
+Work isn't ready to hand back until a `finalizer` agent has been over it. On every turn that changed files, the gate runs first and the handoff message comes after.
+
+**Why:** Josh reads the diff, and his attention belongs on whether the change is *right* — not on catching a leftover debug statement, an abstraction nobody asked for, or a rule the session drifted past. In his words, he should be able to skim the work and confirm it looks right, not nitpick it. Those nitpicks are mechanical, so a gate catches them mechanically before he ever sees them.
+
+**How to apply:**
+- Dispatch it after the work is done, before the message that presents it.
+- Announce it in one line — "Dispatching the finalizer gate." — then dispatch it.
+- The dispatch prompt carries the diff, the list of changed files, the original ask or issue, and every factual claim the implementer made, quoted verbatim. The agent is cold; anything it isn't handed, it can't check.
+- It fixes what it finds and reports back. Don't hand its findings to Josh to adjudicate.
+- The gate stops at its summary. It never commits.
+
+**When the gate doesn't run.** The floor is risk, not size. Ask: *does this change have a way to be wrong that Josh wouldn't catch by skimming the diff?* No → skip. Yes → gate. A one-line change can earn the gate; a two-hundred-line one can skip it.
+
+Gate it, however small:
+- Logic with branches or state.
+- Anything a machine or another program executes.
+- A change with a silent failure mode.
+- Multiple files that have to agree with each other.
+- Work split across agents running in parallel.
+- Claims about a tool, flag, env var, API, or library that were asserted without being run.
+
+Skip it, however large:
+- No files were modified this turn — answering a question, reading code, explaining something.
+- Prose and documentation with no execution path.
+- Work the implementer already exercised, with concrete verification reported back.
+- Additive config whose failure mode is loud and immediate.
+- Work already gated this session with nothing changed since.
+
+**Verified work needs the gate least.** Its distinct value is a cold reader re-deriving claims nobody ran. When the implementer exercised the behavior and handed back evidence, there is nothing left for that reader to find, and running it anyway is process for its own sake.
+
+**Why:** Josh sat through a gate on a Neovim config addition the implementer had already written and tested. He interrupted it half an hour in — "bro its been 30 minutes wtf" — and he was right: the run had nothing to find, because the risk it exists to catch wasn't there. A gate that costs thirty minutes has to be buying something.
 
 ---
 
