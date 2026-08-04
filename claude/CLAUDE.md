@@ -36,6 +36,20 @@ Invoke these skills when their triggers apply:
 
 ---
 
+## Agents
+
+Dispatch these agents when their triggers apply. Full behavior lives in each agent definition under `~/.claude/agents/`.
+
+### `implementer` — File-Changing Work
+
+**Dispatch when:** Anything writes to disk — features, fixes, refactors, config, tests. The session never edits files itself. See `orchestrating.md`.
+
+### `finalizer` — Pre-Review Quality Gate
+
+**Dispatch when:** Work is complete and about to be presented, on any turn that changed files. Mandatory — see `prime-directives.md`.
+
+---
+
 ## Context Compaction Recovery
 
 If context compaction has occurred (guidelines feel fuzzy, you're unsure of rules):
