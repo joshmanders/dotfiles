@@ -13,11 +13,18 @@ import { AnsiStream, type StyledLine } from "./ansi.js";
 interface PtyInternal extends IPty {
   _socket?: { removeAllListeners?: () => void; unref?: () => void };
   _fd?: number;
+  // node-pty's Terminal.on delegates to _socket, so this is how the real
+  // (code, signal) pair from the native waitpid callback is reached.
+  on?: (event: "exit", cb: (code: number, signal?: number) => void) => void;
 }
 
 const POLL_INTERVAL_MS = 15;
 const READ_BUF_SIZE = 16384;
 const MAX_LINES = 5000;
+// node-pty defers its exit event behind a 200ms socket-destroy timer, and
+// destroying the socket is what closes our fd. If a poll error beats the exit
+// event, wait this long for the real status before finalizing without one.
+const EXIT_GRACE_MS = 500;
 
 // node-pty's default kill sends SIGHUP to the shell's PID. With `bash -lc cmd`,
 // signals don't always propagate to the actual command (npm, php, node, etc.) —
@@ -71,6 +78,9 @@ interface ProcEntry {
   manualStop: boolean;
   spawnError?: string;
   pollTimer?: ReturnType<typeof setInterval>;
+  // Real exit status from node-pty's native callback, pending finalization.
+  pendingExit?: { code: number; signal?: number };
+  exitTimer?: ReturnType<typeof setTimeout>;
   // One-shot callback fired after the next exit finalizes (used by restart).
   onNextExit?: () => void;
 }
@@ -145,17 +155,28 @@ export class ProcessManager extends EventEmitter {
     entry.startedAt = Date.now();
     entry.manualStop = false;
     entry.spawnError = undefined;
+    entry.pendingExit = undefined;
 
     // node-pty's tty.ReadStream wrapper around the master fd doesn't work
     // under Bun (read returns EAGAIN, the stream gives up, no 'data' events
-    // ever fire). Workaround: detach the wrapper and poll the raw fd. Side
-    // effect — the broken wrapper is also what fires `pty.onExit`, so we
-    // detect process death from polling errors (EBADF/EIO) instead.
+    // ever fire). Workaround: detach the wrapper and poll the raw fd.
     const ptyInternal = pty as PtyInternal;
     try {
       ptyInternal._socket?.removeAllListeners?.();
       ptyInternal._socket?.unref?.();
     } catch {}
+
+    // Detaching the wrapper also drops node-pty's own 'exit' forwarder, which
+    // is why `pty.onExit` never fires. The native waitpid callback still
+    // delivers the real (code, signal) — re-attach a listener and take it.
+    try {
+      ptyInternal.on?.("exit", (code: number, signal?: number) => {
+        if (entry.pty !== pty) return;
+        entry.pendingExit = { code, signal };
+        this.finalizeExit(entry, name);
+      });
+    } catch {}
+
     const fd = ptyInternal._fd;
     if (typeof fd === "number") {
       const buf = Buffer.alloc(READ_BUF_SIZE);
@@ -167,7 +188,7 @@ export class ProcessManager extends EventEmitter {
           const code = (err as NodeJS.ErrnoException).code;
           // EAGAIN — no data this tick. Anything else means the fd is gone,
           // which means the process is gone.
-          if (code !== "EAGAIN") this.finalizeExit(entry, name);
+          if (code !== "EAGAIN") this.handleFdLoss(entry, name);
         }
       }, POLL_INTERVAL_MS);
     }
@@ -175,23 +196,56 @@ export class ProcessManager extends EventEmitter {
     this.emit("change");
   }
 
-  // Triggered when polling detects the pty fd is dead. Cleans up the entry,
-  // emits state, and routes to either an explicit one-shot callback (restart),
-  // an auto-restart per the config policy, or just leaves it stopped.
+  // The fd died before node-pty reported a status. It destroys the socket
+  // (closing our fd) immediately before emitting the exit event, so the real
+  // status is usually already in flight — hold briefly for it rather than
+  // finalizing with an unknown code.
+  private handleFdLoss(entry: ProcEntry, name: string): void {
+    this.stopPolling(entry);
+    if (entry.exitTimer) return;
+    entry.exitTimer = setTimeout(
+      () => this.finalizeExit(entry, name),
+      EXIT_GRACE_MS,
+    );
+  }
+
+  private stopPolling(entry: ProcEntry): void {
+    if (!entry.pollTimer) return;
+    clearInterval(entry.pollTimer);
+    entry.pollTimer = undefined;
+  }
+
+  // Cleans up a dead process, records its exit status, and routes to either an
+  // explicit one-shot callback (restart), an auto-restart per the config
+  // policy, or just leaves it stopped.
   private finalizeExit(entry: ProcEntry, name: string): void {
-    if (!entry.pty) return;
-    if (entry.pollTimer) {
-      clearInterval(entry.pollTimer);
-      entry.pollTimer = undefined;
+    if (entry.exitTimer) {
+      clearTimeout(entry.exitTimer);
+      entry.exitTimer = undefined;
     }
+    if (!entry.pty) return;
+    this.stopPolling(entry);
     entry.pty = undefined;
     entry.pid = undefined;
     const wasManual = entry.manualStop;
     entry.manualStop = false;
-    // We can't read the real exit code from a dead fd, so infer: manual stop
-    // counts as clean, anything else is treated as failure.
-    entry.exitCode = wasManual ? 0 : 1;
-    entry.status = wasManual ? "exited" : "failed";
+    const info = entry.pendingExit;
+    entry.pendingExit = undefined;
+
+    // A signal death reports exitCode 0, so encode it shell-style to keep
+    // "non-zero means failure" true. The signal we sent to stop the process
+    // ourselves is a clean stop, not a failure. No status at all (node-pty
+    // never reported one) stays undefined and renders as unknown.
+    if (info) {
+      entry.exitCode = info.signal
+        ? wasManual
+          ? 0
+          : 128 + info.signal
+        : info.code;
+    } else {
+      entry.exitCode = wasManual ? 0 : undefined;
+    }
+    entry.status = wasManual || entry.exitCode === 0 ? "exited" : "failed";
     this.emit("change");
 
     if (entry.onNextExit) {
@@ -204,7 +258,8 @@ export class ProcessManager extends EventEmitter {
     if (wasManual) return;
     const policy = entry.cfg.restart ?? "never";
     const shouldRestart =
-      policy === "always" || (policy === "on-fail" && entry.exitCode !== 0);
+      policy === "always" ||
+      (policy === "on-fail" && entry.status === "failed");
     if (shouldRestart) {
       entry.restarts++;
       setTimeout(() => this.start(name), 300);
