@@ -20,6 +20,10 @@ interface PtyInternal extends IPty {
 
 const POLL_INTERVAL_MS = 15;
 const READ_BUF_SIZE = 16384;
+// Reads per poll tick. A single 16KB read per tick throttles a noisy child to
+// ~1MB/s and drops the tail of a burst when the fd closes; draining until
+// EAGAIN keeps up without letting one process starve the event loop.
+const MAX_READS_PER_TICK = 16;
 const MAX_LINES = 5000;
 // node-pty defers its exit event behind a 200ms socket-destroy timer, and
 // destroying the socket is what closes our fd. If a poll error beats the exit
@@ -181,15 +185,22 @@ export class ProcessManager extends EventEmitter {
     if (typeof fd === "number") {
       const buf = Buffer.alloc(READ_BUF_SIZE);
       entry.pollTimer = setInterval(() => {
-        try {
-          const n = readSync(fd, buf, 0, buf.length, null);
-          if (n > 0) this.appendOutput(entry, buf.toString("utf8", 0, n));
-        } catch (err) {
-          const code = (err as NodeJS.ErrnoException).code;
-          // EAGAIN — no data this tick. Anything else means the fd is gone,
-          // which means the process is gone.
-          if (code !== "EAGAIN") this.handleFdLoss(entry, name);
+        let chunk = "";
+        for (let i = 0; i < MAX_READS_PER_TICK; i++) {
+          let n: number;
+          try {
+            n = readSync(fd, buf, 0, buf.length, null);
+          } catch (err) {
+            const code = (err as NodeJS.ErrnoException).code;
+            // EAGAIN — nothing more this tick. Anything else means the fd is
+            // gone, which means the process is gone.
+            if (code !== "EAGAIN") this.handleFdLoss(entry, name);
+            break;
+          }
+          if (n <= 0) break;
+          chunk += buf.toString("utf8", 0, n);
         }
+        if (chunk.length > 0) this.appendOutput(entry, chunk);
       }, POLL_INTERVAL_MS);
     }
 
