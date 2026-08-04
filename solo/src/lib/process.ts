@@ -32,18 +32,31 @@ const TRIM_SLACK = 512;
 // destroying the socket is what closes our fd. If a poll error beats the exit
 // event, wait this long for the real status before finalizing without one.
 const EXIT_GRACE_MS = 500;
+const NOTE_COLOR = "#FFAA00";
 
 const DEFAULTS = {
   // One renderer frame. The CLI renderer is created with targetFps: 30, so
   // flushing faster than this only buys React reconciliation passes whose
   // output is thrown away before it reaches the screen.
   flushIntervalMs: 33,
+  restartBaseMs: 300,
+  restartMaxMs: 30_000,
+  restartMaxAttempts: 8,
+  restartHealthyMs: 10_000,
 };
 
 export interface ProcessManagerOptions {
   // Minimum gap between "change" emissions. Output arrives far faster than
   // any terminal can draw it, so emissions coalesce to roughly one frame.
   flushIntervalMs?: number;
+  // First auto-restart delay. Doubles with each consecutive attempt.
+  restartBaseMs?: number;
+  // Ceiling for the doubling delay.
+  restartMaxMs?: number;
+  // Consecutive auto-restarts before the process is left failed.
+  restartMaxAttempts?: number;
+  // Uptime that marks a run healthy, resetting the restart budget.
+  restartHealthyMs?: number;
 }
 
 // node-pty's default kill sends SIGHUP to the shell's PID. With `bash -lc cmd`,
@@ -108,6 +121,9 @@ interface ProcEntry {
   // Real exit status from node-pty's native callback, pending finalization.
   pendingExit?: { code: number; signal?: number };
   exitTimer?: ReturnType<typeof setTimeout>;
+  restartTimer?: ReturnType<typeof setTimeout>;
+  // Consecutive auto-restarts, reset by a healthy run or a manual start.
+  restartAttempts: number;
   revision: number;
   snap?: ProcSnapshot;
   // One-shot callback fired after the next exit finalizes (used by restart).
@@ -144,6 +160,7 @@ export class ProcessManager extends EventEmitter {
       restarts: 0,
       manualStop: false,
       partialShown: false,
+      restartAttempts: 0,
       revision: 0,
     });
     this.invalidate();
@@ -153,6 +170,7 @@ export class ProcessManager extends EventEmitter {
   unregister(name: string): void {
     const entry = this.procs.get(name);
     if (!entry) return;
+    this.cancelRestart(entry);
     if (entry.pty) {
       entry.manualStop = true;
       killTree(entry.pty);
@@ -164,7 +182,16 @@ export class ProcessManager extends EventEmitter {
 
   start(name: string): void {
     const entry = this.procs.get(name);
-    if (!entry || entry.pty) return;
+    if (!entry) return;
+    // An explicit start is the user taking over — clear any crash-loop budget
+    // and any restart that was still waiting out its backoff.
+    this.cancelRestart(entry);
+    entry.restartAttempts = 0;
+    this.spawn(entry, name);
+  }
+
+  private spawn(entry: ProcEntry, name: string): void {
+    if (entry.pty) return;
     const { cfg } = entry;
     const cwd = cfg.cwd
       ? cfg.cwd.startsWith("/")
@@ -310,15 +337,66 @@ export class ProcessManager extends EventEmitter {
     const shouldRestart =
       policy === "always" ||
       (policy === "on-fail" && entry.status === "failed");
-    if (shouldRestart) {
-      entry.restarts++;
-      setTimeout(() => this.start(name), 300);
+    if (shouldRestart) this.scheduleRestart(entry, name);
+  }
+
+  // Exponential backoff with a hard attempt cap. Without both, a command that
+  // exits immediately respawns a login shell several times a second forever.
+  private scheduleRestart(entry: ProcEntry, name: string): void {
+    // A run that stayed up long enough is evidence the command works; the cap
+    // exists for crash loops, not for one death after hours of clean running.
+    const ranFor = entry.startedAt ? Date.now() - entry.startedAt : 0;
+    if (ranFor >= this.opts.restartHealthyMs) entry.restartAttempts = 0;
+
+    if (entry.restartAttempts >= this.opts.restartMaxAttempts) {
+      entry.status = "failed";
+      this.note(
+        entry,
+        `solo: giving up after ${entry.restartAttempts} restart attempts`,
+      );
+      this.invalidate(entry);
+      this.emitChange();
+      return;
     }
+
+    const delay = Math.min(
+      this.opts.restartMaxMs,
+      this.opts.restartBaseMs * 2 ** entry.restartAttempts,
+    );
+    entry.restartAttempts++;
+    entry.restarts++;
+    this.note(
+      entry,
+      `solo: restarting in ${(delay / 1000).toFixed(1)}s (attempt ${entry.restartAttempts}/${this.opts.restartMaxAttempts})`,
+    );
+    this.invalidate(entry);
+    this.emitChange();
+    entry.restartTimer = setTimeout(() => {
+      entry.restartTimer = undefined;
+      this.spawn(entry, name);
+    }, delay);
+  }
+
+  private cancelRestart(entry: ProcEntry): boolean {
+    if (!entry.restartTimer) return false;
+    clearTimeout(entry.restartTimer);
+    entry.restartTimer = undefined;
+    return true;
   }
 
   stop(name: string): void {
     const entry = this.procs.get(name);
-    if (!entry?.pty) return;
+    if (!entry) return;
+    const wasWaiting = this.cancelRestart(entry);
+    if (!entry.pty) {
+      // Stopping during a backoff window means the user doesn't want it back.
+      if (wasWaiting) {
+        entry.status = "exited";
+        this.invalidate(entry);
+        this.emitChange();
+      }
+      return;
+    }
     entry.manualStop = true;
     killTree(entry.pty);
   }
@@ -326,15 +404,17 @@ export class ProcessManager extends EventEmitter {
   restart(name: string): void {
     const entry = this.procs.get(name);
     if (!entry) return;
+    this.cancelRestart(entry);
+    entry.restartAttempts = 0;
     // Wipe scrollback immediately so the user sees a fresh buffer instead of
     // old output mixed with new on the next run.
     this.resetBuffer(entry);
     if (!entry.pty) {
-      this.start(name);
+      this.spawn(entry, name);
       return;
     }
     entry.manualStop = true;
-    entry.onNextExit = () => this.start(name);
+    entry.onNextExit = () => this.spawn(entry, name);
     killTree(entry.pty);
   }
 
@@ -399,6 +479,7 @@ export class ProcessManager extends EventEmitter {
   }
 
   shutdown(): Promise<void> {
+    for (const entry of this.procs.values()) this.cancelRestart(entry);
     const live = Array.from(this.procs.values()).filter((e) => e.pty);
     if (live.length === 0) return Promise.resolve();
     return new Promise((resolve) => {
@@ -468,7 +549,7 @@ export class ProcessManager extends EventEmitter {
     }, this.opts.flushIntervalMs);
   }
 
-  // Resolve a tail target's absolute path, mirroring how `start` resolves the
+  // Resolve a tail target's absolute path, mirroring how `spawn` resolves the
   // process cwd: absolute paths win; relative paths resolve against the
   // entry's cwd, which itself resolves against the manager's baseDir.
   private resolveTailPath(cfg: CommandConfig): string {
@@ -486,6 +567,14 @@ export class ProcessManager extends EventEmitter {
     entry.lines = [];
     entry.parser = new AnsiStream();
     entry.partialShown = false;
+  }
+
+  // Surface a manager-level message in the process's own scrollback — that's
+  // where the user is already looking when a command misbehaves.
+  private note(entry: ProcEntry, text: string): void {
+    const partial = entry.partialShown ? entry.lines.pop() : undefined;
+    entry.lines.push([{ text, fg: NOTE_COLOR, dim: true }]);
+    if (partial) entry.lines.push(partial);
   }
 
   private appendOutput(entry: ProcEntry, data: string): void {

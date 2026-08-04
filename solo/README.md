@@ -96,7 +96,7 @@ One pty per command. The process layer is responsible for:
 
 - **Spawning** via `$SHELL -lc <command>` with the project's cwd and merged env.
 - **Streaming output** through an ANSI parser into a per-process line buffer (cap ~5000 lines).
-- **Restart policy** (`never` / `on-fail` / `always`) with a short backoff. A user-initiated stop sets a flag that suppresses the policy for that exit.
+- **Restart policy** (`never` / `on-fail` / `always`) with exponential backoff and an attempt cap. Delays double from 300ms up to 30s; after 8 consecutive attempts the process is left failed with a note in its scrollback. A run that stays up long enough to look healthy resets the budget, and a user-initiated stop sets a flag that suppresses the policy for that exit.
 - **Process-group signals.** With `bash -lc cmd`, signals don't reliably propagate to the actual child. The pty puts the child in a new session (`setsid`), so the pty pid is the process-group leader. Send SIGTERM to `-pid` to hit every process in the group; escalate to SIGKILL after ~2s.
 - **Clean shutdown.** On quit, SIGTERM all live processes, wait for exit handlers, hard timeout at 2s.
 
