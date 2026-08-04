@@ -150,6 +150,16 @@ Managed (MDM/policy) > CLI flags > Local (.claude/settings.local.json)
 - **Default:** unset
 - **Purpose:** Threshold controlling when auto-compact triggers.
 
+### `skillListingBudgetFraction`
+
+- **Type:** `number` (> 0, ≤ 1)
+- **Default:** `0.01`
+- **Purpose:** Fraction of the context window reserved for the skill listing sent to Claude. When the listing exceeds the budget, skill descriptions are shortened to fit.
+- **Character math (verified against 2.1.218):** budget = `contextWindowTokens × bytesPerToken × fraction`, floored, with defaults of 200,000 tokens and 4 bytes/token. So `0.01` = 8,000 chars and the `0.07` set here = 56,000 chars.
+- **Override:** `SLASH_COMMAND_TOOL_CHAR_BUDGET` sets an absolute character budget and wins outright.
+- **Why `0.07` here:** the full listing for this repo's skills runs past the default budget, which silently truncates descriptions and makes skills harder for the model to route to.
+- **Related:** `skillListingMaxDescChars` caps each description (default 1536); `skillOverrides` narrows or hides individual skills from the listing.
+
 ### `showThinkingSummaries`
 
 - **Type:** `boolean`
