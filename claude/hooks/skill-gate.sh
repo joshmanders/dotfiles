@@ -15,6 +15,11 @@ input=$(cat)
 prompt=$(printf '%s' "$input" | jq -r '.prompt // empty')
 [[ -z "$prompt" ]] && pass
 
+# Background-agent completion notices arrive on this same event, carrying the
+# agent's whole result. Routing on that body gates work on words the user never
+# typed, so only route on what the user actually wrote.
+[[ "$prompt" == "<task-notification>"* ]] && pass
+
 # First match wins; order in the JSON is the priority order.
 while IFS= read -r skill; do
   pattern=$(jq -r --arg s "$skill" '.[$s].pattern' "$CONFIG")

@@ -58,6 +58,9 @@ none "rename this variable"
 none "what did we decide about pricing"
 none "run the tests"
 none "update the README"
+none "<task-notification>
+<result>Fixed the bug in the worker: the deploy failed because the retry test was failing.</result>
+</task-notification>"
 
 # A debugging request that also mentions building must go to debugging first,
 # since keys_unsorted puts systematic-debugging ahead of brainstorming.

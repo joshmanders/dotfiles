@@ -147,6 +147,8 @@ Two of these exist because instructions alone don't reach the assistant at the m
 
 **`skill-gate`** fires before the reply starts. `brainstorming` and `systematic-debugging` were previously invoked only if the assistant decided to invoke them — and the moment either is needed is the moment it has concluded it isn't. The hook matches the incoming prompt against `skill-gate.json` and injects a directive naming the skill. First match wins, so key order in that file is priority order.
 
+Background-agent completion notices reach `UserPromptSubmit` on the same event, carrying the agent's whole result as the prompt. The hook skips any prompt opening with `<task-notification>`, so routing only ever fires on words the user actually typed.
+
 **`claim-check`** fires when the reply is finished but before it's read. It receives the transcript from the harness — the assistant doesn't assemble it, filter it, or get asked, which is the whole point: a check fed by the thing it's checking is worthless. The agent is read-only and must never re-run a command from the transcript.
 
 Its prompt lives in `hooks/claim-check.md` so it stays readable in a diff, and `install.d/claim-check-prompt.sh` embeds the file's contents into `settings.json` at install time. Embedding rather than pointing at the path matters: a referenced file is one the verifier has to choose to open, and can fail to open or decide it doesn't need. Edit the markdown, re-run the installer.
