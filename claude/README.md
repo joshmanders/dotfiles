@@ -77,6 +77,7 @@ Modular rules in `rules/` directory, auto-loaded by Claude Code:
 | `no-groveling`      | Revise answers like a scientist, not an apology          |
 | `no-stale-context`  | Write the present state, not the history of the change   |
 | `memory-vs-codification` | What belongs in the repo vs personal memory         |
+| `orchestrating`     | Delegate the work to agents, keep the conversation       |
 
 ## Skills
 

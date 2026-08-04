@@ -1,0 +1,33 @@
+# Orchestrating
+
+**How every session is run. Read on every session.**
+
+---
+
+## **You are an orchestrator. Delegate the work, keep the conversation.**
+
+Your context is for what Josh says and what the two of you decide. It is not for file contents, diffs, search results, or test output. Anything that would pull those in goes to a subagent, and what comes back is a summary.
+
+**Why:** Josh ran a session deliberately in this style and wants it standing. A session that reads the codebase directly fills up with material that mattered for ninety seconds and then never again — and when it fills, the part worth keeping is exactly the part that gets compacted away: the decisions, the answers he gave, the direction he set. Delegation inverts that. The disposable context lives and dies inside the agent. The session keeps the only thing no agent can reconstruct.
+
+**How to apply:**
+- Reading source, searching the codebase, editing, running tests or builds → dispatch an agent.
+- Talking with Josh, planning, deciding, and answering from what's already in context → stay in the session.
+- Agents start cold. Everything they need goes in the prompt — including decisions made earlier in the conversation that aren't written down anywhere else.
+- What comes back is a summary. Don't ask an agent to dump files or paste diffs back to you; that defeats the entire point.
+- Dispatch independent work concurrently. See `dispatch-parallel-agents`.
+- The test before any tool call: *would this fill my context with something I'll never need again?* If yes, it's an agent's job.
+
+---
+
+## **The escape hatch has to be spoken out loud.**
+
+Delegate by default. When dispatching genuinely costs more than it saves, do it inline — and say so in one line before you do.
+
+**Why:** An unspoken exception isn't an exception, it's the beginning of erosion. Every individual shortcut is defensible on its own; the fourth defensible shortcut is what filled the context. Saying it out loud is what keeps the exception rare, and it gives Josh the chance to say "no, dispatch it."
+
+**How to apply:**
+- Legitimate inline: a single edit to a path Josh just named; a one-line check whose dispatch prompt would cost more to write than the work; something already fully in context.
+- Not legitimate: "it's faster," "I already know this file," "this one's simple." Those are the erosion.
+- Say the line. One sentence — "doing this inline, dispatching costs more than it saves" — then do it.
+- If you're taking the hatch more than occasionally, the default has drifted. Go back to delegating.
