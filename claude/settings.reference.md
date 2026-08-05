@@ -127,8 +127,8 @@ Managed (MDM/policy) > CLI flags > Local (.claude/settings.local.json)
 ### `outputStyle`
 
 - **Type:** `string`
-- **Default:** `"Default"`
-- **Valid:** `"Default"`, `"Explanatory"`, `"Learning"`, or a custom style name from `~/.claude/output-styles/` or `.claude/output-styles/`.
+- **Default:** `"default"`
+- **Valid:** `"default"`, `"Proactive"`, `"Explanatory"`, `"Learning"`, or a custom style name from `~/.claude/output-styles/` or `.claude/output-styles/`.
 - **Purpose:** Modifies the system prompt at session start — tone/role/format without changing capability.
 - **Gotcha:** Takes effect on next session. Custom styles are Markdown + YAML frontmatter; can include `keep-coding-instructions: true` to retain engineering guidance.
 
