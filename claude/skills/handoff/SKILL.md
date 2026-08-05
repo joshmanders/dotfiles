@@ -1,7 +1,8 @@
 ---
 name: handoff
-description: "Distill a long session into a short pasteable prompt that starts the next one. Prints for refinement, then copies to the clipboard on approval. Use when Josh signals the session itself is ending or moving: \"let's wrap up\", \"I'm going to start a fresh session\", \"write me a prompt for the next session\", \"give me something to paste into a new session\", \"we should pick this up tomorrow\", \"context is getting long\", \"let's continue this somewhere else\". Do not use on \"done\", \"thanks\", \"nice\", \"that's it\" — those close a task, not a session — or on a plain question about session state. When it's genuinely ambiguous whether the session is ending, ask in one line rather than generating."
+description: "Distill this session into a short pasteable prompt that starts the next one. Prints the draft for refinement, then copies it to the clipboard on approval."
 argument-hint: "[note]"
+disable-model-invocation: true
 ---
 
 # Handoff
@@ -9,23 +10,6 @@ argument-hint: "[note]"
 The conversation has gotten long enough that it needs to end. Write the message that lets the next session pick the work up cold.
 
 Write it the way you'd hand a task to a colleague taking over because you got pulled onto something else. They're competent and they have the repo — they don't need a tour, they need to know where things stand and what would bite them.
-
----
-
-## When to Use
-
-Josh runs `/handoff`, or he signals in conversation that the session itself is ending or moving elsewhere.
-
-| Signal | Fires |
-| ------ | ----- |
-| "let's wrap up", "we should pick this up tomorrow" | Yes |
-| "I'm going to start a fresh session", "let's continue this somewhere else" | Yes |
-| "write me a prompt for the next session", "give me something to paste into a new session" | Yes |
-| "context is getting long" | Yes |
-| "done", "thanks", "nice", "that's it" | No — a task finished, not the session |
-| "how much context is left?", "how long have we been at this?" | No — answer the question |
-
-The skill ends a session, so it stays off ambient phrasing. When the signal is genuinely ambiguous, ask in one line — "want a handoff for the next session?" — and wait.
 
 ---
 
@@ -88,7 +72,7 @@ Example shape:
 
 ### 4. Present and refine
 
-Open with one line naming what you're doing — `Writing the session handoff.` — then go straight into the draft. Don't wait for confirmation.
+Go straight into the draft. Don't wait for confirmation.
 
 Print the draft as rendered markdown in the response body — not fenced, not indented, no wrapper. Backticks, bold, and bullets should display as formatting so Josh reads it the way it will land. Stop there — no commentary, no explanation of choices.
 

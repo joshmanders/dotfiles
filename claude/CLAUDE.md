@@ -50,10 +50,6 @@ Invoke these skills when their triggers apply:
 
 **Invoke when:** A PR Josh authored has review comments to act on.
 
-### `handoff` — Session Handoff Prompt
-
-**Invoke when:** Josh signals the session itself is ending or moving to a fresh one.
-
 ---
 
 ## Agents
