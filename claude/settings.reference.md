@@ -130,7 +130,7 @@ Managed (MDM/policy) > CLI flags > Local (.claude/settings.local.json)
 - **Default:** `"default"`
 - **Valid:** `"default"`, `"Proactive"`, `"Explanatory"`, `"Learning"`, or a custom style name from `~/.claude/output-styles/` or `.claude/output-styles/`.
 - **Purpose:** Modifies the system prompt at session start — tone/role/format without changing capability.
-- **Gotcha:** Takes effect on next session. Custom styles are Markdown + YAML frontmatter; can include `keep-coding-instructions: true` to retain engineering guidance.
+- **Gotcha:** Takes effect on next session. Custom styles are Markdown + YAML frontmatter; can include `keep-coding-instructions: true` to retain engineering guidance. The value matches the style's frontmatter `name`, falling back to the filename without `.md` when `name` is absent. `/config` writes its selection to `.claude/settings.local.json`, which outranks this.
 
 ### `advisorModel`
 
