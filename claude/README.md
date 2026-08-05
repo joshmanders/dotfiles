@@ -23,6 +23,7 @@ When you add a rule or skill, ask: *does this apply everywhere, or only when edi
 | `rules/`                 | Modular rules (symlinked to `~/.claude/rules/`)                                               |
 | `skills/`                | Custom skills (symlinked to `~/.claude/skills/`)                                              |
 | `agents/`                | Subagent definitions (symlinked to `~/.claude/agents/`)                                       |
+| `output-styles/`         | Custom output styles (symlinked to `~/.claude/output-styles/`)                                |
 | `hooks/`                 | Hook scripts and their configs. Referenced by absolute path from `settings.json`, not symlinked. |
 | `install.d/`             | Install-time hooks. Sourced before the settings render to export template variables.           |
 | `settings.json.template` | Template with `${DOTFILES}` placeholders. The installer renders it into `settings.json`.       |
@@ -43,8 +44,9 @@ This will:
 4. Symlink `rules/` → `~/.claude/rules/`
 5. Symlink `skills/` → `~/.claude/skills/`
 6. Symlink `agents/` → `~/.claude/agents/`
-7. Symlink `settings.json` → `~/.claude/settings.json`
-8. Symlink `keybindings.json` → `~/.claude/keybindings.json`
+7. Symlink `output-styles/` → `~/.claude/output-styles/`
+8. Symlink `settings.json` → `~/.claude/settings.json`
+9. Symlink `keybindings.json` → `~/.claude/keybindings.json`
 
 ### Why `settings.json` is generated
 

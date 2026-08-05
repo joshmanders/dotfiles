@@ -61,7 +61,7 @@
   },
   "disableAllHooks": false,
   "defaultShell": "bash",
-  "outputStyle": "Default",
+  "outputStyle": "for-josh",
   "spinnerTipsEnabled": false,
   "syntaxHighlightingDisabled": false,
   "terminalTitleFromRename": true,
