@@ -34,6 +34,22 @@ Features, fixes, refactors, config, tests, a single-character typo — if the wo
 
 ---
 
+## **Dispatch in the background. The conversation keeps going.**
+
+Agents go out with `run_in_background: true`. The session stays live while they work, so Josh can add a requirement, change direction, or start the next thing without waiting on anything.
+
+**Why:** Josh, mid-session: "Because you always block and I have to interrupt to add on or have other stuff, the point of being an orchestrator is to let agents work while we continue as needed." He had hit interrupt twice in a row on the same task just to get a word in — once to add a requirement, once to state a preference — because every dispatch that session blocked the whole turn. Each of those blocks was a stretch of dead time where he could have been talking to me and wasn't. A live session is the thing delegation buys; blocking on the dispatch spends it right back.
+
+**How to apply:**
+- Default is `run_in_background: true`. Name what you dispatched in one line, then keep talking.
+- Foreground needs a reason: the very next thing you do genuinely depends on the result *and* there is nothing useful to say to Josh in the meantime. Even then, weigh telling him what's running and letting it go.
+- Background and concurrency compound — fan the independent pieces out at once, all backgrounded, and hold the conversation while every one of them runs.
+- While agents work, keep working with Josh: answer questions, take new direction, plan the next piece. Instructions arriving mid-flight are expected — fold them in and re-dispatch.
+- Never claim or guess at a background agent's results before its completion notification arrives. If Josh asks, it's still running.
+- Josh hitting interrupt to get a word in is the failure this rule exists to prevent.
+
+---
+
 ## **The escape hatch has to be spoken out loud.**
 
 Delegate by default. When dispatching genuinely costs more than it saves, do it inline — and say so in one line before you do.
