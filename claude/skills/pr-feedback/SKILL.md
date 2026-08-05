@@ -1,6 +1,6 @@
 ---
 name: pr-feedback
-description: "Address review feedback on a PR Josh authored - fetch the review comments, understand them, implement the fixes locally. Never posts on his behalf. Invoke when Josh says things like 'we got some feedback on our PR', 'address the review comments', 'the reviewer said X', 'my PR has comments on it', 'can you handle the feedback on #12', 'fix what the review flagged', or mentions someone reviewing a PR of his. Disambiguation with pr-review: authorship decides. A PR Josh authored with review comments to act on belongs here - cues are 'our PR', 'my PR', 'feedback we got', 'address the review', 'reviewer said'. A PR authored by someone else that he wants read belongs to pr-review - cues are 'review this PR', \"take a look at Dave's PR\", 'can you review #12'. When the phrasing is ambiguous ('look at PR 12'), check the PR author with gh before choosing. Takes an optional PR ref and note; with no ref, resolves the PR from the conversation or the current branch."
+description: "Address review feedback on a PR Josh authored - fetch the review comments, understand them, implement the fixes locally, and resolve the threads it addressed once Josh has reviewed, approved, and pushed. Never posts on his behalf. Invoke when Josh says things like 'we got some feedback on our PR', 'address the review comments', 'the reviewer said X', 'my PR has comments on it', 'can you handle the feedback on #12', 'fix what the review flagged', or mentions someone reviewing a PR of his. Disambiguation with pr-review: authorship decides. A PR Josh authored with review comments to act on belongs here - cues are 'our PR', 'my PR', 'feedback we got', 'address the review', 'reviewer said'. A PR authored by someone else that he wants read belongs to pr-review - cues are 'review this PR', \"take a look at Dave's PR\", 'can you review #12'. When the phrasing is ambiguous ('look at PR 12'), check the PR author with gh before choosing. Takes an optional PR ref and note; with no ref, resolves the PR from the conversation or the current branch."
 argument-hint: "[pr-ref] [note]"
 ---
 
@@ -15,9 +15,12 @@ argument-hint: "[pr-ref] [note]"
 You MUST NOT:
 
 - Submit reviews (`gh pr review`)
-- Post comments (`gh pr comment`, `gh api` POST/PUT/PATCH)
-- Reply to review threads
-- Modify any GitHub state whatsoever
+- Post comments (`gh pr comment`, `gh api` comment endpoints)
+- Reply to review threads (`addPullRequestReviewThreadReply`)
+- Approve, request changes, or merge
+- Run any other mutation or write request against the PR
+
+**One write is permitted: the `resolveReviewThread` mutation.** Resolving a thread is a state change with no content authored in Josh's name. Posting text is speaking for him, and that never happens without his explicit approval of the exact words. Resolve only threads whose feedback was actually addressed and pushed — Step 10 governs.
 
 You implement fixes locally. Josh decides what to post and when to push.
 
@@ -123,21 +126,59 @@ GH_TOKEN=$(gh auth token --user "$DOTFILES_GITHUB_USERNAME") \
 GH_TOKEN=$(gh auth token --user "$DOTFILES_GITHUB_USERNAME") \
   gh api repos/<owner>/<repo>/pulls/<number>/reviews
 
-# Inline review comments (the actual feedback on code)
-GH_TOKEN=$(gh auth token --user "$DOTFILES_GITHUB_USERNAME") \
-  gh api repos/<owner>/<repo>/pulls/<number>/comments
-
 # Issue-level comments
 GH_TOKEN=$(gh auth token --user "$DOTFILES_GITHUB_USERNAME") \
   gh api repos/<owner>/<repo>/issues/<number>/comments
 ```
 
+Inline feedback comes from GraphQL, which carries the thread ID and resolution state alongside each comment:
+
+```bash
+GH_TOKEN=$(gh auth token --user "$DOTFILES_GITHUB_USERNAME") \
+  gh api graphql -f owner=<owner> -f repo=<repo> -F number=<number> -f query='
+query($owner: String!, $repo: String!, $number: Int!) {
+  repository(owner: $owner, name: $repo) {
+    pullRequest(number: $number) {
+      reviewThreads(first: 100) {
+        pageInfo { hasNextPage endCursor }
+        nodes {
+          id
+          isResolved
+          isOutdated
+          path
+          line
+          viewerCanResolve
+          comments(first: 20) {
+            nodes { author { login } body url }
+          }
+        }
+      }
+    }
+  }
+}'
+```
+
+Each node is one conversation on the diff:
+
+| Field             | Use                                                        |
+| ----------------- | ---------------------------------------------------------- |
+| `id`              | `PRRT_…` node ID — what Step 10 resolves                   |
+| `isResolved`      | Step 5 categorization                                       |
+| `path`, `line`    | Where the feedback points                                   |
+| `isOutdated`      | The thread points at code the diff has since moved past     |
+| `comments.nodes`  | The feedback itself, author first to last                   |
+| `viewerCanResolve`| Whether resolving will succeed                              |
+
+`first: 100` is this connection's ceiling. If `pageInfo.hasNextPage` is true, fetch the rest with `after: $endCursor` — a truncated fetch silently drops feedback.
+
+Carry each item's thread `id` alongside the feedback from here on. Step 10 needs it.
+
 ### Step 5: Categorize feedback
 
 Separate feedback into:
 
-- **Unresolved items** — active feedback that needs attention
-- **Resolved items** — already addressed, skip these
+- **Unresolved items** — `isResolved: false`, active feedback that needs attention
+- **Resolved items** — `isResolved: true`, already addressed, skip these
 
 For unresolved items, group by reviewer and present a summary to Josh:
 
@@ -180,7 +221,7 @@ Only these items, in the current working tree on branch <branch>. Do not push.
 
 Dispatch a `finalizer` agent with the diff (the uncommitted working tree on branch `<branch>`), the list of changed files, the PR URL, and the implementer's claims quoted verbatim. Fix-ups it hands back go to the implementer via `SendMessage`. **Tests failing means the feedback isn't addressed** — it does not go to Josh with a caveat.
 
-### Step 9: Present results
+### Step 9: Present results and record what Josh approves
 
 For each addressed item, show:
 
@@ -194,7 +235,45 @@ For items you recommend pushing back on:
 - Why it shouldn't be done (technical reasoning)
 - Draft reply text for Josh to review and post himself if he agrees
 
-### Step 10: Restore original state (if needed)
+Then **stop** and wait for his review. Changes requested → implementer via `SendMessage`, feedback verbatim, then back through steps 8 and 9. Signed off → commit when he asks for it, per `committing.md`.
+
+Keep an **approved set** as he goes: one entry per item he signs off on, carrying the item, the file and line, and the thread `id` from Step 4. An item he pushes back on, defers, or wants draft reply text for does not enter the set, and neither does one he hasn't reached yet. This set is the whole input to Step 10 — it is built here, from what he actually said, and never reconstructed later from the diff.
+
+### Step 10: Resolve the threads Josh approved
+
+Josh pushes, in his own shell. His `git push` appearing in the conversation is the go signal. Until it does, wait — nothing resolves, no polling, no asking again.
+
+Once it lands, run one mutation per entry in the approved set:
+
+```bash
+GH_TOKEN=$(gh auth token --user "$DOTFILES_GITHUB_USERNAME") \
+  gh api graphql -f threadId=<thread-id> -f query='
+mutation($threadId: ID!) {
+  resolveReviewThread(input: { threadId: $threadId }) {
+    thread { id isResolved }
+  }
+}'
+```
+
+Which threads get resolved:
+
+| Item                                                      | Resolve            |
+| --------------------------------------------------------- | ------------------ |
+| In the approved set from Step 9                            | Yes                |
+| Josh pushed back on, deferred, or wants draft reply text   | No — leave it open |
+| Not yet approved, even alongside items that were           | No                 |
+
+Resolution only. No reply comment, no "fixed in `abc123`". The draft reply text from Step 9 stays Josh's to post.
+
+When a call fails — a stale ID, a thread already resolved, permission you don't have — `gh` exits non-zero and prints the GraphQL error. Say so plainly, move to the next thread, don't abort the step.
+
+Then report what closed and what stayed open, with the reason for each one left open, so Josh reads it here rather than finding it on GitHub:
+
+> Resolved 3 threads: `src/auth.ts:42`, `src/auth.ts:88`, `README.md:12`. Left open: the `Cargo.toml` pinning thread — you're replying to that one yourself, draft is above.
+
+Josh can also ask for the threads to be closed at any point — a later session, or after the conversation has moved on. Pick up from the approved set and resolve exactly those. If that set is no longer in hand, re-fetch the threads per Step 4, show him the unresolved ones, and ask which to resolve. Never infer the set from the diff or the commits.
+
+### Step 11: Restore original state (if needed)
 
 If Josh wants to return to the original branch:
 
