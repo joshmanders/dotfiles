@@ -12,7 +12,7 @@ Invoke these skills when their triggers apply:
 
 ### `brainstorming` — Design Before Implementation
 
-**Invoke when:** Any creative work - creating features, building components, adding functionality. Explores intent and design before code.
+**Invoke when:** Any creative work - creating features, building components, adding functionality, or modifying behavior. Explores intent and design before code.
 
 ### `systematic-debugging` — Root Cause Analysis
 
@@ -20,7 +20,7 @@ Invoke these skills when their triggers apply:
 
 ### `planning` — Work Planning
 
-**Invoke when:** Starting new work, planning a feature, or when asked "let's plan X". Every session = one issue = one PR.
+**Invoke when:** Starting new work, drafting or editing an issue, or when asked "let's plan X". Each issue covers one coherent thing.
 
 ### `github` — GitHub Project Management
 
@@ -48,7 +48,11 @@ Invoke these skills when their triggers apply:
 
 ### `pr-feedback` — Address Review Feedback
 
-**Invoke when:** A PR Josh authored has review comments to act on.
+**Invoke when:** A PR Josh authored has review comments to act on. Fixes them locally, then resolves the threads once Josh has approved and pushed.
+
+### `test-audit` — Test Suite Quality
+
+**Invoke when:** Reviewing test quality, assessing test coverage value, or analyzing test suite health.
 
 ---
 
