@@ -21,6 +21,7 @@ Agents are dispatched fresh; what Josh said during issue 2 never reaches issue 7
 | **Constraints**       | Invariants, APIs that must not break, things left alone on purpose  |
 | **Cross-issue facts** | Discoveries a later agent will need                                 |
 | **Deferred work**     | Out-of-scope work that surfaced, parked for Josh                    |
+| **Commits**           | One row per sub-issue: the commit SHA and the implementer's name    |
 
 ## Step 0: Parse arguments
 
@@ -98,7 +99,12 @@ Only this issue, in the current working tree on branch <branch>. Other sub-issue
 
 Dispatch a **fresh** scrutinizer on the fixed work — one that already blessed its own findings isn't reviewing. Exit when both hold: `findings: 0`, and every acceptance criterion on the sub-issue met. Three rounds without converging → stop and bring it to Josh; the issue is underspecified or the approach is wrong, and more rounds fix neither.
 
-**4d. Finalize the issue.** Dispatch a `finalizer` agent with the diff (the uncommitted working tree on branch `<branch>`), the list of changed files, the sub-issue URL, and the implementer's claims quoted verbatim. Fix-ups it hands back go to the implementer via `SendMessage`. **Tests failing means the issue isn't done** — it does not go to Josh with a caveat.
+**4d. Run the gate.** Dispatch a `code-reviewer` agent with the diff (the uncommitted working tree on branch `<branch>`), the list of changed files, the sub-issue URL, and the implementer's claims quoted verbatim.
+
+- **Code findings** → back to the implementer via `SendMessage`. All of them, no cherry-picking. If one looks wrong, dispatch an agent to check it before dismissing it.
+- **Claims findings** → to Josh, in your own message, immediately.
+
+Dispatch a **fresh** reviewer on the fixed work — one that already blessed its own findings isn't a gate. Exit on `No findings.` Three rounds without converging → stop and bring it to Josh. **Tests failing means the issue isn't done** — it does not go to Josh with a caveat.
 
 **4e. Present and stop.** Hand it over per `presenting-work.md`: a short plain-language paragraph, not a file listing. Then **stop**. Changes requested → implementer via `SendMessage`, feedback verbatim, then back through 4c and 4d. Signed off → commit.
 
@@ -109,11 +115,20 @@ git add -A
 git commit -m "<prefix>: <subject>" -m "Closes #<n>" -m "<attribution>"
 ```
 
-One commit per sub-issue, prefix and subject per `committing.md`. If the subject needs an "and", the issue holds two logical changes — say so and let Josh decide whether to split. `Closes #<n>` is a trailer, not a body. Then move to the next issue.
+One commit per sub-issue, prefix and subject per `committing.md`. If the subject needs an "and", the issue holds two logical changes — say so and let Josh decide whether to split. `Closes #<n>` is a trailer, not a body.
+
+Log the sub-issue number, the SHA from `git rev-parse --short HEAD`, and the name of the implementer that wrote it under Commits. Step 5 sends to that name to resume the right agent, and by then the branch holds several commits with nothing else tying one to the agent that produced it. Then move to the next issue.
 
 ## Step 5: Close out the epic
 
-Queue empty → dispatch a `finalizer` agent with the whole branch diff (every commit on `<branch>` against the base branch), the list of changed files, the epic URL, and the implementers' claims quoted verbatim — no single-issue reviewer saw the commits together. Fix what it returns; a fix to already-committed work is a new commit, never an amend. Then present: `Epic #437 done. 7 commits on <branch>.`, one line per issue (number and subject), and a `Deferred:` line carrying anything parked for Josh, or "nothing".
+Queue empty → dispatch a `code-reviewer` agent with the whole branch diff (every commit on `<branch>` against the base branch), the list of changed files, the epic URL, and the implementers' claims quoted verbatim — no single-issue reviewer saw the commits together.
+
+- **Code findings** → back to the implementer that wrote the commit each one lands in, by the name recorded under Commits, via `SendMessage`. All of them, no cherry-picking. If one looks wrong, dispatch an agent to check it before dismissing it.
+- **Claims findings** → to Josh, in your own message, immediately.
+
+A fix to already-committed work is a new commit, never an amend. Dispatch a **fresh** reviewer on the fixed work — one that already blessed its own findings isn't a gate. Exit on `No findings.` Three rounds without converging → stop and bring it to Josh.
+
+Then present: `Epic #437 done. 7 commits on <branch>.`, one line per issue (number and subject), and a `Deferred:` line carrying anything parked for Josh, or "nothing".
 
 **Stop there.** No push, no PR, no merge until Josh signs off on the branch as a whole — and then only what he asked for.
 
@@ -122,7 +137,7 @@ Queue empty → dispatch a `finalizer` agent with the whole branch diff (every c
 - **Dispatch, don't do.** Work touching code goes to an agent. You have no business reading a source file.
 - **Sequential, not parallel.** Sub-issues share a branch and usually a blast radius. One at a time, reviewed between each.
 - **The review gate is per issue.** Never commit two issues on one approval. Never commit without one.
-- **Josh sees finished work.** Scrutiny clean, `finalizer` run, tests passing, acceptance criteria met. He should be able to LGTM on a skim.
+- **Josh sees finished work.** Scrutiny clean, `code-reviewer` gate clean, tests passing, acceptance criteria met. He should be able to LGTM on a skim.
 - **Nothing leaves without a sign-off.** No commit without his per-issue approval. No push, PR, or merge without his approval of the finished branch.
 - **100% or ask.** Anything short of certainty goes to Josh.
 - **Scope expands → stop.** Out-of-issue work gets reported, logged as deferred, and decided by Josh. It does not get quietly fixed.

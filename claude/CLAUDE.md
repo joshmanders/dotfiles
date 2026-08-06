@@ -60,9 +60,9 @@ Dispatch these agents when their triggers apply. Full behavior lives in each age
 
 **Dispatch when:** Anything writes to disk — features, fixes, refactors, config, tests. The session never edits files itself. See `orchestrating.md`.
 
-### `finalizer` — Pre-Review Quality Gate
+### `code-reviewer` — Pre-Review Quality Gate
 
-**Dispatch when:** Work is complete and about to be presented, on any turn that changed files. Mandatory — see `prime-directives.md`.
+**Dispatch when:** Work is complete and about to be presented, on any turn that changed files. Mandatory — see `prime-directives.md`. Read-only: it returns findings, which you relay to the implementer that did the work.
 
 ---
 

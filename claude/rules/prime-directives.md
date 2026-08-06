@@ -59,14 +59,16 @@ Present work → wait for review → commit only when explicitly told. The revie
 ```
 1. Understand the ask
 2. Dispatch an `implementer` agent with the scope, the decisions, and the constraints
-3. Dispatch a `finalizer` agent with the diff and the implementer's claims
-4. Present what was done
-5. STOP — wait for review
-6. Iterate if needed — each round trips through steps 2 and 3
-7. Commit ONLY when Josh explicitly asks for it
+3. Dispatch a `code-reviewer` agent with the diff and the implementer's claims
+4. Relay its findings to the same implementer, resumed, and let it fix them
+5. Repeat 3 and 4 until the reviewer returns `No findings.` — three rounds without converging, stop and put it to Josh
+6. Present what was done
+7. STOP — wait for review
+8. Feedback from Josh → to the same implementer, resumed, verbatim, then back through 3
+9. Commit ONLY when Josh explicitly asks for it
 ```
 
-Steps 5-7 are gated. Never skip to commit.
+Steps 7-9 are gated. Never skip to commit.
 
 **Commit trigger words.** Only commit when Josh explicitly uses one of:
 - "commit"
@@ -78,18 +80,23 @@ Steps 5-7 are gated. Never skip to commit.
 
 ---
 
-## **The `finalizer` gate runs before you present.**
+## **The `code-reviewer` gate runs before you present.**
 
-Work isn't ready to hand back until a `finalizer` agent has been over it. On every turn that changed files, the gate runs first and the handoff message comes after.
+Work isn't ready to hand back until a `code-reviewer` agent has been over it. On every turn that changed files, the gate runs first and the handoff message comes after.
 
 **Why:** Josh reads the diff, and his attention belongs on whether the change is *right* — not on catching a leftover debug statement, an abstraction nobody asked for, or a rule the session drifted past. In his words, he should be able to skim the work and confirm it looks right, not nitpick it. Those nitpicks are mechanical, so a gate catches them mechanically before he ever sees them.
 
 **How to apply:**
 - Dispatch it after the work is done, before the message that presents it.
-- Announce it in one line — "Dispatching the finalizer gate." — then dispatch it.
+- Announce it in one line — "Dispatching the code reviewer." — then dispatch it.
 - The dispatch prompt carries the diff, the list of changed files, the original ask or issue, and every factual claim the implementer made, quoted verbatim. The agent is cold; anything it isn't handed, it can't check.
-- It fixes what it finds and reports back. Don't hand its findings to Josh to adjudicate.
-- The gate stops at its summary. It never commits.
+- It reads and runs; it never edits. Findings come back to you as a list.
+- Relay every finding to the implementer that did the work, resumed with `SendMessage` so its context survives. All of them, no cherry-picking. Don't hand findings to Josh to adjudicate, and don't fix them yourself.
+- A finding that disproves a claim you already stated to Josh is his to hear, in your own message, immediately.
+- Re-run the gate on the fixed work until it returns `No findings.` An agent that blessed its own fixes isn't a gate, so every pass after the first is a fresh dispatch.
+- Three rounds without converging → stop and bring it to Josh. The ask is underspecified or the approach is wrong, and more rounds fix neither.
+- Josh's own feedback after you present goes the same way findings do: to the same implementer, resumed, quoted verbatim, then back through the gate.
+- Both agents stop at their summaries. Neither commits.
 
 **When the gate doesn't run.** The floor is risk, not size. Ask: *does this change have a way to be wrong that Josh wouldn't catch by skimming the diff?* No → skip. Yes → gate. A one-line change can earn the gate; a two-hundred-line one can skip it.
 
