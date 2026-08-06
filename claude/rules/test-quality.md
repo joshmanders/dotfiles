@@ -18,6 +18,8 @@ A test earns its place by failing when *your* code regresses. One that exercises
 
 **The trap that produces these.** You hit uncertainty mid-implementation — does this resolve, does that emit — and write a check to answer it. It answers it. Then it gets committed. That was a debugging step; its job ended the moment it told you what you needed. Delete it. Don't promote it to a permanent test because it happens to be green.
 
+**The trap that survives review.** You invent a test to settle your own worry. The shape: "the test environment uses driver A but production uses driver B, so I should write a test that runs against B." Stop — that test's failure mode belongs to whoever wrote the driver. Reading a library's source to pick the right API is good engineering; writing a test to prove the library honours its own contract is not. Concretely: I told a subagent to switch Laravel's cache driver to `database` in a test so it would exercise `DatabaseLock` expiry rather than `ArrayLock`. Josh: "why are you testing the differences of cache providers in local / test / production? You're testing Laravel's internals. We trust Laravel already tests that stuff. We test only what we do and expect." This applies double in a subagent brief — a requirement invented there becomes that agent's entire world, and it will build it without the judgment that would have stopped you.
+
 **When integration genuinely needs proving,** assert the outcome a user gets — the page renders, the record comes back, the endpoint returns 200 — never the dependency's mechanics. The check: if you deleted every line of code you wrote and the test still passed, it was never testing you.
 
 ## Assert Stable Outcomes
