@@ -48,6 +48,8 @@ user-invocable: false
 
 > **High level, always.** An issue describes an *outcome* — what needs to be true when it's resolved. Never *how*. Files, function names, refactor steps, migration order, code snippets, "first do X then Y": none of it belongs in the body. If you catch yourself typing an implementation detail, delete it. The future session picking this up must investigate the code as it exists then — not follow a recipe you baked in now, which is almost certainly stale or wrong.
 
+> **One paragraph, one line.** Issue and PR bodies render as Markdown in a variable-width column, so a hand-wrapped paragraph comes out as ragged short lines. Break a line only to separate paragraphs, list items, and headings — never to wrap prose to a column width.
+
 > **Plan Mode:** During planning, draft the issue content and include it in your plan file. Do NOT run `gh issue create` until after plan approval.
 
 ### Before Creating
@@ -71,10 +73,7 @@ ISSUE_URL=$(gh issue create \
   --repo <org>/<repo> \
   --title "Brief description" \
   --body "## Summary
-High-level overview of what we need to achieve and why. Include only
-constraints that must be honored (e.g. \"must not break the public v1 API\",
-\"must preserve existing session behavior\"). No approach, no files,
-no implementation steps.
+High-level overview of what we need to achieve and why. Include only constraints that must be honored (e.g. \"must not break the public v1 API\", \"must preserve existing session behavior\"). No approach, no files, no implementation steps.
 
 ## Acceptance Criteria
 - [ ] Observable outcome 1
@@ -94,9 +93,7 @@ ISSUE_URL=$(gh issue create \
   --repo <org>/<repo> \
   --title "Brief description" \
   --body "## Summary
-High-level overview of the initiative — what are we trying to achieve overall,
-and why. Constraints that span all children (e.g. \"no child PR may break
-the public v1 API\") go here.")
+High-level overview of the initiative — what are we trying to achieve overall, and why. Constraints that span all children (e.g. \"no child PR may break the public v1 API\") go here.")
 
 printf '%s' "$ISSUE_URL" | pbcopy
 echo "$ISSUE_URL"
