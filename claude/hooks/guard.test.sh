@@ -171,6 +171,48 @@ if (( uncovered > 0 )); then
 fi
 
 # ============================================================
+# Separator tests: a ^-anchored pattern must still fire when the
+# dangerous command sits after a shell command separator.
+# ============================================================
+printf '\n== Separator bypass ==\n'
+
+block 'cd /Users/mockuser/project && rm -rf /Users/mockuser/project/thing'
+block 'make clean || sudo rm -rf /etc/passwd'
+block 'cd /tmp; rm -rf /System/Library'
+block 'echo starting | sudo passwd root'
+block 'sleep 1 & rm -rf /Users/mockuser'
+block 'out=$(rm -rf /Users/mockuser)'
+block 'echo `sudo rm -rf /etc/hosts`'
+block 'cd /tmp && sudo shutdown -h now'
+block 'npm run build && nmap -sS 10.0.0.0/24'
+block 'git pull; sudo launchctl load /Library/LaunchDaemons/evil.plist'
+
+# Patterns ending in a `$` anchor must still fire when the closing delimiter of a
+# command substitution follows the dangerous command
+block 'out=$(crontab -r)'
+block 'echo `crontab -r`'
+block 'out=$(sudo -i)'
+block 'echo `sudo -i`'
+block 'out=$(sudo chown -R root /)'
+block 'echo `sudo shutdown -h now`'
+
+# Everyday commands built out of separators stay allowed
+allow 'cd /tmp && ls -la'
+allow 'rm -rf ./build && npm run build'
+allow 'make clean; make build'
+allow 'ps aux | grep node'
+allow 'sleep 10 & echo backgrounded'
+allow '(cd /tmp && ls)'
+allow 'echo "$(date) build done"'
+allow 'out=$(git rev-parse HEAD)'
+allow 'echo `git rev-parse --short HEAD`'
+allow "awk -F'|' '{print \$2}' data.txt"
+allow "sed 's|old|new|' file.txt"
+allow "jq '{name: .x}' file.json"
+allow 'find . -type d -name node_modules | xargs rm -rf'
+allow "ssh host 'cd /tmp && ls'"
+
+# ============================================================
 # ALLOW tests: legitimate commands that must NOT be blocked
 # ============================================================
 printf '\n== Allow tests ==\n'
@@ -221,7 +263,7 @@ allow "history | grep git"
 allow "chmod +x script.sh"
 allow "chmod 644 file.txt"
 allow "chmod 777 /tmp/foo"
-allow "chown josh:staff file.txt"
+allow "chown mockuser:staff file.txt"
 allow "sudo ls /etc"
 
 # macOS tools (read-only)
