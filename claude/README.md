@@ -19,8 +19,7 @@ When you add a rule or skill, ask: *does this apply everywhere, or only when edi
 
 | File                     | Purpose                                                                                       |
 | ------------------------ | --------------------------------------------------------------------------------------------- |
-| `CLAUDE.md`              | Main instructions (symlinked to `~/.claude/CLAUDE.md`)                                        |
-| `rules/`                 | Modular rules (symlinked to `~/.claude/rules/`)                                               |
+| `CLAUDE.md`              | Main instructions and operating rules (symlinked to `~/.claude/CLAUDE.md`)                    |
 | `skills/`                | Custom skills (symlinked to `~/.claude/skills/`)                                              |
 | `agents/`                | Subagent definitions (symlinked to `~/.claude/agents/`)                                       |
 | `output-styles/`         | Custom output styles (symlinked to `~/.claude/output-styles/`)                                |
@@ -45,10 +44,9 @@ This will:
 4. Symlink `CLAUDE.md` → `~/.claude/CLAUDE.md`
 5. Symlink `skills/` → `~/.claude/skills/`
 6. Symlink `agents/` → `~/.claude/agents/`
-7. Symlink `rules/` → `~/.claude/rules/`
-8. Symlink `output-styles/` → `~/.claude/output-styles/`
-9. Symlink `settings.json` → `~/.claude/settings.json`
-10. Symlink `keybindings.json` → `~/.claude/keybindings.json`
+7. Symlink `output-styles/` → `~/.claude/output-styles/`
+8. Symlink `settings.json` → `~/.claude/settings.json`
+9. Symlink `keybindings.json` → `~/.claude/keybindings.json`
 
 ### Why `settings.json` is generated
 
@@ -62,29 +60,17 @@ The cost is that anything Claude Code wrote into `settings.json` itself is disca
 
 ## Rules
 
-Modular rules in `rules/` directory, auto-loaded by Claude Code:
+Operating rules live inline in `CLAUDE.md` as a numbered list, loaded every session. Reference an individual rule by its number. Code-authoring and review standards live in the agent definitions under `agents/` (see below).
 
-| Rule                | Purpose                                                  |
-| ------------------- | -------------------------------------------------------- |
-| `prime-directives`  | Non-negotiable rules (verify, review gate, hard nos)     |
-| `code-standards`    | Before-writing checks, naming, errors                    |
-| `leave-code-better` | Opportunistic refactoring while touching files           |
-| `scope-discipline`  | Stay in the task boundary, hold findings for the end     |
-| `documentation`     | Keep docs current as code changes                        |
-| `committing`        | Atomic commits, format, prefixes                         |
-| `cleanup`           | Debug code removal before presenting work                |
-| `deleting-files`    | Relative paths for `rm`, rewrite blocked commands        |
-| `pr-format`         | PR title, body, and final checklist                      |
-| `test-quality`      | Test assertions, determinism, signal                     |
-| `code-review-output`| Actionable items only — no narration or affirmations     |
-| `presenting-work`   | Hand finished work back conversationally, not file-by-file |
-| `output-shape`      | Payload first, numbered steps, flat errors               |
-| `writing-prose`     | Standards govern authored artifacts, never hard-wrap     |
-| `no-lecturing`      | Answer what was asked, skip the tutorial                 |
-| `no-groveling`      | Revise answers like a scientist, not an apology          |
-| `no-stale-context`  | Write the present state, not the history of the change   |
-| `memory-vs-codification` | What belongs in the repo vs personal memory         |
-| `orchestrating`     | Delegate the work to agents, keep the conversation       |
+## Agents
+
+Subagent definitions live in `agents/`, symlinked to `~/.claude/agents/`.
+
+| Agent           | Purpose                                                     |
+| --------------- | ----------------------------------------------------------- |
+| `implementer`   | Make file changes within a defined scope and report back    |
+| `code-reviewer` | Read-only quality gate over a diff before human review      |
+| `audit`         | Read-only audit of a test suite for real confidence         |
 
 ## Skills
 
@@ -98,14 +84,10 @@ Modular rules in `rules/` directory, auto-loaded by Claude Code:
 | `epic`                          | Orchestrate a parent issue's sub-issues through dispatched agents |
 | `pr-review`                     | Read-only review of someone else's PR                             |
 | `pr-feedback`                   | Address review feedback on a PR Josh authored                     |
-| `requesting-code-review`        | Verify work before merging                                        |
-| `receiving-code-review`         | Handle review feedback with rigor                                 |
 | `dispatch-parallel-agents`      | Run independent tasks concurrently                                |
 | `bin-scripts`                   | Custom shell scripts for dev workflows                            |
-| `test-audit`                    | Audit test suites for real confidence                             |
 | `handoff`                       | Distill a long session into the next one's opening prompt         |
-| `realign`                       | Re-read config and rules after context drift                      |
-| `writing-clearly-and-concisely` | Strunk's rules for any prose humans read                          |
+| `humanizer`                     | Strip AI-writing tells and edit prose for clarity                 |
 | `ab-testing`                    | Plan, design, and run A/B tests and experiments                   |
 | `ad-creative`                   | Generate and iterate paid ad copy at scale                        |
 | `ads`                           | Paid campaign strategy, targeting, and bidding                    |
@@ -196,34 +178,8 @@ Protected directories (`.git/`, `.vscode/`, `.idea/`, `.claude/`, `.husky/`, `.c
 | Event              | Handler                         | Purpose                                                                       |
 | ------------------ | ------------------------------- | ----------------------------------------------------------------------------- |
 | `PreToolUse`       | `hooks/guard.sh` (command)      | Blocks dangerous Bash commands. Config: `denied-commands.json`.               |
-| `UserPromptSubmit` | `hooks/skill-gate.sh` (command) | Routes a request to the skill that must run first. Config: `skill-gate.json`. |
-| `Stop`             | agent, `hooks/claim-check.md`   | Verifies the factual claims in the reply against the transcript. **Not enabled** — see below. |
 
-Two of these exist because instructions alone don't reach the assistant at the moment they're needed.
-
-**`skill-gate`** fires before the reply starts. `brainstorming` and `systematic-debugging` were previously invoked only if the assistant decided to invoke them — and the moment either is needed is the moment it has concluded it isn't. The hook matches the incoming prompt against `skill-gate.json` and injects a directive naming the skill. First match wins, so key order in that file is priority order.
-
-Background-agent completion notices reach `UserPromptSubmit` on the same event, carrying the agent's whole result as the prompt. The hook skips any prompt opening with `<task-notification>`, so routing only ever fires on words the user actually typed.
-
-**`claim-check`** fires when the reply is finished but before it's read. It receives the transcript from the harness — the assistant doesn't assemble it, filter it, or get asked, which is the whole point: a check fed by the thing it's checking is worthless. The agent is read-only and must never re-run a command from the transcript.
-
-Its prompt lives in `hooks/claim-check.md` so it stays readable in a diff, and `install.d/claim-check-prompt.sh` embeds the file's contents into `settings.json` at install time. Embedding rather than pointing at the path matters: a referenced file is one the verifier has to choose to open, and can fail to open or decide it doesn't need. Edit the markdown, re-run the installer.
-
-**It is not wired into the template.** In live use it took over two minutes per turn, because it was reading the entire session transcript to check a single message. `claim-check.md` now scopes it to the last message and the current turn, but that hasn't been measured yet. Enable it by adding this alongside the other events in `settings.json.template` and re-running the installer:
-
-```json
-"Stop": [
-  {
-    "hooks": [
-      { "type": "agent", "prompt": "${SCRUTINY_AGENT_HOOK_PROMPT}", "timeout": 300 }
-    ]
-  }
-]
-```
-
-Watch the turn time on a short session before leaving it on.
-
-Both command hooks are tested. Run `hooks/guard.test.sh` and `hooks/skill-gate.test.sh`.
+The guard hook is tested. Run `hooks/guard.test.sh`.
 
 ## Install hooks
 
