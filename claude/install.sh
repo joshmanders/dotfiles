@@ -7,13 +7,12 @@
 #
 # What it does:
 #   1. Symlinks CLAUDE.md to ~/.claude/CLAUDE.md
-#   2. Symlinks rules/ to ~/.claude/rules/
-#   3. Symlinks skills/ to ~/.claude/skills/
-#   4. Symlinks agents/ to ~/.claude/agents/
-#   5. Symlinks output-styles/ to ~/.claude/output-styles/
-#   6. Renders settings.json.template into settings.json with the actual
+#   2. Symlinks skills/ to ~/.claude/skills/
+#   3. Symlinks agents/ to ~/.claude/agents/
+#   4. Symlinks output-styles/ to ~/.claude/output-styles/
+#   5. Renders settings.json.template into settings.json with the actual
 #      $DOTFILES path, then symlinks it to ~/.claude/settings.json
-#   7. Symlinks keybindings.json to ~/.claude/keybindings.json
+#   6. Symlinks keybindings.json to ~/.claude/keybindings.json
 #
 # Usage:
 #   bash claude/install.sh
@@ -73,7 +72,6 @@ mv "$rendered" "$DOTFILES/claude/settings.json"
 symlink "$DOTFILES/claude/CLAUDE.md" "$HOME/.claude/CLAUDE.md"
 symlink "$DOTFILES/claude/skills" "$HOME/.claude/skills"
 symlink "$DOTFILES/claude/agents" "$HOME/.claude/agents"
-symlink "$DOTFILES/claude/rules" "$HOME/.claude/rules"
 symlink "$DOTFILES/claude/output-styles" "$HOME/.claude/output-styles"
 symlink "$DOTFILES/claude/settings.json" "$HOME/.claude/settings.json"
 symlink "$DOTFILES/claude/keybindings.json" "$HOME/.claude/keybindings.json"
