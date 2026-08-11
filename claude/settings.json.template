@@ -47,16 +47,6 @@
           }
         ]
       }
-    ],
-    "UserPromptSubmit": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "${DOTFILES}/claude/hooks/skill-gate.sh"
-          }
-        ]
-      }
     ]
   },
   "disableAllHooks": false,
