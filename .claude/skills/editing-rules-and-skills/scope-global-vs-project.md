@@ -38,12 +38,11 @@ When in doubt, prefer global for **behavior** and project for **maintenance / re
 
 **Global tree** (`$DOTFILES/claude/`):
 
-| Path             | Purpose                                                |
-| ---------------- | ------------------------------------------------------ |
-| `rules/*.md`     | Behavioral rules auto-loaded with the global context   |
-| `skills/*/SKILL.md` | Capability skills auto-loaded with the global context |
-| `agents/`        | Subagent definitions                                   |
-| `CLAUDE.md`      | Top-level global instructions                          |
+| Path                | Purpose                                                                                        |
+| ------------------- | --------------------------------------------------------------------------------------------- |
+| `CLAUDE.md`         | Top-level global instructions and the inline numbered behavioral-rules list                   |
+| `agents/*.md`       | Subagent definitions, and the home of the code-authoring and code-review standards            |
+| `skills/*/SKILL.md` | Capability skills                                                                              |
 
 **Project tree** (`$DOTFILES/.claude/`):
 
