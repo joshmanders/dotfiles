@@ -18,7 +18,7 @@ Pattern-match to existing informative skills for the shape:
 - **`bin-scripts`** — command tables grouped by purpose (Committing, Undoing, History, etc.). Each row is `script | usage | purpose`.
 - **`brainstorming`** — process steps in short bullet groups under section headers. Key principles as a bulleted list at the bottom.
 - **`dispatch-parallel-agents`** — process + concrete ❌/✅ examples + when-not-to-use guardrails.
-- **`writing-clearly-and-concisely`** — terse numbered rules + bottom-line summary.
+- **`humanizer`** — a pattern catalog grouped by category, each entry a labeled Before/After pair.
 
 Shape signals: tables, code blocks, short labeled sections, examples. Almost no `**Why:**` blocks. Bolding is used sparingly to emphasize key terms, not to scream.
 
@@ -46,5 +46,5 @@ The bar for emphatic callouts in an informative skill is high. Most content is c
 2. **Verify every fact.** Run commands, read help text, read source. Never invent details to fill out a reference.
 3. **Pattern-match to existing skills.** Pick a sibling skill with similar shape (`github` for CLI references, `brainstorming` for process docs, `bin-scripts` for command catalogs) and match its structure.
 4. **Stay calm.** No emphatic headings, no manufactured Why/How blocks. Tables, sections, examples.
-5. **Decide scope: global or project?** Universal capabilities → global. Dotfiles-specific tooling → project. See `scope-global-vs-project.md` if unsure.
+5. **Decide scope: global or project?** Universal capabilities → global. Dotfiles-specific tooling → project. See `placement.md` if unsure.
 6. **Show one section's draft before completing the rest.** When writing a new skill, finish one section, present it, wait for validation, then proceed.

@@ -1,6 +1,35 @@
-# Scope: Global vs Project
+# Placement: Where an Artifact Lives
 
-Load this when you need to decide whether a new rule or skill belongs in the global tree (applies everywhere) or the project tree (only when working in this dotfiles repo).
+Load this to decide which physical file an artifact belongs in. Two questions stack here, and they're independent of voice (correction vs informative):
+
+1. **Which home** does a behavioral lesson land in — the numbered list or an agent def?
+2. **Which tree** does a rule or skill belong in — global (everywhere) or project (this repo only)?
+
+## Two homes for a behavioral lesson
+
+A correction that encodes a behavioral lesson has two possible homes. Classify which before touching anything:
+
+- **A lesson about how the session works** → a terse numbered item in the flat list in `claude/CLAUDE.md`. Calm, imperative, one concern per item.
+- **A lesson about how code gets authored or reviewed** → prose in the relevant agent def: `claude/agents/implementer.md` for authoring, cleanup, tests, and docs; `claude/agents/code-reviewer.md` for review and review output. Match that file's existing prose.
+
+## The numbered list in `claude/CLAUDE.md`
+
+The global behavioral rules are a single flat numbered list, inline in `claude/CLAUDE.md` right after the `---` that follows "You are Josh's engineering assistant." No `## Rules` heading, no section headings — just the numbered items, uniformly terse.
+
+The list is loosely grouped by topic, not split into strict priority tiers:
+
+- It opens with **orchestration** (what you are — delegate the work, keep the conversation).
+- Then **working with the user and voice** (terseness, presenting work, apologizing, corrections).
+- Then a long run of **task specifics** — commits, PRs, GitHub actions, git safety, where knowledge lives — grouped loosely by topic with no hard boundary between the groups. The git-safety items sit among the task specifics, after the commit-approval and code-reviewer-gate items, not in an earlier tier of their own.
+
+To place a new item: find the existing items on the same topic and drop it next to them. Match your neighbors — don't compute a tier or a rule number, and don't hardcode a count anywhere, since both rot on the next edit.
+
+An item that belongs here gets no bold heading, no `**Why:**` block, no `---` separator — one or two imperative sentences, one concern each. Match the surrounding items exactly:
+
+- Portable wording — **"the user", never "Josh"**. These rules ship to every project.
+- `master`, never `main`.
+- Imperative voice, one concern per item.
+- No heading, no Why/How block, no separator.
 
 ## The two trees
 
@@ -15,7 +44,7 @@ The dotfiles repo contains two Claude config trees that look superficially ident
 
 Global is the source of truth for what becomes `~/.claude/` after install. Project is dotfiles-internal — it loads only when working on the dotfiles themselves.
 
-## The decision
+## Global vs project
 
 Ask: *does this apply everywhere Claude runs, or only when editing this repo?*
 

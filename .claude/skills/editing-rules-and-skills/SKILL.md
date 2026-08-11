@@ -15,7 +15,7 @@ Before touching anything, identify which kind of work this is. The two flavors l
 
 If unsure, ask Josh in one sentence: "Is this you correcting a behavior, or you wanting me to know about a capability?"
 
-Most existing global skills (`github`, `bin-scripts`, `brainstorming`, `planning`, `dispatch-parallel-agents`, `writing-clearly-and-concisely`) are informative. Most of the numbered behavioral rules are correction-driven. Memory entries are always correction-driven.
+Most existing global skills (`github`, `bin-scripts`, `brainstorming`, `planning`, `dispatch-parallel-agents`, `humanizer`) are informative. Most of the numbered behavioral rules are correction-driven.
 
 ## When this skill fires
 
@@ -26,16 +26,13 @@ Most existing global skills (`github`, `bin-scripts`, `brainstorming`, `planning
 - Adding new items to any of the above
 - Anytime Josh says "let's document this so it doesn't happen again" (correction) or "let's make sure you know about X" (informative)
 
-It does **not** fire when editing memory entries (`~/.claude/projects/*/memory/`) — those already use this voice natively.
+## Where it lands
 
-## Scope decision
-
-Whether the work is correction or informative, it also has a scope: global (applies everywhere) or project (only when working in this dotfiles repo). Misplaced rules either pollute every project or silently stop applying. If unsure which scope a new rule or skill belongs in, load **`scope-global-vs-project.md`**.
+Voice is one axis; location is a separate one. Whichever voice the work takes, it also needs a home: which file a behavioral lesson lands in (the numbered list or an agent def) and which tree a rule or skill belongs in (global everywhere, or project only in this repo). Get either wrong and the artifact pollutes every project, silently stops applying, or lands in the wrong voice. Load **`placement.md`** for both decisions.
 
 ## What this skill is NOT
 
 - Not a license to make the terse numbered rules or agent defs dramatic for the sake of drama.
-- Not a license to invent incidents to anchor promoted memory entries.
+- Not a license to invent incidents to anchor a correction.
 - Not a license to change the semantics of a rule while reframing it.
 - Not a license to dress informative reference up in correction voice.
-- Not applied to memory entries — those already have the right voice.
