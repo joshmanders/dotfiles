@@ -1,6 +1,6 @@
 ---
 name: handoff
-description: "Distill this session into a short pasteable prompt that starts the next one. Prints the draft for refinement, then copies it to the clipboard on approval."
+description: Distill this session into a short pasteable prompt that starts the next one. Prints the draft for refinement, then copies it to the clipboard on approval.
 argument-hint: "[note]"
 disable-model-invocation: true
 ---

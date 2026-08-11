@@ -1,6 +1,7 @@
 ---
 name: issue
-description: "Work a single GitHub issue end to end — fetch its full context, branch, and start. Use when Josh points at an issue and wants it worked: 'let's look at issue 43', 'work on #43', 'start 43', 'pick up foo/bar#43', 'what's next?', 'grab the next issue', 'let's fix that bug'. Also use with no ref when he says 'let's get started' or 'what am I on?' — the ref resolves from the conversation or from the current git branch. Routing: if the issue has at least one open sub-issue it is a parent, so hand off to the `epic` skill with that ref; `epic` covers 'close out the epic', 'work through all of #40's children', 'do the whole epic'."
+description: |
+  Work a single GitHub issue end to end — fetch its full context, branch, and start. Use when Josh points at an issue and wants it worked: 'let's look at issue 43', 'work on #43', 'start 43', 'pick up foo/bar#43', 'what's next?', 'grab the next issue', 'let's fix that bug'. Also use with no ref when he says 'let's get started' or 'what am I on?' — the ref resolves from the conversation or from the current git branch. Routing: if the issue has at least one open sub-issue it is a parent, so hand off to the `epic` skill with that ref; `epic` covers 'close out the epic', 'work through all of #40's children', 'do the whole epic'.
 argument-hint: "[issue-ref] [note]"
 ---
 
@@ -8,7 +9,7 @@ argument-hint: "[issue-ref] [note]"
 
 Pull the specified GitHub issue, gather its full context, create a working branch, and start.
 
-`orchestrating.md` governs, without its escape hatch — work touching code always goes to an agent, however small it looks. Your exceptions are metadata: `gh` calls fetching issue context, `git` calls managing the branch. What you keep is the conversation.
+CLAUDE.md's orchestration rules govern, without their escape hatch — work touching code always goes to an agent, however small it looks. Your exceptions are metadata: `gh` calls fetching issue context, `git` calls managing the branch. What you keep is the conversation.
 
 ### Step 0: Resolve the ref and note
 
@@ -185,4 +186,4 @@ Dispatch a **fresh** reviewer on the fixed work — one that already blessed its
 
 ### Step 9: Present and stop
 
-Hand it over per `presenting-work.md`: a short plain-language paragraph, not a file listing. Then **stop** and wait for review. Changes requested → implementer via `SendMessage`, feedback verbatim, then back through steps 8 and 9.
+Hand it over like a colleague would — a short plain-language paragraph, not a file listing. Then **stop** and wait for review. Changes requested → implementer via `SendMessage`, feedback verbatim, then back through steps 8 and 9.

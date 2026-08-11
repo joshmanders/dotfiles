@@ -1,6 +1,7 @@
 ---
 name: github
-description: "GitHub CLI patterns for issues, projects, and PRs. Invoke when: creating issues, linking PRs to issues, updating project status, or any GitHub project operations."
+description: |
+  GitHub CLI patterns for issues, projects, and PRs. Invoke when: creating issues, linking PRs to issues, updating project status, or any GitHub project operations.
 user-invocable: false
 ---
 
@@ -18,10 +19,8 @@ Generic patterns for GitHub operations using `gh` CLI.
 gh issue create \
   --repo <org>/<repo> \
   --title "Issue title" \
-  --body "## Summary
-Description of what and why.
+  --body "What needs doing and why, in a sentence or two.
 
-## Acceptance Criteria
 - [ ] Criterion 1
 - [ ] Criterion 2"
 ```
@@ -130,12 +129,7 @@ PR_URL=$(gh pr create \
   --draft \
   --repo <org>/<repo> \
   --title "feat: short description" \
-  --body "## Summary
-What was done.
-
-## Changes
-- Change 1
-- Change 2
+  --body "What this does and why, at a high level.
 
 Closes #<issue-number>")
 

@@ -1,6 +1,7 @@
 ---
 name: epic
-description: "Close out an entire epic in one session — every open child issue of a parent issue, worked by dispatched agents, reviewed and committed one at a time. Use when Josh points at a parent issue and wants the whole thing finished: 'close out the epic', 'let's do epic 40', 'knock out the children of #40', 'work through all of #40's sub-issues', 'finish the whole epic'. Also use when a ref he named — even plain 'let's work on #40' — turns out to have open sub-issues. Routing: if the ref has no open sub-issues it is a single issue, so hand off to the `issue` skill with that ref."
+description: |
+  Close out an entire epic in one session — every open child issue of a parent issue, worked by dispatched agents, reviewed and committed one at a time. Use when Josh points at a parent issue and wants the whole thing finished: 'close out the epic', 'let's do epic 40', 'knock out the children of #40', 'work through all of #40's sub-issues', 'finish the whole epic'. Also use when a ref he named — even plain 'let's work on #40' — turns out to have open sub-issues. Routing: if the ref has no open sub-issues it is a single issue, so hand off to the `issue` skill with that ref.
 argument-hint: "[epic-ref] [note]"
 ---
 
@@ -8,7 +9,7 @@ argument-hint: "[epic-ref] [note]"
 
 Finish this epic: every open child issue, one commit each, in one sitting. Nothing else gets worked this session.
 
-`orchestrating.md` governs, without its escape hatch — issue work always goes to an agent, however small it looks. Your only exceptions are metadata: `gh` calls fetching issue context, `git` calls managing the branch and commit. What you keep is the conversation.
+CLAUDE.md's orchestration rules govern, without their escape hatch — issue work always goes to an agent, however small it looks. Your only exceptions are metadata: `gh` calls fetching issue context, `git` calls managing the branch and commit. What you keep is the conversation.
 
 ## The Ledger
 
@@ -106,7 +107,7 @@ Dispatch a **fresh** scrutinizer on the fixed work — one that already blessed 
 
 Dispatch a **fresh** reviewer on the fixed work — one that already blessed its own findings isn't a gate. Exit on `No findings.` Three rounds without converging → stop and bring it to Josh. **Tests failing means the issue isn't done** — it does not go to Josh with a caveat.
 
-**4e. Present and stop.** Hand it over per `presenting-work.md`: a short plain-language paragraph, not a file listing. Then **stop**. Changes requested → implementer via `SendMessage`, feedback verbatim, then back through 4c and 4d. Signed off → commit.
+**4e. Present and stop.** Hand it over like a colleague would — a short plain-language paragraph, not a file listing. Then **stop**. Changes requested → implementer via `SendMessage`, feedback verbatim, then back through 4c and 4d. Signed off → commit.
 
 **4f. Commit.**
 
@@ -115,7 +116,7 @@ git add -A
 git commit -m "<prefix>: <subject>" -m "Closes #<n>" -m "<attribution>"
 ```
 
-One commit per sub-issue, prefix and subject per `committing.md`. If the subject needs an "and", the issue holds two logical changes — say so and let Josh decide whether to split. `Closes #<n>` is a trailer, not a body.
+One commit per sub-issue, prefix and subject in the project's established commit style, and only once Josh has signed off. If the subject needs an "and", the issue holds two logical changes — say so and let Josh decide whether to split. `Closes #<n>` is a trailer, not a body.
 
 Log the sub-issue number, the SHA from `git rev-parse --short HEAD`, and the name of the implementer that wrote it under Commits. Step 5 sends to that name to resume the right agent, and by then the branch holds several commits with nothing else tying one to the agent that produced it. Then move to the next issue.
 

@@ -1,6 +1,7 @@
 ---
 name: pr-feedback
-description: "Address review feedback on a PR Josh authored - fetch the review comments, understand them, implement the fixes locally, and resolve the threads it addressed once Josh has reviewed, approved, and pushed. Never posts on his behalf. Invoke when Josh says things like 'we got some feedback on our PR', 'address the review comments', 'the reviewer said X', 'my PR has comments on it', 'can you handle the feedback on #12', 'fix what the review flagged', or mentions someone reviewing a PR of his. Disambiguation with pr-review: authorship decides. A PR Josh authored with review comments to act on belongs here - cues are 'our PR', 'my PR', 'feedback we got', 'address the review', 'reviewer said'. A PR authored by someone else that he wants read belongs to pr-review - cues are 'review this PR', \"take a look at Dave's PR\", 'can you review #12'. When the phrasing is ambiguous ('look at PR 12'), check the PR author with gh before choosing. Takes an optional PR ref and note; with no ref, resolves the PR from the conversation or the current branch."
+description: |
+  Address review feedback on a PR Josh authored - fetch the review comments, understand them, implement the fixes locally, and resolve the threads it addressed once Josh has reviewed, approved, and pushed. Never posts on his behalf. Invoke when Josh says things like 'we got some feedback on our PR', 'address the review comments', 'the reviewer said X', 'my PR has comments on it', 'can you handle the feedback on #12', 'fix what the review flagged', or mentions someone reviewing a PR of his. Disambiguation with pr-review: authorship decides. A PR Josh authored with review comments to act on belongs here - cues are 'our PR', 'my PR', 'feedback we got', 'address the review', 'reviewer said'. A PR authored by someone else that he wants read belongs to pr-review - cues are 'review this PR', "take a look at Dave's PR", 'can you review #12'. When the phrasing is ambiguous ('look at PR 12'), check the PR author with gh before choosing. Takes an optional PR ref and note; with no ref, resolves the PR from the conversation or the current branch.
 argument-hint: "[pr-ref] [note]"
 ---
 
@@ -185,19 +186,14 @@ For unresolved items, group by reviewer and present a summary to Josh:
 - What each reviewer is asking for
 - Which items are clear vs. need clarification
 
-### Step 6: Apply `receiving-code-review` skill
+### Step 6: Feedback handling is the implementer's job
 
-This skill governs how to handle all feedback. Key principles:
+The `implementer` you dispatch in Step 7 evaluates each point technically before applying it — tracing it against the actual code, pushing back with reasoning on anything wrong or unsafe through its `BLOCKED:` path, and YAGNI-checking suggested additions rather than adding them reflexively. You don't pre-verify or pre-implement here; the dispatch (Step 7) and the gate (Step 8) carry the work.
 
-1. **READ** all feedback without reacting
-2. **UNDERSTAND** — restate each item in your own words
-3. **VERIFY** — check against the actual codebase
-4. **EVALUATE** — is the suggestion technically sound for THIS codebase?
-5. **RESPOND** — implement or push back with reasoning
+What's yours at this step is what the implementer can't do from a cold start:
 
-**If ANY item is unclear:** Stop. Present what you understand and what needs clarification. Do not partially implement.
-
-**If a suggestion seems wrong:** Say so with technical reasoning. Check if it breaks existing functionality, contradicts architecture decisions, or violates YAGNI.
+- **Clarify anything unclear with Josh first.** If any item is ambiguous, present what you understand and what needs clarification before dispatching. Don't hand over a partial or guessed-at scope.
+- Carry Josh's direction on each item into the dispatch prompt.
 
 ### Step 7: Dispatch the implementer
 
@@ -240,7 +236,7 @@ For items you recommend pushing back on:
 - Why it shouldn't be done (technical reasoning)
 - Draft reply text for Josh to review and post himself if he agrees
 
-Then **stop** and wait for his review. Changes requested → implementer via `SendMessage`, feedback verbatim, then back through steps 8 and 9. Signed off → commit when he asks for it, per `committing.md`.
+Then **stop** and wait for his review. Changes requested → implementer via `SendMessage`, feedback verbatim, then back through steps 8 and 9. Signed off → commit only when he explicitly asks.
 
 Keep an **approved set** as he goes: one entry per item he signs off on, carrying the item, the file and line, and the thread `id` from Step 4. An item he pushes back on, defers, or wants draft reply text for does not enter the set, and neither does one he hasn't reached yet. This set is the whole input to Step 10 — it is built here, from what he actually said, and never reconstructed later from the diff.
 

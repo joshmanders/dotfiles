@@ -1,6 +1,6 @@
 ---
 name: brainstorming
-description: "You MUST use this before any creative work - creating features, building components, adding functionality, or modifying behavior. Explores user intent, requirements and design before implementation."
+description: You MUST use this before any creative work - creating features, building components, adding functionality, or modifying behavior. Explores user intent, requirements and design before implementation.
 user-invocable: false
 ---
 
@@ -41,7 +41,7 @@ Start by understanding the current project context, then ask questions one at a 
 **Documentation:**
 
 - Write the validated design to a plan file
-- Use writing-clearly-and-concisely skill
+- Use the humanizer skill
 
 **Implementation (if continuing):**
 

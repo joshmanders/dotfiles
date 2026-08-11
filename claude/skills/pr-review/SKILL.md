@@ -1,6 +1,7 @@
 ---
 name: pr-review
-description: "Review someone else's GitHub PR - checkout locally, deep read-only review, output copyable findings. Never posts, approves, or merges. Invoke when Josh says things like 'review this PR', 'can you look at Dave's PR', 'take a look at #12', 'review PR 340 for me', 'what do you think of this pull request', 'look over their changes', or drops a PR link and asks for a look. Disambiguation with pr-feedback: authorship decides. A PR authored by someone else belongs here. A PR Josh authored that has review comments to act on belongs to pr-feedback - cues for that are 'our PR', 'my PR', 'feedback we got', 'address the review', 'reviewer said'. When the phrasing is ambiguous ('look at PR 12'), check the PR author with gh before choosing. Takes a PR ref plus an optional note; with no ref, resolves the PR from the conversation or the current branch."
+description: |
+  Review someone else's GitHub PR - checkout locally, deep read-only review, output copyable findings. Never posts, approves, or merges. Invoke when Josh says things like 'review this PR', 'can you look at Dave's PR', 'take a look at #12', 'review PR 340 for me', 'what do you think of this pull request', 'look over their changes', or drops a PR link and asks for a look. Disambiguation with pr-feedback: authorship decides. A PR authored by someone else belongs here. A PR Josh authored that has review comments to act on belongs to pr-feedback - cues for that are 'our PR', 'my PR', 'feedback we got', 'address the review', 'reviewer said'. When the phrasing is ambiguous ('look at PR 12'), check the PR author with gh before choosing. Takes a PR ref plus an optional note; with no ref, resolves the PR from the conversation or the current branch.
 argument-hint: "[pr-ref] [note]"
 ---
 
@@ -148,14 +149,19 @@ git diff --name-only "$BASE_SHA"..HEAD
 
 **Never use `gh pr diff`** — API diffs can be inaccurate. Local diff is the source of truth.
 
-### Step 6: Read changed files and deep review
+### Step 6: Deep review via the code-reviewer agent
 
-Use `git diff --name-only` output to get the file list. Apply the `requesting-code-review` skill:
+Dispatch the `code-reviewer` agent (Agent tool, `subagent_type: code-reviewer`) to do the actual review. It reads every changed file cold, traces code paths, re-derives claims by running them, sweeps for debug code, runs the documented tests and formatters, and returns findings without touching a file. The review criteria and output discipline live in the agent — don't restate them here.
 
-- Read each changed file in full — not just diff hunks
-- Trace code paths end-to-end per the skill's review process
-- Use the review criteria from `code-reviewer.md` (bugs, regressions, security, pattern violations, etc.)
-- Follow the skill's output rules: only actionable items, nothing else
+Give it, in the prompt:
+
+- The diff range: review `"$BASE_SHA"..HEAD` from Step 5, and tell it the base is already computed — the local diff is the source of truth, so it must not recompute the base or fall back to `origin/HEAD`
+- The changed-file list from `git diff --name-only "$BASE_SHA"..HEAD`
+- The requirement to measure against: the PR title and body, plus any linked-issue titles and bodies gathered in Step 4
+- The note from Step 0, if present, as review guidance
+- That this is a third-party PR review — read-only, post nothing
+
+The agent returns a `Findings` list (each item as `path:line — problem`) and, when the work carried claims, a `Claims` block. Both are your input to Step 7, not Josh's output — you reshape them into copyable markdown there.
 
 ### Step 7: Output
 

@@ -1,12 +1,15 @@
 ---
 name: planning
-description: "Work planning through GitHub issues, including creating and refining them. Invoke when: starting new work, drafting or editing an issue, or when asked 'let's plan X'. Each issue covers one coherent thing."
+description: |
+  Create and refine the GitHub issues and epics that later sessions work — draft a standalone issue for one piece of work, or a parent tracker issue (epic) with child issues. Invoke when: planning new work, drafting or editing an issue or epic, or when asked 'let's plan X'. Counterpart to the `issue` and `epic` skills, which work already-created issues; `planning` authors them. Each issue covers one coherent thing.
 user-invocable: false
 ---
 
 # Planning Workflow
 
-**Every unit of work gets a GitHub issue. Each issue covers one coherent thing — not a mix of unrelated concerns. A session may span multiple issues (planning several, working through several); an issue may not span multiple concerns.**
+**This skill authors the work. It drafts and refines GitHub issues and epics so a later session can pick them up: a standalone issue captures one coherent piece of work; a parent tracker issue — an epic — groups child issues under one initiative. The `issue` and `epic` skills work already-created issues; `planning` is where those issues come from.**
+
+**Every unit of work gets a GitHub issue. Each issue covers one coherent thing — not a mix of unrelated concerns. A session may plan several issues at once, but an issue may not span multiple concerns.**
 
 ---
 
@@ -21,26 +24,16 @@ user-invocable: false
 
 ---
 
-## Session Flow
-
-### Planning Phase (plan mode active)
+## Flow
 
 ```
-1. Understand the work
-2. Draft issue content (do NOT create yet)
-3. Include issue draft in plan file
-4. Exit plan mode for approval
+1. Understand the work — the problem, the outcome, the constraints
+2. Draft the issue content (leaf or tracker — see below)
+3. Create the issue and capture its URL
+4. Hand the URL back — don't assume the next step is working it
 ```
 
-### Execution Phase (after plan approval)
-
-```
-5. Create the issue (first step after approval)
-6. Track issue as session context
-7. Do the work (core-workflow)
-8. If new work surfaces → see Discovered Work
-9. Finalize → PR closes the issue
-```
+Working the issue is the `issue` and `epic` skills' job, not this one.
 
 ---
 
@@ -48,9 +41,7 @@ user-invocable: false
 
 > **High level, always.** An issue describes an *outcome* — what needs to be true when it's resolved. Never *how*. Files, function names, refactor steps, migration order, code snippets, "first do X then Y": none of it belongs in the body. If you catch yourself typing an implementation detail, delete it. The future session picking this up must investigate the code as it exists then — not follow a recipe you baked in now, which is almost certainly stale or wrong.
 
-> **One paragraph, one line.** Issue and PR bodies render as Markdown in a variable-width column, so a hand-wrapped paragraph comes out as ragged short lines. Break a line only to separate paragraphs, list items, and headings — never to wrap prose to a column width.
-
-> **Plan Mode:** During planning, draft the issue content and include it in your plan file. Do NOT run `gh issue create` until after plan approval.
+> **Body prose follows CLAUDE.md's prose and body rules** — terse, lead with the payload, cap lists, one paragraph on one line. Break a line only to separate paragraphs, list items, and headings; let the display wrap the rest.
 
 ### Before Creating
 
@@ -99,8 +90,7 @@ printf '%s' "$ISSUE_URL" | pbcopy
 echo "$ISSUE_URL"
 ```
 
-**In plan mode:** Include the draft in your plan file and exit plan mode.
-**After approval:** Run `gh issue create`, capture the URL, and hand it back. Do not assume the next step is starting work on it.
+Run `gh issue create`, capture the URL, and hand it back. Don't assume the next step is starting work on it.
 
 ---
 
@@ -139,30 +129,11 @@ Sometimes planning reveals work that should be split into multiple issues.
 
 ### How to Handle
 
-1. Draft all issues in the plan file
-2. Note dependencies/order if any
-3. Get approval on the full set
-4. After approval: create all issues, pick one to start
-5. Other issues become backlog (or parallel work if independent)
+1. Draft all the issues together
+2. Note dependencies and order, if any
+3. Create them, and say which is the starting point
 
-### Plan File Format
-
-```markdown
-## Issue Drafts
-
-### Issue 1: Feature A
-
-Summary, approach, acceptance criteria...
-
-### Issue 2: Feature B
-
-Summary, approach, acceptance criteria...
-
-## Execution Order
-
-1. Start with Issue 1 (no dependencies)
-2. Issue 2 depends on Issue 1
-```
+When the split is one initiative broken into pieces rather than independent deliverables, make the initiative a tracker (epic) and the pieces its children — see the tracker body shape above.
 
 ---
 
@@ -171,7 +142,7 @@ Summary, approach, acceptance criteria...
 When additional work surfaces mid-session, judge it against the acceptance criteria — not against a "scope" boundary.
 
 - **If it's needed to meet acceptance criteria** — it's part of the work. Do it. Don't defer under "out of scope" language.
-- **If it's unrelated to acceptance criteria but small and adjacent** (per `leave-code-better`) — do it.
+- **If it's unrelated to acceptance criteria but small and adjacent** — leave the code better than you found it, so do it.
 - **If it's genuinely a separate initiative** — STOP and ask:
 
   ```
@@ -216,21 +187,15 @@ When work is complete and approved for commit:
 
 ### 1. Create PR with Issue Reference
 
+Title and body follow CLAUDE.md's PR rules — `feat: short description`, body is what/why at a high level, and it must end with `Closes #<issue-number>`.
+
 ```bash
 PR_URL=$(gh pr create \
   --draft \
   --repo <org>/<repo> \
   --title "feat: clear description" \
   --body "## Summary
-What was done.
-
-## Changes
-- Change 1
-- Change 2
-
-## Testing
-- [ ] Tests pass
-- [ ] Manual testing done
+What was done and why.
 
 Closes #<issue-number>")
 
@@ -238,28 +203,9 @@ printf '%s' "$PR_URL" | pbcopy   # draft PR URL copied to clipboard, ready to pa
 echo "$PR_URL"
 ```
 
-### 2. PR Summary Format
+### 2. The `Closes` Line
 
-When presenting the PR:
-
-```
-PR ready to create:
-
-Title: feat: add feature description
-
-Body:
-## Summary
-Implemented the feature.
-
-## Changes
-- Added endpoint
-- Added validation
-- Added tests
-
-Closes #123
-```
-
-The `Closes #123` automatically:
+The `Closes #123` line is what wires the PR to the issue. It:
 
 - Links the PR to the issue
 - Moves issue to "Done" when PR merges
@@ -281,7 +227,6 @@ The `Closes #123` automatically:
 ## Don't
 
 - Start work without an issue
-- Create issue during plan mode (draft only, create after approval)
 - Include implementation steps, an approach, or a step-by-step recipe in the body
 - List files, function names, or areas in the body
 - Include code snippets, refactor plans, or migration order in the body
