@@ -67,7 +67,7 @@
     "mode": "hold"
   },
   "prefersReducedMotion": false,
-  "autoMemoryEnabled": true,
+  "autoMemoryEnabled": false,
   "skipDangerousModePermissionPrompt": true,
   "editorMode": "normal",
   "verbose": false,
