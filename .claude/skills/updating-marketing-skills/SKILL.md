@@ -16,30 +16,14 @@ The 7-day floor is the whole safety model. Don't shorten it, don't skip it, don'
 
 ## Process
 
-All `gh` calls use the project's `GH_TOKEN` convention so they run as Josh, not the bot:
-
-```bash
-GH_TOKEN=$(gh auth token --user "$DOTFILES_GITHUB_USERNAME") gh <command>
-```
-
-Before anything else, hard-fail unless `$DOTFILES` points at a real dotfiles repo root. The update step does `rm -rf` against `$DOTFILES/claude/skills/<name>` — if `$DOTFILES` were empty or unset, that would target `/claude/skills/<name>` (the wrong tree), so this guard stops the run rather than letting the destructive command fire:
-
-```bash
-: "${DOTFILES:?DOTFILES is not set — point it at the dotfiles repo root before updating}"
-[ -d "$DOTFILES/claude/skills" ] || { echo "no $DOTFILES/claude/skills — is DOTFILES the dotfiles repo root?"; exit 1; }
-```
-
-The `${DOTFILES:?message}` form writes the message to stderr and exits a non-interactive shell when `DOTFILES` is unset or empty; the second line then catches a set-but-wrong path.
-
 ### 1. Pick the release
 
-Compute the cutoff at runtime — never hardcode a date. Select the newest non-draft, non-prerelease release whose `published_at` is at or before 7 days ago:
+Compute the cutoff at runtime — never hardcode a date. Select the newest non-draft, non-prerelease release whose `published_at` is at or before 7 days ago. No account override is needed — `coreyhaines31/marketingskills` is public and this only reads release data:
 
 ```bash
 CUTOFF=$(date -u -v-7d +%Y-%m-%dT%H:%M:%SZ)
 
-TAG=$(GH_TOKEN=$(gh auth token --user "$DOTFILES_GITHUB_USERNAME") \
-  gh api repos/coreyhaines31/marketingskills/releases --jq \
+TAG=$(gh api repos/coreyhaines31/marketingskills/releases --jq \
   "[.[] | select(.draft==false and .prerelease==false) | select(.published_at <= \"$CUTOFF\")] | sort_by(.published_at) | reverse | .[0].tag_name")
 ```
 
