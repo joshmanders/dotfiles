@@ -74,6 +74,8 @@ Subagent definitions live in `agents/`, symlinked to `~/.claude/agents/`.
 
 ## Skills
 
+### Custom
+
 | Skill                           | Purpose                                                           |
 | ------------------------------- | ----------------------------------------------------------------- |
 | `brainstorming`                 | Design before implementation                                      |
@@ -88,6 +90,13 @@ Subagent definitions live in `agents/`, symlinked to `~/.claude/agents/`.
 | `bin-scripts`                   | Custom shell scripts for dev workflows                            |
 | `handoff`                       | Distill a long session into the next one's opening prompt         |
 | `humanizer`                     | Strip AI-writing tells and edit prose for clarity                 |
+
+### Marketing (coreyhaines)
+
+From [coreyhaines31/marketingskills](https://github.com/coreyhaines31/marketingskills).
+
+| Skill                           | Purpose                                                           |
+| ------------------------------- | ----------------------------------------------------------------- |
 | `ab-testing`                    | Plan, design, and run A/B tests and experiments                   |
 | `ad-creative`                   | Generate and iterate paid ad copy at scale                        |
 | `ads`                           | Paid campaign strategy, targeting, and bidding                    |
