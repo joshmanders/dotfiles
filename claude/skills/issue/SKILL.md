@@ -112,13 +112,13 @@ query($url: URI!) {
 
 The GraphQL call returns `subIssues` with a `state` on every node. If at least one sub-issue is `OPEN`, this is a parent with work left in it and the `epic` skill owns it — say so in one line and invoke `epic` with the same ref and note.
 
-Otherwise announce what's running, one line:
+Otherwise announce what's running in one line, then go straight to Step 4 — invoking `/issue` with a resolved ref is Josh's go-ahead to work it, not a prompt for a second yes:
 
 ```
 Working issue #43 — <title>
 ```
 
-Wait for Josh to confirm before branching.
+Only pause for confirmation when something genuinely needs it: the ref resolved implicitly and might be the wrong issue, or the issue itself leaves a decision open that you can't settle from context.
 
 ### Step 4: Create working branch
 
