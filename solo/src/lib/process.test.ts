@@ -7,7 +7,7 @@ import {
   type ProcSnapshot,
   type ProcStatus,
 } from "./process.js";
-import type { StyledLine } from "./ansi.js";
+import type { StyledLine } from "./terminal.js";
 
 // Commands run under `$SHELL -lc`. Pin bash so a slow or exotic login profile
 // can't skew the timing assertions below.

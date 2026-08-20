@@ -4,7 +4,7 @@ import { isAbsolute, join } from "node:path";
 import { spawn as ptySpawn } from "node-pty";
 import type { IPty } from "node-pty";
 import { resolveCommand, type CommandConfig } from "./config.js";
-import { AnsiStream, type StyledLine } from "./ansi.js";
+import { TerminalEmulator, type StyledLine } from "./terminal.js";
 
 // node-pty wraps the master fd in tty.ReadStream, which Bun's runtime fails
 // to read from (EAGAIN → close, no 'data' events ever fire). Workaround:
@@ -25,14 +25,10 @@ const READ_BUF_SIZE = 16384;
 // EAGAIN keeps up without letting one process starve the event loop.
 const MAX_READS_PER_TICK = 16;
 export const MAX_LINES = 5000;
-// Trimming to MAX_LINES on every append shifts the whole array per line.
-// Letting it overshoot by this much amortizes the cost across the slack.
-const TRIM_SLACK = 512;
 // node-pty defers its exit event behind a 200ms socket-destroy timer, and
 // destroying the socket is what closes our fd. If a poll error beats the exit
 // event, wait this long for the real status before finalizing without one.
 const EXIT_GRACE_MS = 500;
-const NOTE_COLOR = "#FFAA00";
 
 const DEFAULTS = {
   // One renderer frame. The CLI renderer is created with targetFps: 30, so
@@ -93,9 +89,10 @@ export interface ProcSnapshot {
   pid?: number;
   exitCode?: number;
   startedAt?: number;
-  // Live buffer, owned by the manager and appended to in place. Read it, don't
-  // mutate it, and don't use its identity to detect change — `revision` is what
-  // moves when this process's state or output changes.
+  // Visible tail, recomputed from the emulator each flush. Read it, don't
+  // mutate it, and don't use its identity to detect change — a redraw can
+  // rewrite the region in place, so the array is rebuilt rather than appended
+  // to. `revision` is what moves when this process's state or output changes.
   lines: StyledLine[];
   restarts: number;
   spawnError?: string;
@@ -110,14 +107,11 @@ interface ProcEntry {
   exitCode?: number;
   startedAt?: number;
   lines: StyledLine[];
-  parser: AnsiStream;
+  emulator: TerminalEmulator;
   restarts: number;
   manualStop: boolean;
   spawnError?: string;
   pollTimer?: ReturnType<typeof setInterval>;
-  // True when lines' last element is the parser's in-progress line, which is
-  // swapped out on the next append rather than duplicated.
-  partialShown: boolean;
   // Real exit status from node-pty's native callback, pending finalization.
   pendingExit?: { code: number; signal?: number };
   exitTimer?: ReturnType<typeof setTimeout>;
@@ -156,10 +150,9 @@ export class ProcessManager extends EventEmitter {
       cfg,
       status: "idle",
       lines: [],
-      parser: new AnsiStream(),
+      emulator: new TerminalEmulator(120, 30, MAX_LINES),
       restarts: 0,
       manualStop: false,
-      partialShown: false,
       restartAttempts: 0,
       revision: 0,
     });
@@ -429,6 +422,11 @@ export class ProcessManager extends EventEmitter {
     if (!entry?.pty) return;
     try {
       entry.pty.resize(cols, rows);
+      // Match the emulator's grid to the pty so wrapping and redraws line up.
+      entry.emulator.resize(cols, rows);
+      entry.lines = entry.emulator.renderTail(MAX_LINES);
+      this.invalidate(entry);
+      this.scheduleChange();
     } catch {}
   }
 
@@ -564,38 +562,27 @@ export class ProcessManager extends EventEmitter {
   }
 
   private resetBuffer(entry: ProcEntry): void {
+    entry.emulator.reset();
     entry.lines = [];
-    entry.parser = new AnsiStream();
-    entry.partialShown = false;
   }
 
   // Surface a manager-level message in the process's own scrollback — that's
-  // where the user is already looking when a command misbehaves.
+  // where the user is already looking when a command misbehaves. It's written
+  // into the emulator rather than spliced into `entry.lines`, because that
+  // array is recomputed from the emulator on the next flush and would wipe a
+  // line inserted straight into it. Dim truecolor #FFAA00 matches the old
+  // note color, on its own line.
   private note(entry: ProcEntry, text: string): void {
-    const partial = entry.partialShown ? entry.lines.pop() : undefined;
-    entry.lines.push([{ text, fg: NOTE_COLOR, dim: true }]);
-    if (partial) entry.lines.push(partial);
+    entry.emulator.write(`\r\n\x1b[2;38;2;255;170;0m${text}\x1b[0m\r\n`);
+    entry.lines = entry.emulator.renderTail(MAX_LINES);
   }
 
   private appendOutput(entry: ProcEntry, data: string): void {
-    const completed = entry.parser.feed(data);
-    const { lines } = entry;
-    // The parser's in-progress line sits at the tail so subscribers see output
-    // before its newline arrives. Drop it before appending: `feed` either
-    // handed it back in `completed` or is still mutating that same array.
-    if (entry.partialShown) {
-      lines.pop();
-      entry.partialShown = false;
-    }
-    for (const line of completed) lines.push(line);
-    if (lines.length > MAX_LINES + TRIM_SLACK) {
-      lines.splice(0, lines.length - MAX_LINES);
-    }
-    const partial = entry.parser.partialLine();
-    if (partial.length > 0) {
-      lines.push(partial);
-      entry.partialShown = true;
-    }
+    // Feed the emulator, then re-read the visible tail: a redraw can rewrite
+    // the region in place, so the tail is rebuilt every flush rather than
+    // appended to. The emulator's scrollback cap bounds this to MAX_LINES.
+    entry.emulator.write(data);
+    entry.lines = entry.emulator.renderTail(MAX_LINES);
     this.invalidate(entry);
     this.scheduleChange();
   }

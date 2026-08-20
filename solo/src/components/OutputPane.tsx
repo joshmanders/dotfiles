@@ -1,6 +1,6 @@
 import React, { forwardRef, memo, useEffect, useRef } from "react";
 import type { ScrollBoxRenderable } from "@opentui/core";
-import type { StyledLine } from "../lib/ansi.js";
+import type { StyledLine } from "../lib/terminal.js";
 
 interface Props {
   title?: string;

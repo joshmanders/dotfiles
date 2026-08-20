@@ -13,6 +13,7 @@
   "dependencies": {
     "@opentui/core": "latest",
     "@opentui/react": "latest",
+    "@xterm/headless": "^6.0.0",
     "node-pty": "1.2.0-beta.14",
     "react": "latest",
     "yaml": "latest"
