@@ -59,6 +59,33 @@ autocmd("VimEnter", {
   end,
 })
 
+-- Neo-tree never scrolls horizontally: accidental sideways trackpad/mouse
+-- scroll shifts the tree content and looks broken. Kill the horizontal scroll
+-- keys buffer-locally and stop the cursor from forcing a sidescroll.
+autocmd("FileType", {
+  group = augroup("neo_tree_no_hscroll", { clear = true }),
+  pattern = "neo-tree",
+  callback = function(args)
+    local opts = { buffer = true, nowait = true }
+    for _, lhs in ipairs({
+      "<ScrollWheelLeft>", "<ScrollWheelRight>",
+      "zl", "zh", "zL", "zH", "zs", "ze",
+    }) do
+      vim.keymap.set("n", lhs, "<nop>", opts)
+    end
+
+    -- On neo-tree's window-reuse path the filetype is set on a background
+    -- buffer, so this callback runs before the buffer is shown and a plain
+    -- vim.wo write would land on a throwaway window. Defer and set the option
+    -- on whichever window ends up displaying the buffer.
+    vim.schedule(function()
+      for _, win in ipairs(vim.fn.win_findbuf(args.buf)) do
+        vim.api.nvim_set_option_value("sidescrolloff", 0, { scope = "local", win = win })
+      end
+    end)
+  end,
+})
+
 -- Suppress neovim defaults.lua "Did not detect DSR response" warning.
 -- Fired before user config loads, so we clear it right after UI attaches.
 autocmd("UIEnter", {
