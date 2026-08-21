@@ -2,19 +2,19 @@
 
 Load this to decide which physical file an artifact belongs in. Two questions stack here, and they're independent of voice (correction vs informative):
 
-1. **Which home** does a behavioral lesson land in — the numbered list or an agent def?
+1. **Which home** does a behavioral lesson land in — the flat list or an agent def?
 2. **Which tree** does a rule or skill belong in — global (everywhere) or project (this repo only)?
 
 ## Two homes for a behavioral lesson
 
 A correction that encodes a behavioral lesson has two possible homes. Classify which before touching anything:
 
-- **A lesson about how the session works** → a terse numbered item in the flat list in `claude/CLAUDE.md`. Calm, imperative, one concern per item.
+- **A lesson about how the session works** → a terse bullet in the flat list in `claude/CLAUDE.md`. Calm, imperative, one concern per item.
 - **A lesson about how code gets authored or reviewed** → prose in the relevant agent def: `claude/agents/implementer.md` for authoring, cleanup, tests, and docs; `claude/agents/code-reviewer.md` for review and review output. Match that file's existing prose.
 
-## The numbered list in `claude/CLAUDE.md`
+## The flat list in `claude/CLAUDE.md`
 
-The global behavioral rules are a single flat numbered list, inline in `claude/CLAUDE.md` right after the `---` that follows "You are Josh's engineering assistant." No `## Rules` heading, no section headings — just the numbered items, uniformly terse.
+The global behavioral rules are a single flat bullet list, inline in `claude/CLAUDE.md` right after the `---` that follows "You are Josh's engineering assistant." No `## Rules` heading, no section headings — just the bullet items, uniformly terse.
 
 The list is loosely grouped by topic, not split into strict priority tiers:
 
@@ -22,7 +22,7 @@ The list is loosely grouped by topic, not split into strict priority tiers:
 - Then **working with the user and voice** (terseness, presenting work, apologizing, corrections).
 - Then a long run of **task specifics** — commits, PRs, GitHub actions, git safety, where knowledge lives — grouped loosely by topic with no hard boundary between the groups. The git-safety items sit among the task specifics, after the commit-approval and code-reviewer-gate items, not in an earlier tier of their own.
 
-To place a new item: find the existing items on the same topic and drop it next to them. Match your neighbors — don't compute a tier or a rule number, and don't hardcode a count anywhere, since both rot on the next edit.
+To place a new item: find the existing items on the same topic and drop it next to them. Match your neighbors — don't compute a tier, and don't hardcode a count anywhere, since it rots on the next edit.
 
 An item that belongs here gets no bold heading, no `**Why:**` block, no `---` separator — one or two imperative sentences, one concern each. Match the surrounding items exactly:
 
@@ -69,7 +69,7 @@ When in doubt, prefer global for **behavior** and project for **maintenance / re
 
 | Path                | Purpose                                                                                        |
 | ------------------- | --------------------------------------------------------------------------------------------- |
-| `CLAUDE.md`         | Top-level global instructions and the inline numbered behavioral-rules list                   |
+| `CLAUDE.md`         | Top-level global instructions and the inline flat behavioral-rules list                       |
 | `agents/*.md`       | Subagent definitions, and the home of the code-authoring and code-review standards            |
 | `skills/*/SKILL.md` | Capability skills                                                                              |
 

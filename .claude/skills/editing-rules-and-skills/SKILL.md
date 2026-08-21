@@ -15,11 +15,11 @@ Before touching anything, identify which kind of work this is. The two flavors l
 
 If unsure, ask Josh in one sentence: "Is this you correcting a behavior, or you wanting me to know about a capability?"
 
-Most existing global skills (`github`, `bin-scripts`, `brainstorming`, `planning`, `dispatch-parallel-agents`, `humanizer`) are informative. Most of the numbered behavioral rules are correction-driven.
+Most existing global skills (`github`, `bin-scripts`, `brainstorming`, `planning`, `dispatch-parallel-agents`, `humanizer`) are informative. Most of the flat behavioral rules are correction-driven.
 
 ## When this skill fires
 
-- Editing the numbered behavioral rules in `claude/CLAUDE.md`
+- Editing the flat behavioral rules in `claude/CLAUDE.md`
 - Editing the code-authoring or code-review standards in the agent defs (`claude/agents/implementer.md`, `claude/agents/code-reviewer.md`)
 - Editing project rules, which live as sections in the project `CLAUDE.md`
 - Editing or creating any skill file (global or project)
@@ -28,11 +28,11 @@ Most existing global skills (`github`, `bin-scripts`, `brainstorming`, `planning
 
 ## Where it lands
 
-Voice is one axis; location is a separate one. Whichever voice the work takes, it also needs a home: which file a behavioral lesson lands in (the numbered list or an agent def) and which tree a rule or skill belongs in (global everywhere, or project only in this repo). Get either wrong and the artifact pollutes every project, silently stops applying, or lands in the wrong voice. Load **`placement.md`** for both decisions.
+Voice is one axis; location is a separate one. Whichever voice the work takes, it also needs a home: which file a behavioral lesson lands in (the flat list or an agent def) and which tree a rule or skill belongs in (global everywhere, or project only in this repo). Get either wrong and the artifact pollutes every project, silently stops applying, or lands in the wrong voice. Load **`placement.md`** for both decisions.
 
 ## What this skill is NOT
 
-- Not a license to make the terse numbered rules or agent defs dramatic for the sake of drama.
+- Not a license to make the terse behavioral rules or agent defs dramatic for the sake of drama.
 - Not a license to invent incidents to anchor a correction.
 - Not a license to change the semantics of a rule while reframing it.
 - Not a license to dress informative reference up in correction voice.

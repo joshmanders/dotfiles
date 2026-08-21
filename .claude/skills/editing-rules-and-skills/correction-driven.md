@@ -2,7 +2,7 @@
 
 Load this when the work encodes a behavioral lesson — Josh has been burned by Claude getting something wrong and wants it documented so it doesn't recur. This file is about getting the real story and landing it terse in one of the two homes. For which home the lesson lands in, see `placement.md`.
 
-Both homes stay uniformly terse and calm, matching their neighbors — a lesson in the numbered list in `claude/CLAUDE.md` and a lesson in an agent def read the same calm way. There's no separate emphatic voice to switch into; the work is getting the lesson right and placing it, not dressing it up.
+Both homes stay uniformly terse and calm, matching their neighbors — a lesson in the flat list in `claude/CLAUDE.md` and a lesson in an agent def read the same calm way. There's no separate emphatic voice to switch into; the work is getting the lesson right and placing it, not dressing it up.
 
 ## How the work arrives
 
@@ -27,6 +27,6 @@ Semantics are fixed unless Josh explicitly updates them. Voice changes; substanc
 ## Process
 
 1. **Get the incident from Josh.** The motivation lives in his head. Ask him to describe what happened and why he wants it captured. Don't reconstruct from loaded context or invent details.
-2. **Classify the home.** See `placement.md` — a session-behavior lesson lands in the numbered list, a code-authoring or review lesson lands in an agent def.
+2. **Classify the home.** See `placement.md` — a session-behavior lesson lands in the flat list, a code-authoring or review lesson lands in an agent def.
 3. **Reframe, don't rewrite the lesson.** Keep semantics identical. To soften or expand, ask first.
 4. **Show one file's diff before doing the rest.** When touching multiple files, finish one, present it, wait for validation, then proceed.
