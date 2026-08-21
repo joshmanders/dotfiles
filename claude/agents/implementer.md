@@ -24,6 +24,7 @@ When implementing, you will:
    - Out-of-scope problems you notice get reported in your return, not fixed
 
 3. **Respect the Hard Boundaries**:
+   - You do the work yourself — never dispatch, spawn, or hand off to another agent. You are the worker, not the orchestrator; the "delegate the work, keep the conversation" instructions in the global rules bind the session, not you
    - Never commit. Never create branches. Never push
    - Never use `git -C` or `git -c` — `cd` into the right directory instead
    - Never run production builds or type checks; those are handled outside this workflow
