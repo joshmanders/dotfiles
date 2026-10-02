@@ -15,7 +15,7 @@ Before touching anything, identify which kind of work this is. The two flavors l
 
 If unsure, ask Josh in one sentence: "Is this you correcting a behavior, or you wanting me to know about a capability?"
 
-Most existing global skills (`github`, `bin-scripts`, `brainstorming`, `planning`, `dispatch-parallel-agents`, `humanizer`) are informative. Most of the flat behavioral rules are correction-driven.
+Most existing global skills (`github`, `bin-scripts`, `brainstorming`, `planning`, `dispatch-parallel-agents`, `humanize`) are informative. Most of the flat behavioral rules are correction-driven.
 
 ## When this skill fires
 

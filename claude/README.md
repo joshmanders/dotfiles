@@ -78,18 +78,18 @@ Subagent definitions live in `agents/`, symlinked to `~/.claude/agents/`.
 
 | Skill                           | Purpose                                                           |
 | ------------------------------- | ----------------------------------------------------------------- |
-| `brainstorming`                 | Design before implementation                                      |
-| `systematic-debugging`          | Root cause analysis for bugs/failures                             |
-| `planning`                      | Work planning through GitHub issues                               |
-| `github`                        | GitHub CLI patterns for issues/PRs                                |
-| `issue`                         | Work a single GitHub issue end to end                             |
-| `epic`                          | Orchestrate a parent issue's sub-issues through dispatched agents |
-| `pr-review`                     | Read-only review of someone else's PR                             |
-| `pr-feedback`                   | Address review feedback on a PR Josh authored                     |
-| `dispatch-parallel-agents`      | Run independent tasks concurrently                                |
-| `bin-scripts`                   | Custom shell scripts for dev workflows                            |
-| `handoff`                       | Distill a long session into the next one's opening prompt         |
-| `humanizer`                     | Strip AI-writing tells and edit prose for clarity                 |
+| [`brainstorming`](skills/brainstorming/SKILL.md) | Design before implementation                                      |
+| [`systematic-debugging`](skills/systematic-debugging/SKILL.md) | Root cause analysis for bugs/failures                             |
+| [`planning`](skills/planning/SKILL.md) | Work planning through GitHub issues                               |
+| [`github`](skills/github/SKILL.md) | GitHub CLI patterns for issues/PRs                                |
+| [`issue`](skills/issue/SKILL.md) | Work a single GitHub issue end to end                             |
+| [`epic`](skills/epic/SKILL.md) | Orchestrate a parent issue's sub-issues through dispatched agents |
+| [`pr-review`](skills/pr-review/SKILL.md) | Read-only review of someone else's PR                             |
+| [`pr-feedback`](skills/pr-feedback/SKILL.md) | Address review feedback on a PR Josh authored                     |
+| [`dispatch-parallel-agents`](skills/dispatch-parallel-agents/SKILL.md) | Run independent tasks concurrently                                |
+| [`bin-scripts`](skills/bin-scripts/SKILL.md) | Custom shell scripts for dev workflows                            |
+| [`handoff`](skills/handoff/SKILL.md) | Distill a long session into the next one's opening prompt         |
+| [`humanize`](skills/humanize/SKILL.md) | Strip AI-writing tells and edit prose for clarity                 |
 
 ### Marketing (coreyhaines)
 
@@ -97,43 +97,43 @@ From [coreyhaines31/marketingskills](https://github.com/coreyhaines31/marketings
 
 | Skill                           | Purpose                                                           |
 | ------------------------------- | ----------------------------------------------------------------- |
-| `ab-testing`                    | Plan, design, and run A/B tests and experiments                   |
-| `ad-creative`                   | Generate and iterate paid ad copy at scale                        |
-| `ads`                           | Paid campaign strategy, targeting, and bidding                    |
-| `ai-seo`                        | Optimize content for citation by AI search engines                |
-| `churn-prevention`              | Cancel flows, save offers, payment recovery                       |
-| `co-marketing`                  | Find partners and plan joint campaigns                            |
-| `cold-email`                    | B2B cold outreach and follow-up sequences                         |
-| `community-marketing`           | Build and grow a product community                                |
-| `competitor-profiling`          | Research competitors from their URLs into profiles                |
-| `competitors`                   | Alternative, vs, and comparison pages                             |
-| `content-strategy`              | Decide what content to create and why                             |
-| `copy-editing`                  | Improve or refresh existing marketing copy                        |
-| `copywriting`                   | Write and rewrite marketing page copy                             |
-| `cro`                           | Conversion optimization for pages and forms                       |
-| `customer-research`             | Gather and synthesize voice-of-customer research                  |
-| `directory-submissions`         | Submit a product to directories for backlinks                     |
-| `free-tools`                    | Plan and build free tools as marketing                            |
-| `image`                         | Create and optimize marketing images                              |
-| `launch`                        | Product launch and release planning                               |
-| `lead-magnets`                  | Gated content for email capture                                   |
-| `marketing-ideas`               | Growth ideas and inspiration when stuck                           |
-| `marketing-plan`                | Comprehensive AARRR marketing plan                                |
-| `marketing-psychology`          | Behavioral science applied to marketing                           |
-| `onboarding`                    | Post-signup activation and time-to-value                          |
-| `paywalls`                      | In-app upgrade screens and feature gates                          |
-| `popups`                        | Popups, modals, overlays, and banners                             |
-| `pricing`                       | Pricing, packaging, and monetization strategy                     |
-| `product-marketing`             | Product context, positioning, and ICP doc                         |
-| `programmatic-seo`              | SEO pages at scale from templates and data                        |
-| `prospecting`                   | Build and qualify outbound prospect lists                         |
-| `public-relations`              | Earned media, press outreach, newsjacking                         |
-| `referrals`                     | Referral, affiliate, and word-of-mouth programs                   |
-| `schema`                        | Schema markup and structured data                                 |
-| `seo-audit`                     | Diagnose technical and on-page SEO issues                         |
-| `signup`                        | Signup, registration, and trial activation flows                  |
-| `site-architecture`             | Page hierarchy, navigation, internal linking                      |
-| `social`                        | Social content, video scripts, and listening                      |
+| [`ab-testing`](skills/ab-testing/SKILL.md) | Plan, design, and run A/B tests and experiments                   |
+| [`ad-creative`](skills/ad-creative/SKILL.md) | Generate and iterate paid ad copy at scale                        |
+| [`ads`](skills/ads/SKILL.md) | Paid campaign strategy, targeting, and bidding                    |
+| [`ai-seo`](skills/ai-seo/SKILL.md) | Optimize content for citation by AI search engines                |
+| [`churn-prevention`](skills/churn-prevention/SKILL.md) | Cancel flows, save offers, payment recovery                       |
+| [`co-marketing`](skills/co-marketing/SKILL.md) | Find partners and plan joint campaigns                            |
+| [`cold-email`](skills/cold-email/SKILL.md) | B2B cold outreach and follow-up sequences                         |
+| [`community-marketing`](skills/community-marketing/SKILL.md) | Build and grow a product community                                |
+| [`competitor-profiling`](skills/competitor-profiling/SKILL.md) | Research competitors from their URLs into profiles                |
+| [`competitors`](skills/competitors/SKILL.md) | Alternative, vs, and comparison pages                             |
+| [`content-strategy`](skills/content-strategy/SKILL.md) | Decide what content to create and why                             |
+| [`copy-editing`](skills/copy-editing/SKILL.md) | Improve or refresh existing marketing copy                        |
+| [`copywriting`](skills/copywriting/SKILL.md) | Write and rewrite marketing page copy                             |
+| [`cro`](skills/cro/SKILL.md) | Conversion optimization for pages and forms                       |
+| [`customer-research`](skills/customer-research/SKILL.md) | Gather and synthesize voice-of-customer research                  |
+| [`directory-submissions`](skills/directory-submissions/SKILL.md) | Submit a product to directories for backlinks                     |
+| [`free-tools`](skills/free-tools/SKILL.md) | Plan and build free tools as marketing                            |
+| [`image`](skills/image/SKILL.md) | Create and optimize marketing images                              |
+| [`launch`](skills/launch/SKILL.md) | Product launch and release planning                               |
+| [`lead-magnets`](skills/lead-magnets/SKILL.md) | Gated content for email capture                                   |
+| [`marketing-ideas`](skills/marketing-ideas/SKILL.md) | Growth ideas and inspiration when stuck                           |
+| [`marketing-plan`](skills/marketing-plan/SKILL.md) | Comprehensive AARRR marketing plan                                |
+| [`marketing-psychology`](skills/marketing-psychology/SKILL.md) | Behavioral science applied to marketing                           |
+| [`onboarding`](skills/onboarding/SKILL.md) | Post-signup activation and time-to-value                          |
+| [`paywalls`](skills/paywalls/SKILL.md) | In-app upgrade screens and feature gates                          |
+| [`popups`](skills/popups/SKILL.md) | Popups, modals, overlays, and banners                             |
+| [`pricing`](skills/pricing/SKILL.md) | Pricing, packaging, and monetization strategy                     |
+| [`product-marketing`](skills/product-marketing/SKILL.md) | Product context, positioning, and ICP doc                         |
+| [`programmatic-seo`](skills/programmatic-seo/SKILL.md) | SEO pages at scale from templates and data                        |
+| [`prospecting`](skills/prospecting/SKILL.md) | Build and qualify outbound prospect lists                         |
+| [`public-relations`](skills/public-relations/SKILL.md) | Earned media, press outreach, newsjacking                         |
+| [`referrals`](skills/referrals/SKILL.md) | Referral, affiliate, and word-of-mouth programs                   |
+| [`schema`](skills/schema/SKILL.md) | Schema markup and structured data                                 |
+| [`seo-audit`](skills/seo-audit/SKILL.md) | Diagnose technical and on-page SEO issues                         |
+| [`signup`](skills/signup/SKILL.md) | Signup, registration, and trial activation flows                  |
+| [`site-architecture`](skills/site-architecture/SKILL.md) | Page hierarchy, navigation, internal linking                      |
+| [`social`](skills/social/SKILL.md) | Social content, video scripts, and listening                      |
 
 ## Customization
 

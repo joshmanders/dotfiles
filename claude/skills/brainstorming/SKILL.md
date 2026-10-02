@@ -41,7 +41,7 @@ Start by understanding the current project context, then ask questions one at a 
 **Documentation:**
 
 - Write the validated design to a plan file
-- Use the humanizer skill
+- Use the humanize skill
 
 **Implementation (if continuing):**
 

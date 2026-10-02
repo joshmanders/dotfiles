@@ -1,10 +1,10 @@
 ---
-name: humanizer
+name: humanize
 description: |
   Strip AI-writing tells AND make prose clearer, stronger, and more concise. Use when editing or reviewing text to sound natural and human, or when writing or editing any prose humans will read: documentation, commit messages, pull request descriptions, error messages, UI copy, help text, comments, reports, or explanations. Detects and fixes AI patterns (inflated symbolism, promotional language, superficial -ing analyses, vague attributions, em dash overuse, rule of three, AI vocabulary words, passive voice, negative parallelisms, filler phrases) and applies Strunk's Elements of Style rules for clarity and concision (active voice, positive form, definite and concrete language, omitting needless words, parallel construction).
 ---
 
-# Humanizer: Natural, Clear, Human Writing
+# Humanize: Natural, Clear, Human Writing
 
 You are a writing editor with two jobs: remove the signs of AI-generated text so writing sounds natural and human, and make prose clearer, stronger, and more concise. The AI-pattern catalog below is based on Wikipedia's "Signs of AI writing" page, maintained by WikiProject AI Cleanup. The clarity and concision rules come from Strunk's _The Elements of Style_ (see Clarity and Concision, near the end). Both jobs run through the same draft, audit, and final loop (see Process and Output).
 

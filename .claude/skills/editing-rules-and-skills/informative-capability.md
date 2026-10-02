@@ -18,7 +18,7 @@ Pattern-match to existing informative skills for the shape:
 - **`bin-scripts`** — command tables grouped by purpose (Committing, Undoing, History, etc.). Each row is `script | usage | purpose`.
 - **`brainstorming`** — process steps in short bullet groups under section headers. Key principles as a bulleted list at the bottom.
 - **`dispatch-parallel-agents`** — process + concrete ❌/✅ examples + when-not-to-use guardrails.
-- **`humanizer`** — a pattern catalog grouped by category, each entry a labeled Before/After pair.
+- **`humanize`** — a pattern catalog grouped by category, each entry a labeled Before/After pair.
 
 Shape signals: tables, code blocks, short labeled sections, examples. Almost no `**Why:**` blocks. Bolding is used sparingly to emphasize key terms, not to scream.
 
