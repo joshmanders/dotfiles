@@ -93,19 +93,19 @@ Only this issue, in the current working tree on branch <branch>. Other sub-issue
 
 **4b. Handle a block.** **100% confident** from the conversation, ledger, issue, or epic → answer it. **Anything less** → put the question to Josh verbatim with the context needed to answer it; don't soften it, don't answer around it, don't hand him a guess to confirm. Never invent an answer. Resume the same implementer with `SendMessage` so its context survives, and log the resolution.
 
-**4c. Scrutinize until clean.** Dispatch a reviewer with: (1) the full contents of `adversarial-review.md` in this skill's directory, (2) the sub-issue number, URL, and body, (3) the branch name and the fact that the diff is the uncommitted working tree, (4) the implementer's summary and its verbatim claims, (5) the relevant ledger slice.
+**4c. Scrutinize.** Dispatch a reviewer with: (1) the full contents of `adversarial-review.md` in this skill's directory, (2) the sub-issue number, URL, and body, (3) the branch name and the fact that the diff is the uncommitted working tree, (4) the implementer's summary and its verbatim claims, (5) the relevant ledger slice.
 
 - **Code findings** → back to the implementer via `SendMessage`. All of them, no cherry-picking. If one looks wrong, dispatch an agent to check it before dismissing it.
 - **Claims findings** → to Josh, in your own message, immediately.
 
-Dispatch a **fresh** scrutinizer on the fixed work — one that already blessed its own findings isn't reviewing. Exit when both hold: `findings: 0`, and every acceptance criterion on the sub-issue met. Three rounds without converging → stop and bring it to Josh; the issue is underspecified or the approach is wrong, and more rounds fix neither.
+One pass: the implementer fixes every finding and meets every acceptance criterion on the sub-issue, then on to 4d. No second scrutinizer.
 
-**4d. Run the gate.** Dispatch a `code-reviewer` agent with the diff (the uncommitted working tree on branch `<branch>`), the list of changed files, the sub-issue URL, and the implementer's claims quoted verbatim.
+**4d. Run the gate.** The project defines a `team-review` skill → invoke it yourself as the gate; it's a skill, not an agent to dispatch. Otherwise dispatch a `code-reviewer` agent with the diff (the uncommitted working tree on branch `<branch>`), the list of changed files, the sub-issue URL, and the implementer's claims quoted verbatim.
 
 - **Code findings** → back to the implementer via `SendMessage`. All of them, no cherry-picking. If one looks wrong, dispatch an agent to check it before dismissing it.
 - **Claims findings** → to Josh, in your own message, immediately.
 
-Dispatch a **fresh** reviewer on the fixed work — one that already blessed its own findings isn't a gate. Exit on `No findings.` Three rounds without converging → stop and bring it to Josh. **Tests failing means the issue isn't done** — it does not go to Josh with a caveat.
+One pass: the implementer fixes every finding, then the work goes to Josh. No second reviewer. **Tests failing means the issue isn't done** — it does not go to Josh with a caveat.
 
 **4e. Present and stop.** Hand it over like a colleague would — a short plain-language paragraph, not a file listing. Then **stop**. Changes requested → implementer via `SendMessage`, feedback verbatim, then back through 4c and 4d. Signed off → commit.
 
@@ -122,12 +122,12 @@ Log the sub-issue number, the SHA from `git rev-parse --short HEAD`, and the nam
 
 ## Step 5: Close out the epic
 
-Queue empty → dispatch a `code-reviewer` agent with the whole branch diff (every commit on `<branch>` against the base branch), the list of changed files, the epic URL, and the implementers' claims quoted verbatim — no single-issue reviewer saw the commits together.
+Queue empty → run the whole-branch gate. The project defines a `team-review` skill → invoke it yourself over the whole branch diff; it's a skill, not an agent to dispatch. Otherwise dispatch a `code-reviewer` agent with the whole branch diff (every commit on `<branch>` against the base branch), the list of changed files, the epic URL, and the implementers' claims quoted verbatim — no single-issue reviewer saw the commits together.
 
 - **Code findings** → back to the implementer that wrote the commit each one lands in, by the name recorded under Commits, via `SendMessage`. All of them, no cherry-picking. If one looks wrong, dispatch an agent to check it before dismissing it.
 - **Claims findings** → to Josh, in your own message, immediately.
 
-A fix to already-committed work is a new commit, never an amend. Dispatch a **fresh** reviewer on the fixed work — one that already blessed its own findings isn't a gate. Exit on `No findings.` Three rounds without converging → stop and bring it to Josh.
+A fix to already-committed work is a new commit, never an amend. One pass: the implementers fix every finding, then the branch goes to Josh. No second reviewer.
 
 Then present: `Epic #437 done. 7 commits on <branch>.`, one line per issue (number and subject), and a `Deferred:` line carrying anything parked for Josh, or "nothing".
 

@@ -220,7 +220,7 @@ Dispatch a `code-reviewer` agent with the diff (the uncommitted working tree on 
 - **Code findings** → back to the implementer via `SendMessage`. All of them, no cherry-picking. If one looks wrong, dispatch an agent to check it before dismissing it.
 - **Claims findings** → to Josh, in your own message, immediately.
 
-Dispatch a **fresh** reviewer on the fixed work — one that already blessed its own findings isn't a gate. Exit on `No findings.` Three rounds without converging → stop and bring it to Josh. **Tests failing means the feedback isn't addressed** — it does not go to Josh with a caveat.
+One pass: the implementer fixes every finding, then the work goes to Josh. No second reviewer. **Tests failing means the feedback isn't addressed** — it does not go to Josh with a caveat.
 
 ### Step 9: Present results and record what Josh approves
 
