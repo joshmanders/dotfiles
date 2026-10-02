@@ -134,16 +134,16 @@ map("n", "<leader>u", "u", { desc = "Undo" })
 -- Lazygit
 vim.api.nvim_create_user_command("Lazygit", function()
   local buf = vim.api.nvim_create_buf(false, true)
-  local width = math.floor(vim.o.columns * 0.9)
-  local height = math.floor(vim.o.lines * 0.9)
+  local width = vim.o.columns
+  local height = vim.o.lines
   vim.api.nvim_open_win(buf, true, {
     relative = "editor",
     width = width,
     height = height,
-    col = math.floor((vim.o.columns - width) / 2),
-    row = math.floor((vim.o.lines - height) / 2),
+    col = 0,
+    row = 0,
     style = "minimal",
-    border = "rounded",
+    border = "none",
   })
   vim.fn.termopen("lazygit", {
     on_exit = function()
