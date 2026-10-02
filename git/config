@@ -11,6 +11,7 @@
 [push]
 	default = simple
 	followTags = true
+	autoSetupRemote = true
 [core]
 	excludesfile = ~/.gitignore
 	ignorecase = false
