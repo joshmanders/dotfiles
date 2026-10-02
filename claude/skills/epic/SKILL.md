@@ -113,10 +113,10 @@ One pass: the implementer fixes every finding, then the work goes to Josh. No se
 
 ```bash
 git add -A
-git commit -m "<prefix>: <subject>" -m "Closes #<n>" -m "<attribution>"
+git commit -m "<prefix>: <subject>" -m "<attribution>"
 ```
 
-One commit per sub-issue, prefix and subject in the project's established commit style, and only once Josh has signed off. If the subject needs an "and", the issue holds two logical changes — say so and let Josh decide whether to split. `Closes #<n>` is a trailer, not a body.
+One commit per sub-issue, prefix and subject in the project's established commit style, and only once Josh has signed off. If the subject needs an "and", the issue holds two logical changes — say so and let Josh decide whether to split.
 
 Log the sub-issue number, the SHA from `git rev-parse --short HEAD`, and the name of the implementer that wrote it under Commits. Step 5 sends to that name to resume the right agent, and by then the branch holds several commits with nothing else tying one to the agent that produced it. Then move to the next issue.
 
