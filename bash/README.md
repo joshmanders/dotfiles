@@ -15,7 +15,7 @@ Modern bash setup with a customizable prompt and enhanced navigation.
 | File            | Purpose                                   |
 | --------------- | ----------------------------------------- |
 | `bashrc`        | Main entry point, sources all other files |
-| `exports.sh`    | Environment variables (EDITOR, TZ, etc.)  |
+| `exports.sh`    | Environment variables (EDITOR, etc.)      |
 | `path.sh`       | PATH configuration                        |
 | `aliases.sh`    | Shell aliases                             |
 | `functions.sh`  | Shell functions (e.g. `exit` pane guard)  |

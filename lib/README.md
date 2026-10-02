@@ -92,7 +92,6 @@ Available variables:
 | `DOTFILES_NAME`   | Git commits          |
 | `DOTFILES_EMAIL`  | Git commits, SSH key |
 | `DOTFILES_EDITOR` | Default editor       |
-| `DOTFILES_TZ`     | Timezone             |
 
 ## Flags
 

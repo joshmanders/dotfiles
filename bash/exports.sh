@@ -9,9 +9,6 @@
 export EDITOR="${DOTFILES_EDITOR}"
 export VISUAL="${DOTFILES_EDITOR}"
 
-# Timezone (from config or default)
-export TZ="${DOTFILES_TZ}"
-
 # Silence macOS "default interactive shell is now zsh" warning
 export BASH_SILENCE_DEPRECATION_WARNING=1
 
