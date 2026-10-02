@@ -60,7 +60,7 @@ The cost is that anything Claude Code wrote into `settings.json` itself is disca
 
 ## Rules
 
-Operating rules live inline in `CLAUDE.md` as a numbered list, loaded every session. Reference an individual rule by its number. Code-authoring and review standards live in the agent definitions under `agents/` (see below).
+Operating rules live inline in `CLAUDE.md` as a flat bullet list, loaded every session. Code-authoring and review standards live in the agent definitions under `agents/` (see below).
 
 ## Agents
 
