@@ -90,6 +90,7 @@ Subagent definitions live in `agents/`, symlinked to `~/.claude/agents/`.
 | [`bin-scripts`](skills/bin-scripts/SKILL.md) | Custom shell scripts for dev workflows                            |
 | [`handoff`](skills/handoff/SKILL.md) | Distill a long session into the next one's opening prompt         |
 | [`humanize`](skills/humanize/SKILL.md) | Strip AI-writing tells and edit prose for clarity                 |
+| [`screenshot`](skills/screenshot/SKILL.md) | Capture a running web app in headless Chromium as a PNG           |
 
 ### Marketing (coreyhaines)
 
