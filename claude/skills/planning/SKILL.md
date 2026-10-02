@@ -68,14 +68,15 @@ High-level overview of what we need to achieve and why. Include only constraints
 
 ## Acceptance Criteria
 - [ ] Observable outcome 1
-- [ ] Observable outcome 2
-- [ ] Tests written")
+- [ ] Observable outcome 2")
 
 printf '%s' "$ISSUE_URL" | pbcopy   # issue URL copied to clipboard
 echo "$ISSUE_URL"
 ```
 
-Acceptance criteria are the source of truth for "done" on a leaf — each item should be something you can point at and verify, not an implementation task.
+Acceptance criteria are the source of truth for "done" on a leaf — each item should be something you can point at and verify, not an implementation task. Tests passing is assumed for any code change, so don't list it as a criterion.
+
+When an issue originates from a Sentry issue, add a `Sentry: [PRIMCLOUD-<n>](<permalink>)` line to the body (short ID linked to its permalink). This is a reference, not implementation detail, so it doesn't violate the "no approach, no files" rule.
 
 **Tracker issues** — Epic, or any parent issue whose purpose is to group sub-issues under one initiative. Body = Summary only. **No acceptance criteria** — the acceptance lives on the children. The tracker describes what the initiative is about; the sub-issues are the work.
 
@@ -230,6 +231,7 @@ The `Closes #123` line is what wires the PR to the issue. It:
 - Include implementation steps, an approach, or a step-by-step recipe in the body
 - List files, function names, or areas in the body
 - Include code snippets, refactor plans, or migration order in the body
+- Carry session-specific or incidental debugging context into the body — a particular customer's setup, a one-off repro detail, or a mechanism that only mattered while diagnosing the current session. Frame the general case the future reader needs, not the story of how the problem surfaced.
 - Add a `## Scope` section — the concept doesn't exist here
 - Attach acceptance criteria to a tracker issue (Epic, etc.) — acceptance lives on the children
 - Defer work that's needed to meet acceptance criteria under an "out of scope" excuse
