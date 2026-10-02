@@ -77,8 +77,8 @@ Managed (MDM/policy) > CLI flags > Local (.claude/settings.local.json)
 ### `model`
 
 - **Type:** `string`
-- **Default:** tier-dependent (Max/Team Premium → Opus 4.7; Pro/Team/API → Sonnet 4.6; Bedrock/Vertex → Sonnet 4.5 at time of writing)
-- **Valid:** aliases (`default`, `best`, `sonnet`, `opus`, `haiku`, `sonnet[1m]`, `opus[1m]`, `opusplan`) or full IDs (`claude-opus-4-7`, etc.)
+- **Default:** tier-dependent (Pro/Max/Team/Enterprise subscriptions and Bedrock/Vertex → Opus 5.5; API key → Sonnet 4.6; as of Claude Code 2.1.280)
+- **Valid:** aliases (`default`, `best`, `sonnet`, `opus`, `haiku`, `fable`, `sonnet[1m]`, `opus[1m]`, `fable[1m]`, `opusplan`) or full IDs (`claude-opus-5-5`, `claude-opus-5-5[1m]`, etc.)
 - **Purpose:** Initial model for the session. Not enforcement — user can still switch via `/model` picker.
 - **Gotcha:** Aliases track latest; pin full IDs for version stability. `[1m]` suffix enables 1M context.
 
@@ -159,6 +159,14 @@ Managed (MDM/policy) > CLI flags > Local (.claude/settings.local.json)
 - **Override:** `SLASH_COMMAND_TOOL_CHAR_BUDGET` sets an absolute character budget and wins outright.
 - **Why `0.07` here:** the full listing for this repo's skills runs past the default budget, which silently truncates descriptions and makes skills harder for the model to route to.
 - **Related:** `skillListingMaxDescChars` caps each description (default 1536); `skillOverrides` narrows or hides individual skills from the listing.
+
+### `syncClaudeAiSkills`
+
+- **Type:** `boolean`
+- **Default:** unset (sync follows the server-side rollout for the account)
+- **Purpose:** `false` turns off syncing of skills enabled on claude.ai. Only `false` is honored; `true` does not turn the feature on early. Not read from project settings.
+- **Effect in user settings (verified against 2.1.280):** nothing more is downloaded, and previously synced skills in `~/.claude/skills/synced` are hidden from new sessions and moved to `~/.claude/skills/.trash` at the next launch (deleted after `cleanupPeriodDays`).
+- **Why `false` here:** `~/.claude/skills` is this repo's `claude/skills/` via symlink, so synced skills would land in the repo. `claude/skills/.trash/` is gitignored for the same reason.
 
 ### `showThinkingSummaries`
 
@@ -418,10 +426,11 @@ Managed (MDM/policy) > CLI flags > Local (.claude/settings.local.json)
 
 ### `attribution`
 
-- **Type:** `{ commit?: string, pr?: string }`
+- **Type:** `{ commit?: string, pr?: string, sessionUrl?: boolean }`
 - **Default:** built-in co-author trailer applied.
 - **`attribution.commit`:** text appended to commit messages. Empty string `""` hides attribution entirely.
 - **`attribution.pr`:** text appended to PR body. Empty string `""` produces PRs with no body.
+- **`attribution.sessionUrl`:** whether to append the claude.ai session link to commits and PRs created from web or Remote Control sessions. Default `true`; `false` omits the `Claude-Session` trailer and the PR-body link.
 
 ### `includeGitInstructions`
 
