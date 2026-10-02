@@ -89,11 +89,11 @@ export interface ProcSnapshot {
   pid?: number;
   exitCode?: number;
   startedAt?: number;
-  // Visible tail, recomputed from the emulator each flush. Read it, don't
-  // mutate it, and don't use its identity to detect change — a redraw can
-  // rewrite the region in place, so the array is rebuilt rather than appended
-  // to. `revision` is what moves when this process's state or output changes.
-  lines: StyledLine[];
+  // Rows of output in the emulator. The rows themselves are converted only on
+  // request through `readLines`, so a tab nobody looks at never pays for it.
+  // A redraw can rewrite rows in place without changing the count;
+  // `revision` is what moves when this process's state or output changes.
+  lineCount: number;
   restarts: number;
   spawnError?: string;
   revision: number;
@@ -106,7 +106,6 @@ interface ProcEntry {
   pid?: number;
   exitCode?: number;
   startedAt?: number;
-  lines: StyledLine[];
   emulator: TerminalEmulator;
   restarts: number;
   manualStop: boolean;
@@ -131,6 +130,10 @@ export class ProcessManager extends EventEmitter {
   private snapArray?: ProcSnapshot[];
   private flushTimer?: ReturnType<typeof setTimeout>;
   private flushPending = false;
+  // Grid size every pty and emulator runs at: the output pane's size once it
+  // reports one, so output wraps where the pane does.
+  private cols = 120;
+  private rows = 30;
 
   constructor(baseDir: string, options: ProcessManagerOptions = {}) {
     super();
@@ -149,8 +152,7 @@ export class ProcessManager extends EventEmitter {
     this.procs.set(cfg.name, {
       cfg,
       status: "idle",
-      lines: [],
-      emulator: new TerminalEmulator(120, 30, MAX_LINES),
+      emulator: new TerminalEmulator(this.cols, this.rows, MAX_LINES),
       restarts: 0,
       manualStop: false,
       restartAttempts: 0,
@@ -198,8 +200,8 @@ export class ProcessManager extends EventEmitter {
     try {
       pty = ptySpawn(shell, ["-lc", cmd], {
         name: "xterm-256color",
-        cols: 120,
-        rows: 30,
+        cols: this.cols,
+        rows: this.rows,
         cwd,
         env: env as { [k: string]: string },
       });
@@ -417,17 +419,21 @@ export class ProcessManager extends EventEmitter {
     entry.pty.write(data);
   }
 
-  resize(name: string, cols: number, rows: number): void {
-    const entry = this.procs.get(name);
-    if (!entry?.pty) return;
-    try {
-      entry.pty.resize(cols, rows);
-      // Match the emulator's grid to the pty so wrapping and redraws line up.
+  // Resize every process, running or not, so switching tabs never shows a
+  // buffer laid out for a different width. xterm reflows the scrollback.
+  resize(cols: number, rows: number): void {
+    if (cols < 1 || rows < 1) return;
+    if (cols === this.cols && rows === this.rows) return;
+    this.cols = cols;
+    this.rows = rows;
+    for (const entry of this.procs.values()) {
       entry.emulator.resize(cols, rows);
-      entry.lines = entry.emulator.renderTail(MAX_LINES);
+      try {
+        entry.pty?.resize(cols, rows);
+      } catch {}
       this.invalidate(entry);
-      this.scheduleChange();
-    } catch {}
+    }
+    this.emitChange();
   }
 
   clear(name: string): void {
@@ -461,6 +467,13 @@ export class ProcessManager extends EventEmitter {
       out.push(this.entrySnapshot(entry));
     this.snapArray = out;
     return out;
+  }
+
+  // Styled rows [start, start + count) of a process's output. Converting a
+  // row walks every cell, so callers ask only for what's on screen.
+  readLines(name: string, start: number, count: number): StyledLine[] {
+    const entry = this.procs.get(name);
+    return entry ? entry.emulator.renderRange(start, count) : [];
   }
 
   get(name: string): ProcSnapshot | undefined {
@@ -503,7 +516,7 @@ export class ProcessManager extends EventEmitter {
       pid: entry.pid,
       exitCode: entry.exitCode,
       startedAt: entry.startedAt,
-      lines: entry.lines,
+      lineCount: entry.emulator.lineCount(),
       restarts: entry.restarts,
       spawnError: entry.spawnError,
       revision: entry.revision,
@@ -563,26 +576,19 @@ export class ProcessManager extends EventEmitter {
 
   private resetBuffer(entry: ProcEntry): void {
     entry.emulator.reset();
-    entry.lines = [];
   }
 
   // Surface a manager-level message in the process's own scrollback — that's
-  // where the user is already looking when a command misbehaves. It's written
-  // into the emulator rather than spliced into `entry.lines`, because that
-  // array is recomputed from the emulator on the next flush and would wipe a
-  // line inserted straight into it. Dim truecolor #FFAA00 matches the old
-  // note color, on its own line.
+  // where the user is already looking when a command misbehaves. Dim
+  // truecolor #FFAA00, on its own line.
   private note(entry: ProcEntry, text: string): void {
     entry.emulator.write(`\r\n\x1b[2;38;2;255;170;0m${text}\x1b[0m\r\n`);
-    entry.lines = entry.emulator.renderTail(MAX_LINES);
   }
 
   private appendOutput(entry: ProcEntry, data: string): void {
-    // Feed the emulator, then re-read the visible tail: a redraw can rewrite
-    // the region in place, so the tail is rebuilt every flush rather than
-    // appended to. The emulator's scrollback cap bounds this to MAX_LINES.
+    // Only feed the emulator; rows are converted when someone reads them. The
+    // emulator's scrollback cap bounds the buffer to MAX_LINES.
     entry.emulator.write(data);
-    entry.lines = entry.emulator.renderTail(MAX_LINES);
     this.invalidate(entry);
     this.scheduleChange();
   }

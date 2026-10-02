@@ -1,11 +1,9 @@
-// A headless terminal emulator wrapping @xterm/headless. solo's output pane
-// used to be fed by an append-only ANSI parser that discarded cursor-motion
-// escapes, so a redraw frame (`docker compose up` progress, spinners that
-// reprint with `\x1b[A`) became new appended lines instead of overwriting the
-// old ones. A real emulator keeps a cell grid, so those redraws land in place.
+// A headless terminal emulator wrapping @xterm/headless. It keeps a cell grid,
+// so a redraw frame (`docker compose up` progress, spinners that reprint with
+// `\x1b[A`) overwrites the old frame in place rather than appending a copy.
 //
-// The grid is read back into the same `StyledLine`/`StyledRun` shape the UI
-// already consumes, so OutputPane doesn't care that the source changed.
+// Rows of the grid are read back as `StyledLine`s — runs of text sharing one
+// style — which is the shape OutputPane draws.
 
 import { Terminal } from "@xterm/headless";
 
@@ -138,10 +136,9 @@ function isBlank(cell: IBufferCell): boolean {
 // @xterm/headless queues bytes from the public `write()` and only reflects
 // them in the buffer once an internal task drains — a synchronous read right
 // after `write()` sees stale cells. `writeSync` on the internal write buffer
-// drains immediately, which is what lets the manager rebuild the visible tail
-// on the same tick it fed a chunk. It's not on the public typings, so it's
-// reached through this shape and kept behind the wrapper; a future xterm
-// change only breaks this one spot.
+// drains immediately, so a read at any point after a write reflects it. It's
+// not on the public typings, so it's reached through this shape and kept
+// behind the wrapper; a future xterm change only breaks this one spot.
 interface XtermCore {
   _core: { _writeBuffer: { writeSync(data: string): void } };
 }
@@ -168,28 +165,32 @@ export class TerminalEmulator {
     this.term.reset();
   }
 
-  // Read the buffer (scrollback + viewport) and return up to `maxLines` of the
-  // most recent content as styled lines. The visible region can be rewritten
-  // in place by a redraw, so this is meant to be called fresh after each write
-  // rather than accumulated.
-  renderTail(maxLines: number): StyledLine[] {
+  // Rows of the buffer (scrollback + viewport) up to the last one with
+  // content. Blank rows at the bottom of the viewport are unused padding, so
+  // they aren't counted and don't render as a blank tail. Only the viewport
+  // (from `baseY` down) is scanned: rows above it are scrollback, which is
+  // content by definition, so the cost is bounded by the viewport height
+  // however full the buffer is.
+  lineCount(): number {
     const buf = this.term.buffer.active;
-    const total = buf.length;
-    // Everything below the last line with content is unused viewport padding;
-    // find the real bottom so those empty rows don't render as blank tail.
-    let end = -1;
-    for (let y = total - 1; y >= 0; y--) {
+    for (let y = buf.length - 1; y >= buf.baseY; y--) {
       const line = buf.getLine(y);
-      if (line && line.translateToString(true).length > 0) {
-        end = y;
-        break;
-      }
+      if (line && line.translateToString(true).length > 0) return y + 1;
     }
-    if (end < 0) return [];
-    const start = Math.max(0, end - maxLines + 1);
+    return buf.baseY;
+  }
+
+  // Styled rows [start, start + count), clamped to the content. Converting a
+  // row walks every cell, so callers ask only for the rows on screen. The
+  // region can be rewritten in place by a redraw, so read it fresh after
+  // writes rather than accumulating it.
+  renderRange(start: number, count: number): StyledLine[] {
+    const buf = this.term.buffer.active;
+    const from = Math.max(0, start);
+    const to = Math.min(this.lineCount(), start + count);
     const cell = buf.getNullCell();
     const out: StyledLine[] = [];
-    for (let y = start; y <= end; y++) {
+    for (let y = from; y < to; y++) {
       const line = buf.getLine(y);
       out.push(line ? this.lineToStyled(line, cell) : []);
     }

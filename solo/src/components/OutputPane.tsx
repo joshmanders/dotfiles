@@ -1,68 +1,144 @@
-import React, { forwardRef, memo, useEffect, useRef } from "react";
+import React, { memo, useEffect, useRef, useState } from "react";
 import type { ScrollBoxRenderable } from "@opentui/core";
 import type { StyledLine } from "../lib/terminal.js";
 
 interface Props {
   title?: string;
-  lines: StyledLine[];
-  // The manager appends to `lines` in place, so its identity never moves.
-  // This is what tells memo the visible process actually produced something —
-  // without it, a chatty background tab would re-reconcile every line here.
+  lineCount: number;
+  // Moves only when this process's state or output changes, so memo bails out
+  // when a chatty background tab is what triggered the render. Rows can be
+  // rewritten in place without the count moving, so this is also what tells
+  // the pane to re-read the window.
   revision: number;
+  // Converts rows [start, start + count). Only the window on screen is asked
+  // for; converting the whole scrollback per frame is what this pane avoids.
+  read: (start: number, count: number) => StyledLine[];
+  // The text area's size in cells, so processes wrap where the pane does.
+  onResize: (cols: number, rows: number) => void;
 }
 
-const VISIBLE_TAIL = 1000;
+// Rows converted above and below the viewport. The window is picked from the
+// last scroll position React saw, and the scrollbox can move a frame ahead of
+// it (a wheel flick, the tail growing), so this keeps that frame filled.
+const MARGIN = 20;
+// Terminal resizes arrive in bursts while a window is dragged; each one
+// reflows every process's scrollback and signals every pty.
+const RESIZE_DEBOUNCE_MS = 100;
+// The scrollbox's padding, per side, which the text area loses.
+const PADDING = 1;
+// Columns the vertical scrollbar takes once content overflows.
+const SCROLLBAR_WIDTH = 1;
 
-// Sticky-to-bottom only kicks in once content exceeds the viewport. While
-// the buffer is shorter than the visible area, default flex layout keeps
-// the lines stacked from the top with empty space below, which is what
-// you want when output has barely started. After overflow, we pin scroll
-// to the bottom so the latest line stays visible.
-export const OutputPane = memo(
-  forwardRef<ScrollBoxRenderable, Props>(function OutputPane(
-    { title, lines },
-    ref,
-  ) {
-    const localRef = useRef<ScrollBoxRenderable | null>(null);
+// A virtual list: spacer boxes stand in for the rows off screen, so the
+// scrollbox's height, scrollbar, and wheel handling cover the whole
+// scrollback while only the visible window is converted and drawn. Sticky
+// scroll follows the tail; scrolling up stops following, and scrolling back to
+// the bottom resumes it.
+export const OutputPane = memo(function OutputPane({
+  title,
+  lineCount,
+  read,
+  onResize,
+}: Props) {
+  const boxRef = useRef<ScrollBoxRenderable | null>(null);
+  const [view, setView] = useState({ top: 0, height: 0, following: true });
+  // Read by the layout listeners, which run outside React's render.
+  const following = useRef(true);
 
-    useEffect(() => {
-      const box = localRef.current;
-      if (!box) return;
-      const overflow = box.scrollHeight - box.viewport.height;
-      if (overflow > 0) box.scrollTo({ x: 0, y: overflow });
-    }, [lines.length]);
-
-    const setRef = (el: ScrollBoxRenderable | null) => {
-      localRef.current = el;
-      if (typeof ref === "function") ref(el);
-      else if (ref)
-        (ref as React.MutableRefObject<ScrollBoxRenderable | null>).current =
-          el;
+  useEffect(() => {
+    const box = boxRef.current;
+    if (!box) return;
+    const sync = () => {
+      // Exactly the bottom, as OpenTUI's own sticky check judges it: a wheel
+      // notch moves one row, so any slack would swallow a one-notch scroll.
+      const max = box.scrollHeight - box.viewport.height;
+      following.current = box.scrollTop >= max;
+      setView({
+        top: box.scrollTop,
+        height: box.viewport.height,
+        following: following.current,
+      });
     };
+    // Sticky scroll alone doesn't resume after the wheel reaches the bottom:
+    // every wheel event marks the scroll manual, and it only re-engages if
+    // the old bottom is still the bottom once the content has grown. Pinning
+    // on growth while at the bottom covers it, and the setter clears that
+    // manual mark so sticky scroll takes over again.
+    const pin = () => {
+      if (following.current)
+        box.scrollTop = box.scrollHeight - box.viewport.height;
+    };
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const resized = () => {
+      pin();
+      sync();
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        // Measured off the scrollbox, not its viewport, with the scrollbar's
+        // column always reserved: the viewport narrows when the scrollbar
+        // appears, and a size that followed it would flip on every switch
+        // between a short tab and a long one, reflowing every process. At the
+        // tail the bottom padding stays on screen and the top has scrolled
+        // away, so one row of padding is lost.
+        onResize(
+          box.width - SCROLLBAR_WIDTH - PADDING * 2,
+          box.height - PADDING,
+        );
+      }, RESIZE_DEBOUNCE_MS);
+    };
+    box.verticalScrollBar.on("change", sync);
+    box.viewport.on("resize", resized);
+    box.content.on("resize", pin);
+    resized();
+    return () => {
+      clearTimeout(timer);
+      box.verticalScrollBar.off("change", sync);
+      box.viewport.off("resize", resized);
+      box.content.off("resize", pin);
+    };
+  }, [onResize]);
 
-    const display =
-      lines.length > VISIBLE_TAIL ? lines.slice(-VISIBLE_TAIL) : lines;
+  // While following, anchor the window to the tail rather than the last
+  // scroll position: the scrollbox jumps to the new bottom only after layout,
+  // and a burst of output can outrun the margin before React hears about it.
+  const rowsTop = Math.max(0, view.top - PADDING);
+  const start = view.following
+    ? Math.max(0, lineCount - view.height - MARGIN)
+    : Math.max(0, rowsTop - MARGIN);
+  const end = Math.min(lineCount, start + view.height + MARGIN * 2);
+  const rows = end > start ? read(start, end - start) : [];
 
-    return (
-      <box
-        style={{
-          flexGrow: 1,
-          flexShrink: 1,
-          flexBasis: 0,
-          flexDirection: "column",
-          borderStyle: "rounded",
-          border: true,
-          borderColor: "#333333",
-          overflow: "hidden",
-        }}
-        title={title ? ` ${title} ` : undefined}
+  return (
+    <box
+      style={{
+        flexGrow: 1,
+        flexShrink: 1,
+        flexBasis: 0,
+        flexDirection: "column",
+        borderStyle: "rounded",
+        border: true,
+        borderColor: "#333333",
+        overflow: "hidden",
+      }}
+      title={title ? ` ${title} ` : undefined}
+    >
+      <scrollbox
+        ref={boxRef}
+        style={{ flexGrow: 1, padding: PADDING }}
+        scrollY
+        stickyScroll
+        stickyStart="bottom"
       >
-        <scrollbox ref={setRef} style={{ flexGrow: 1, padding: 1 }} scrollY>
-          {display.length === 0 ? (
-            <text fg="#666666">(no output)</text>
-          ) : (
-            display.map((line, i) => (
-              <text key={i}>
+        {lineCount === 0 ? (
+          <text fg="#666666">(no output)</text>
+        ) : (
+          <>
+            <box style={{ height: start, flexShrink: 0 }} />
+            {/* Keyed by slot, not row: moving the window then updates these
+                in place instead of replacing them, so a wheel event aimed
+                at a row drawn last frame still lands on a live renderable. */}
+            {rows.map((line, i) => (
+              <text key={i} wrapMode="none">
                 {line.length === 0 ? (
                   <span> </span>
                 ) : (
@@ -83,10 +159,11 @@ export const OutputPane = memo(
                   ))
                 )}
               </text>
-            ))
-          )}
-        </scrollbox>
-      </box>
-    );
-  }),
-);
+            ))}
+            <box style={{ height: lineCount - end, flexShrink: 0 }} />
+          </>
+        )}
+      </scrollbox>
+    </box>
+  );
+});

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useKeyboard, useRenderer } from "@opentui/react";
 import { Header } from "../components/Header.js";
 import { OutputPane } from "../components/OutputPane.js";
@@ -58,7 +58,7 @@ export function Dashboard({
         const proc = snapshots.find((p) => p.name === cfg.name) ?? {
           name: cfg.name,
           status: "idle" as const,
-          lines: [],
+          lineCount: 0,
           restarts: 0,
           revision: 0,
         };
@@ -69,6 +69,16 @@ export function Dashboard({
 
   const cur = items[Math.min(selected, Math.max(0, items.length - 1))];
   const isRunning = cur?.proc.status === "running";
+  const curName = cur?.cfg.name;
+  const readLines = useCallback(
+    (start: number, count: number) =>
+      curName ? pm.readLines(curName, start, count) : [],
+    [pm, curName],
+  );
+  const resize = useCallback(
+    (cols: number, rows: number) => pm.resize(cols, rows),
+    [pm],
+  );
 
   // Build the bottom-bar bindings to match the screenshot: a focused set
   // that swaps Start/Stop based on state. Less-used actions (add/edit/
@@ -182,7 +192,7 @@ export function Dashboard({
         : "#888888";
 
   const titleParts: string[] = [];
-  if (cur?.proc.lines.length) titleParts.push(`${cur.proc.lines.length} lines`);
+  if (cur?.proc.lineCount) titleParts.push(`${cur.proc.lineCount} lines`);
   if (cur?.proc.restarts) titleParts.push(`restarts ${cur.proc.restarts}`);
   const outputTitle = titleParts.join(" · ");
 
@@ -192,10 +202,14 @@ export function Dashboard({
       <box style={{ paddingLeft: 1, paddingRight: 1, height: 1 }}>
         <text fg={statusColor}>{statusLine}</text>
       </box>
+      {/* Keyed per process so each tab opens following its own tail. */}
       <OutputPane
+        key={curName}
         title={outputTitle}
-        lines={cur?.proc.lines ?? []}
+        lineCount={cur?.proc.lineCount ?? 0}
         revision={cur?.proc.revision ?? 0}
+        read={readLines}
+        onResize={resize}
       />
       {cur?.cfg.interactive && isRunning ? (
         <box

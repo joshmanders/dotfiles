@@ -1,4 +1,4 @@
-import { afterEach, expect, test } from "bun:test";
+import { afterEach, expect, spyOn, test } from "bun:test";
 import { tmpdir } from "node:os";
 import {
   MAX_LINES,
@@ -7,7 +7,7 @@ import {
   type ProcSnapshot,
   type ProcStatus,
 } from "./process.js";
-import type { StyledLine } from "./terminal.js";
+import { TerminalEmulator, type StyledLine } from "./terminal.js";
 
 // Commands run under `$SHELL -lc`. Pin bash so a slow or exotic login profile
 // can't skew the timing assertions below.
@@ -51,6 +51,10 @@ function settled(pm: ProcessManager, name: string): boolean {
 
 function text(lines: StyledLine[]): string[] {
   return lines.map((line) => line.map((run) => run.text).join(""));
+}
+
+function output(pm: ProcessManager, name: string): string[] {
+  return text(pm.readLines(name, 0, proc(pm, name).lineCount));
 }
 
 test("surfaces the child's real exit code", async () => {
@@ -101,7 +105,7 @@ test("a crash loop gives up at the attempt cap instead of respawning forever", a
 
   expect(proc(pm, "loop").restarts).toBe(3);
   expect(proc(pm, "loop").status).toBe("failed");
-  expect(text(proc(pm, "loop").lines)).toContain(
+  expect(output(pm, "loop")).toContain(
     "solo: giving up after 3 restart attempts",
   );
 }, 20_000);
@@ -163,7 +167,7 @@ test("output arrives complete and in order", async () => {
   pm.start("seq");
   await waitFor(() => settled(pm, "seq"));
 
-  const emitted = text(proc(pm, "seq").lines).filter((l) => l.length > 0);
+  const emitted = output(pm, "seq").filter((l) => l.length > 0);
   expect(emitted.slice(0, 500)).toEqual(
     Array.from({ length: 500 }, (_, i) => String(i + 1)),
   );
@@ -183,14 +187,14 @@ test("change events coalesce instead of firing per output chunk", async () => {
   // Output streams over ~400ms, which is ~27 poll ticks. Emitting per chunk
   // would put `changes` in that range; one flush per 200ms window cannot.
   expect(changes).toBeLessThan(12);
-  expect(text(proc(pm, "chatty").lines)).toContain("line 40");
+  expect(output(pm, "chatty")).toContain("line 40");
 }, 20_000);
 
 test("the last chunk of output still lands after the burst ends", async () => {
   const pm = makeManager({ flushIntervalMs: 200 });
   let lastSeen: string[] = [];
   pm.on("change", () => {
-    lastSeen = text(proc(pm, "tail").lines);
+    lastSeen = output(pm, "tail");
   });
   pm.register({ name: "tail", command: "seq 1 200" });
   pm.start("tail");
@@ -219,6 +223,54 @@ test("snapshots keep their identity while nothing changes", async () => {
   );
 }, 20_000);
 
+test("a busy tab nobody reads converts no rows", async () => {
+  const writes = spyOn(TerminalEmulator.prototype, "write");
+  const renders = spyOn(TerminalEmulator.prototype, "renderRange");
+  try {
+    const pm = makeManager();
+    pm.on("change", () => pm.snapshot());
+    pm.register({ name: "hidden", command: "seq 1 2000" });
+    pm.start("hidden");
+    await waitFor(() => settled(pm, "hidden"));
+
+    expect(writes.mock.calls.length).toBeGreaterThan(0);
+    expect(renders).not.toHaveBeenCalled();
+    expect(output(pm, "hidden")).toContain("2000");
+  } finally {
+    writes.mockRestore();
+    renders.mockRestore();
+  }
+}, 20_000);
+
+test("readLines converts just the requested window", async () => {
+  const pm = makeManager();
+  pm.register({ name: "long", command: "seq 1 1000" });
+  pm.start("long");
+  await waitFor(() => settled(pm, "long"));
+
+  const count = proc(pm, "long").lineCount;
+  const window = text(pm.readLines("long", count - 40, 40));
+  expect(window).toHaveLength(40);
+  expect(window.at(-1)).toBe("1000");
+  expect(window[0]).toBe("961");
+}, 20_000);
+
+test("resize reaches running processes and ones started later", async () => {
+  const pm = makeManager();
+  // Holds on stdin, so `stty size` runs only once the resize has landed.
+  pm.register({ name: "early", command: "read -r _; stty size" });
+  pm.start("early");
+  await waitFor(() => proc(pm, "early").status === "running");
+  pm.resize(50, 12);
+  pm.writeStdin("early", "go\n");
+  pm.register({ name: "late", command: "stty size" });
+  pm.start("late");
+  await waitFor(() => settled(pm, "early") && settled(pm, "late"));
+
+  expect(output(pm, "early")).toContain("12 50");
+  expect(output(pm, "late")).toContain("12 50");
+}, 20_000);
+
 test("runningCount tracks live processes", async () => {
   const pm = makeManager();
   pm.register({ name: "a", command: "sleep 30" });
@@ -244,7 +296,7 @@ test("scrollback stays bounded and keeps the newest lines", async () => {
   pm.start("flood");
   await waitFor(() => settled(pm, "flood"));
 
-  const lines = text(proc(pm, "flood").lines).filter((l) => l.length > 0);
+  const lines = output(pm, "flood").filter((l) => l.length > 0);
   expect(lines.length).toBeLessThanOrEqual(MAX_LINES + 512);
   expect(lines.length).toBeGreaterThan(MAX_LINES - 512);
   expect(lines.at(-1)).toBe("20000");
@@ -254,8 +306,8 @@ test("clearing wipes the buffer of a running process", async () => {
   const pm = makeManager();
   pm.register({ name: "clearable", command: "seq 1 100; sleep 30" });
   pm.start("clearable");
-  await waitFor(() => proc(pm, "clearable").lines.length > 0);
+  await waitFor(() => proc(pm, "clearable").lineCount > 0);
 
   pm.clear("clearable");
-  expect(proc(pm, "clearable").lines.length).toBe(0);
+  expect(proc(pm, "clearable").lineCount).toBe(0);
 }, 20_000);
