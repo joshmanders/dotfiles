@@ -78,11 +78,3 @@ Edit `config`:
 ```bash
 git config commit.gpgsign false
 ```
-
-## Hooks
-
-Git hooks are stored in the `git/hooks/` directory but are not automatically installed. Copy them manually if needed:
-
-```bash
-cp ~/.files/git/hooks/post-merge .git/hooks/
-```
