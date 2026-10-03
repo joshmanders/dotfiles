@@ -49,8 +49,7 @@ Modern bash setup with a customizable prompt and enhanced navigation.
 
 - SSH commit signing (simpler than GPG)
 - macOS Keychain credential storage
-- Custom diff tool (icdiff)
-- 40 utility scripts in `bin/`
+- 36 utility scripts in `bin/`
 
 ### Local Development
 
@@ -73,8 +72,10 @@ concierge add
 ├── bash/              # Shell configuration
 ├── bin/               # Custom scripts
 ├── caddy/             # Web server config
-├── claude/            # Claude Code config, rules, and skills
+├── caffeine/          # Caffeine preferences
+├── claude/            # Claude Code config, rules, and skills; Claude desktop app preferences
 ├── cpanel/            # Claude Panel TUI (Bun/React)
+├── dato/              # Dato preferences
 ├── dnsmasq/           # DNS resolver config
 ├── fzf/               # Fuzzy finder config
 ├── gh/                # GitHub CLI config
@@ -82,16 +83,19 @@ concierge add
 ├── git/               # Git configuration
 ├── homebrew/          # Package management
 ├── hyperkey/          # Hyperkey config
+├── kap/               # Kap preferences
+├── lazygit/           # Lazygit config
 ├── lib/               # Installer utilities
 ├── macos/             # macOS system preferences
 ├── neovim/            # Neovim configuration
 ├── npm/               # NPM configuration
+├── orbstack/          # OrbStack preferences
+├── php/               # PHP and PHP-FPM settings
 ├── rectangle/         # Window manager config
 ├── ripgrep/           # Ripgrep config
 ├── solo/              # Process-runner TUI (Bun/React)
 ├── ssh/               # SSH configuration
 ├── tmux/              # Terminal multiplexer
-├── vscode/            # VS Code settings
 ├── config.sh.example  # Config template (copy to config.sh)
 ├── install.sh         # Main installer
 └── README.md          # This file
@@ -110,22 +114,38 @@ bash install.sh --non-interactive --skip --deny
 bash install.sh --non-interactive --overwrite --allow
 ```
 
+The installer asks for your sudo password once at the start and keeps it alive until it finishes, so steps that need root don't stop to prompt. With `--non-interactive` it asks only when `--allow` is set and the credentials aren't already cached.
+
 ### Module-specific Installation
+
+`install.sh` runs every module below, in this order. Each one also runs on its own:
 
 ```bash
 bash homebrew/install.sh    # Just Homebrew packages
 bash bash/install.sh        # Just shell config
+bash fzf/install.sh         # Just fzf keybindings
 bash git/install.sh         # Just git config
+bash gh/install.sh          # Just GitHub CLI config
 bash ssh/install.sh         # Just SSH config
 bash dnsmasq/install.sh     # Just DNS setup
 bash caddy/install.sh       # Just web server
-bash claude/install.sh      # Just Claude Code config
+bash php/install.sh         # Just PHP settings
+bash npm/install.sh         # Just npm config
+bash ripgrep/install.sh     # Just ripgrep global ignore
+bash claude/install.sh      # Just Claude Code config and Claude desktop app preferences
 bash cpanel/install.sh      # Just Claude Panel TUI (config symlink + bun install)
 bash solo/install.sh        # Just solo TUI (configs symlink + bun install)
+bash lazygit/install.sh     # Just Lazygit config
 bash neovim/install.sh      # Just Neovim config
 bash tmux/install.sh        # Just tmux config
-bash vscode/install.sh      # Just VS Code settings
+bash ghostty/install.sh     # Just Ghostty config
 bash macos/install.sh       # Just macOS system preferences
+bash rectangle/install.sh   # Just Rectangle preferences
+bash hyperkey/install.sh    # Just Hyperkey preferences
+bash caffeine/install.sh    # Just Caffeine preferences
+bash dato/install.sh        # Just Dato preferences
+bash kap/install.sh         # Just Kap preferences
+bash orbstack/install.sh    # Just OrbStack preferences
 ```
 
 ## Documentation
@@ -135,8 +155,10 @@ Each directory has its own README with detailed documentation:
 - [bash/README.md](bash/README.md) - Shell configuration
 - [bin/README.md](bin/README.md) - Custom scripts
 - [caddy/README.md](caddy/README.md) - Web server
-- [claude/README.md](claude/README.md) - Claude Code config
+- [caffeine/README.md](caffeine/README.md) - Caffeine
+- [claude/README.md](claude/README.md) - Claude Code config and Claude desktop app preferences
 - [cpanel/README.md](cpanel/README.md) - Claude Panel TUI (browse/mine `~/.claude`)
+- [dato/README.md](dato/README.md) - Dato
 - [dnsmasq/README.md](dnsmasq/README.md) - DNS resolver
 - [fzf/README.md](fzf/README.md) - Fuzzy finder
 - [gh/README.md](gh/README.md) - GitHub CLI
@@ -144,17 +166,19 @@ Each directory has its own README with detailed documentation:
 - [git/README.md](git/README.md) - Git configuration
 - [homebrew/README.md](homebrew/README.md) - Package management
 - [hyperkey/README.md](hyperkey/README.md) - Hyperkey
+- [kap/README.md](kap/README.md) - Kap
 - [lib/README.md](lib/README.md) - Installer utilities
 - [macos/README.md](macos/README.md) - macOS system preferences
 - [neovim/README.md](neovim/README.md) - Neovim configuration
 - [lazygit/README.md](lazygit/README.md) - Lazygit
 - [npm/README.md](npm/README.md) - NPM configuration
+- [orbstack/README.md](orbstack/README.md) - OrbStack
+- [php/README.md](php/README.md) - PHP and PHP-FPM settings
 - [rectangle/README.md](rectangle/README.md) - Window manager
 - [ripgrep/README.md](ripgrep/README.md) - Ripgrep
 - [solo/README.md](solo/README.md) - Process-runner TUI (per-cwd command set)
 - [ssh/README.md](ssh/README.md) - SSH configuration
 - [tmux/README.md](tmux/README.md) - Terminal multiplexer
-- [vscode/README.md](vscode/README.md) - VS Code settings
 
 ## Key Commands
 
