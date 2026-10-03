@@ -17,8 +17,3 @@ fi
 if command -v zoxide &>/dev/null; then
     eval "$(zoxide init bash)"
 fi
-
-# direnv - per-directory environment variables
-if command -v direnv &>/dev/null; then
-    eval "$(direnv hook bash)"
-fi
