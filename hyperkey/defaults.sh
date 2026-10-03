@@ -2,14 +2,16 @@
 #
 # hyperkey/defaults.sh - Hyperkey preferences (Caps Lock remapping)
 
+set -euo pipefail
+
 # General settings
 defaults write com.knollsoft.Hyperkey launchOnLogin -bool true
 defaults write com.knollsoft.Hyperkey hideMenuBarIcon -bool false
 
-# Remap Caps Lock to Hyper key (Ctrl+Option+Cmd+Shift)
+# Remap Caps Lock to Hyper key; hyperFlags 1835008 is Ctrl+Option+Cmd, Shift is not part of it
 defaults write com.knollsoft.Hyperkey keyRemap -int 1
 defaults write com.knollsoft.Hyperkey capsLockRemapped -int 2
-defaults write com.knollsoft.Hyperkey hyperFlags -int 1966080
+defaults write com.knollsoft.Hyperkey hyperFlags -int 1835008
 defaults write com.knollsoft.Hyperkey physicalKeycode -int 57
 
 # Quick press sends Escape (optional)

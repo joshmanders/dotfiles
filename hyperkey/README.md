@@ -1,6 +1,6 @@
 # Hyperkey Configuration
 
-Remap Caps Lock to Hyper key (Ctrl+Option+Cmd+Shift).
+Remap Caps Lock to Hyper key (Ctrl+Option+Cmd).
 
 ## Setup
 
@@ -10,7 +10,8 @@ bash hyperkey/install.sh
 
 ## Features
 
-- Holding Caps Lock acts as Hyper key (all modifiers)
+- Holding Caps Lock acts as Hyper key (Ctrl+Option+Cmd)
+- `hyperFlags` 1835008 is Ctrl+Option+Cmd; Shift is not part of it
 - Quick tap sends Escape (configurable)
 - Enables powerful keyboard shortcuts without conflicts
 
