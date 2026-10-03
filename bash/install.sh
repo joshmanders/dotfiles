@@ -30,20 +30,22 @@ symlink "$DOTFILES/bash/inputrc" "$HOME/.inputrc"
 symlink "$DOTFILES/bash/hushlogin" "$HOME/.hushlogin"
 
 # Set Homebrew bash as default shell
-BASH_PATH="$(brew --prefix)/bin/bash"
-if [[ -x "${BASH_PATH}" ]]; then
-    if ! grep -q "${BASH_PATH}" /etc/shells 2>/dev/null; then
-        run "Add ${BASH_PATH} to /etc/shells" \
-            sudo bash -c "echo '${BASH_PATH}' >> /etc/shells"
-    fi
+skip_unless brew "Homebrew not installed" || {
+    BASH_PATH="$(brew --prefix)/bin/bash"
+    if [[ -x "${BASH_PATH}" ]]; then
+        if ! grep -q "${BASH_PATH}" /etc/shells 2>/dev/null; then
+            run "Add ${BASH_PATH} to /etc/shells" \
+                sudo bash -c "echo '${BASH_PATH}' >> /etc/shells"
+        fi
 
-    if [[ "${SHELL}" != "${BASH_PATH}" ]]; then
-        run "Set default shell to ${BASH_PATH}" \
-            chsh -s "${BASH_PATH}"
-    else
-        echo "Skip: ${BASH_PATH} is already default shell"
+        if [[ "${SHELL}" != "${BASH_PATH}" ]]; then
+            run "Set default shell to ${BASH_PATH}" \
+                chsh -s "${BASH_PATH}"
+        else
+            echo "Skip: ${BASH_PATH} is already default shell"
+        fi
     fi
-fi
+}
 
 echo ""
 echo "Bash setup complete!"
