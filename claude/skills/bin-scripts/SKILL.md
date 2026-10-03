@@ -65,18 +65,15 @@ Custom shell scripts available on your PATH for common development workflows.
 
 ## Utilities
 
-| Script      | Usage                  | Purpose                                      |
-| ----------- | ---------------------- | -------------------------------------------- |
-| `killport`  | `killport 3000`        | Kill process listening on TCP port           |
-| `concierge` | `concierge add mysite` | Manage local Caddy dev sites                 |
-| `git-issue` | `git issue 123`        | Create branch from GitHub issue              |
-| `brewdump`  | `brewdump`             | Interactive Homebrew cleanup + Brewfile dump |
+| Script      | Usage                  | Purpose                            |
+| ----------- | ---------------------- | ---------------------------------- |
+| `killport`  | `killport 3000`        | Kill process listening on TCP port |
+| `concierge` | `concierge add mysite` | Manage local Caddy dev sites       |
+| `git-issue` | `git issue 123`        | Create branch from GitHub issue    |
 
 **git-issue requirements:** Needs `DOTFILES_GITHUB_USERNAME` env var. Creates branch like `FEATURE-123` or `BUG-123` based on issue labels.
 
 **concierge commands:** `add <name>`, `remove <name>`, `list`. Optional `--ip <addr>` for X-Forwarded-For testing.
-
-**brewdump:** Reviews leaf packages interactively, marks items for removal, runs `brew autoremove`, then dumps Brewfile to `$DOTFILES/homebrew/bundle`. Use `--dry-run` to preview.
 
 ## Claude Internals
 
