@@ -22,19 +22,14 @@ echo ""
 echo "=== Neovim Setup ==="
 echo ""
 
-if ! command -v nvim &>/dev/null; then
-    echo "Skip: neovim not installed"
-    exit 0
-fi
+skip_unless nvim "neovim not installed" || {
+    symlink "$DOTFILES/neovim/config" "$HOME/.config/nvim"
 
-symlink "$DOTFILES/neovim/config" "$HOME/.config/nvim"
+    skip_unless composer "composer not installed" || {
+        run "Install Laravel language server" composer global require laravel/lsp
+    }
 
-if command -v composer &>/dev/null; then
-    run "Install Laravel language server" composer global require laravel/lsp
-else
-    echo "Skip laravel/lsp: composer not installed"
-fi
-
-echo ""
-echo "Neovim setup complete!"
-echo "Run 'nvim' to trigger plugin installation on first launch."
+    echo ""
+    echo "Neovim setup complete!"
+    echo "Run 'nvim' to trigger plugin installation on first launch."
+}
