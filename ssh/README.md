@@ -26,6 +26,30 @@ This will:
 
 The install script generates an ed25519 key at `~/.ssh/id_ed25519`.
 
+### Generate a new key
+
+Every machine gets its own key. On a new machine `bash ssh/install.sh` runs this command when `~/.ssh/id_ed25519` does not exist. To run it by hand:
+
+```bash
+ssh-keygen -t ed25519 -C "$DOTFILES_EMAIL" -f ~/.ssh/id_ed25519
+```
+
+`DOTFILES_EMAIL` comes from `config.sh`, which `bashrc` loads into every shell.
+
+Then register the key for commit verification. The installer writes this same line, `<email> <public key>`, when `~/.ssh/allowed_signers` is missing or does not contain the email:
+
+```bash
+echo "$DOTFILES_EMAIL $(cat ~/.ssh/id_ed25519.pub)" > ~/.ssh/allowed_signers
+chmod 600 ~/.ssh/allowed_signers
+```
+
+Then add the public key to GitHub twice, as described in [Add to GitHub](#add-to-github), or with `gh`:
+
+```bash
+gh ssh-key add ~/.ssh/id_ed25519.pub --title "<machine name>" --type authentication
+gh ssh-key add ~/.ssh/id_ed25519.pub --title "<machine name>" --type signing
+```
+
 ### View your public key
 
 ```bash
