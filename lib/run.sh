@@ -25,7 +25,7 @@
 #
 # Examples:
 #   run "Install Homebrew packages" brew bundle --file="$DOTFILES/homebrew/bundle"
-#   run "Set default shell to bash" chsh -s /opt/homebrew/bin/bash
+#   run "Set default shell to bash" chsh -s "$(brew --prefix)/bin/bash"
 #   run "Start Caddy service" brew services start caddy
 
 run() {

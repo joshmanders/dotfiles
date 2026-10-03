@@ -30,9 +30,9 @@
 #   --deny             Skip all commands (non-interactive)
 #
 # Examples:
-#   ./install.sh                                    # Interactive
-#   ./install.sh --non-interactive --skip --deny    # Skip everything
-#   ./install.sh --non-interactive --overwrite --allow  # Do everything
+#   bash install.sh                                 # Interactive
+#   bash install.sh --non-interactive --skip --deny # Skip everything
+#   bash install.sh --non-interactive --overwrite --allow  # Do everything
 
 # Source utilities in order
 source "$DOTFILES/lib/flags.sh"

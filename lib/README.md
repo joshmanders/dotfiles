@@ -11,7 +11,7 @@ Source `index.sh` in your install script to get access to all utilities:
 source "$DOTFILES/lib/index.sh"
 
 symlink "$DOTFILES/bash/bashrc" "$HOME/.bashrc"
-run "Set default shell" chsh -s /opt/homebrew/bin/bash
+run "Set default shell" chsh -s "$(brew --prefix)/bin/bash"
 ```
 
 ## Functions
@@ -129,11 +129,17 @@ Personal settings are stored in `config.sh` (gitignored).
 
 Available variables:
 
-| Variable          | Used For             |
-| ----------------- | -------------------- |
-| `DOTFILES_NAME`   | Git commits          |
-| `DOTFILES_EMAIL`  | Git commits, SSH key |
-| `DOTFILES_EDITOR` | Default editor       |
+| Variable                          | Used For                                    |
+| --------------------------------- | ------------------------------------------- |
+| `DOTFILES_NAME`                   | Git commits                                 |
+| `DOTFILES_EMAIL`                  | Git commits, SSH key                        |
+| `DOTFILES_GITHUB_USERNAME`        | Scoped gh cli actions                       |
+| `DOTFILES_EDITOR`                 | Editor                                      |
+| `DOTFILES_HOMEBREW_NO_AUTOUPDATE` | Disable Homebrew auto-update (1 = disabled) |
+| `DOTFILES_HISTSIZE`               | Shell history size                          |
+| `DOTFILES_NPM_TOKEN`              | npm registry auth token                     |
+| `DOTFILES_GITHUB_NPM_TOKEN`       | GitHub npm package registry auth token      |
+| `DOTFILES_PRIMCLOUD_DIR`          | Primcloud projects directory                |
 
 ## Flags
 
@@ -173,5 +179,6 @@ bash homebrew/install.sh --non-interactive --allow
 - `env.sh` - Environment variable helpers
 - `symlink.sh` - Symlink creation with conflict handling
 - `run.sh` - Command wrapper with confirmation prompts
+- `install_hooks.sh` - Loader for a module's `install.d/` hooks
 - `sudo.sh` - One sudo prompt held for the whole run
 - `skip.sh` - Guard for work that needs a command or an app
