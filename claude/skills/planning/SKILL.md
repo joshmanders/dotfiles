@@ -29,8 +29,10 @@ user-invocable: false
 ```
 1. Understand the work — the problem, the outcome, the constraints
 2. Draft the issue content (leaf or tracker — see below)
-3. Create the issue and capture its URL
-4. Hand the URL back — don't assume the next step is working it
+3. Present the full draft — title, body, type — and wait for Josh's approval of that exact text
+4. Create the issue and capture its URL
+5. Verify the created issue's number, type, and state
+6. Hand the URL back — don't assume the next step is working it
 ```
 
 Working the issue is the `issue` and `epic` skills' job, not this one.
@@ -91,7 +93,13 @@ printf '%s' "$ISSUE_URL" | pbcopy
 echo "$ISSUE_URL"
 ```
 
-Run `gh issue create`, capture the URL, and hand it back. Don't assume the next step is starting work on it.
+Present the draft — title, body, and type — and wait for Josh's explicit approval of that exact text. Agreeing to the plan or the design is not that approval, and a draft that changes after he approves it goes back to him. Then run `gh issue create`, capture the URL, and verify what landed:
+
+```bash
+gh issue view <number> --repo <org>/<repo> --json number,title,issueType,state,url
+```
+
+Hand the URL back. Don't assume the next step is starting work on it.
 
 ---
 
@@ -132,9 +140,10 @@ Sometimes planning reveals work that should be split into multiple issues.
 
 1. Draft all the issues together
 2. Note dependencies and order, if any
-3. Create them, and say which is the starting point
+3. Present the drafts one at a time — each worked through to Josh's approve or deny before the next is shown
+4. Create each approved issue, verify it, and say which is the starting point
 
-When the split is one initiative broken into pieces rather than independent deliverables, make the initiative a tracker (epic) and the pieces its children — see the tracker body shape above.
+When the split is one initiative broken into pieces rather than independent deliverables, make the initiative a tracker (epic) and the pieces its children — see the tracker body shape above. Present the tracker first, then each child. Linking a child to the tracker is its own ask at the moment of linking — see the `github` skill's Sub-Issues section for the command.
 
 ---
 
@@ -162,17 +171,22 @@ If folding in, update the issue body so the acceptance criteria reflect the new 
 
 ### Updating an Existing Issue Body
 
+Present the full revised title and body and wait for Josh's approval of that exact text, then apply it and verify.
+
 ```bash
 # View current body
 gh issue view <number> --repo <org>/<repo>
 
-# Edit (opens editor)
-gh issue edit <number> --repo <org>/<repo>
+# Apply the approved body
+gh issue edit <number> --repo <org>/<repo> --body-file <file>
+
+# Verify what landed
+gh issue view <number> --repo <org>/<repo> --json number,title,body,issueType,state
 ```
 
 ## Refining an Existing Issue
 
-Same rules apply. When editing an issue that already exists:
+Same rules apply, including the present-and-approve step above before `gh issue edit` runs. When editing an issue that already exists:
 
 - Strip any `## Approach`, `## Files/Areas`, `## Notes`, `## Scope`, or step-by-step implementation sections. They short-circuit investigation.
 - Rewrite the summary as a high-level overview + constraints only.
@@ -188,7 +202,7 @@ When work is complete and approved for commit:
 
 ### 1. Create PR with Issue Reference
 
-Title and body follow CLAUDE.md's PR rules — `feat: short description`, body is what/why at a high level, and it must end with `Closes #<issue-number>`.
+Title and body follow CLAUDE.md's PR rules — `feat: short description`, body is what/why at a high level, and it must end with `Closes #<issue-number>`. Present the full title and body and wait for Josh's approval of that exact text before running `gh pr create`.
 
 ```bash
 PR_URL=$(gh pr create \
@@ -228,6 +242,7 @@ The `Closes #123` line is what wires the PR to the issue. It:
 ## Don't
 
 - Start work without an issue
+- Create or edit an issue before Josh has approved its exact text
 - Include implementation steps, an approach, or a step-by-step recipe in the body
 - List files, function names, or areas in the body
 - Include code snippets, refactor plans, or migration order in the body

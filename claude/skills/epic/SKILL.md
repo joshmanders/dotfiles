@@ -133,13 +133,19 @@ Then present: `Epic #437 done. 7 commits on <branch>.`, one line per issue (numb
 
 **Stop there.** No push, no PR, no merge until Josh signs off on the branch as a whole — and then only what he asked for.
 
+When he asks for the PR, present its full title and body and wait for his approval of that exact text before `gh pr create` runs; signing off on the branch is not that approval. Then verify what landed:
+
+```bash
+gh pr view <number> --repo <owner/repo> --json number,title,isDraft,state,url,closingIssuesReferences
+```
+
 ## Rules
 
 - **Dispatch, don't do.** Work touching code goes to an agent. You have no business reading a source file.
 - **Sequential, not parallel.** Sub-issues share a branch and usually a blast radius. One at a time, reviewed between each.
 - **The review gate is per issue.** Never commit two issues on one approval. Never commit without one.
 - **Josh sees finished work.** Scrutiny clean, `code-reviewer` gate clean, tests passing, acceptance criteria met. He should be able to LGTM on a skim.
-- **Nothing leaves without a sign-off.** No commit without his per-issue approval. No push, PR, or merge without his approval of the finished branch.
+- **Nothing leaves without a sign-off.** No commit without his per-issue approval. No push, PR, or merge without his approval of the finished branch. No PR without his approval of its exact title and body.
 - **100% or ask.** Anything short of certainty goes to Josh.
 - **Scope expands → stop.** Out-of-issue work gets reported, logged as deferred, and decided by Josh. It does not get quietly fixed.
 - **The ledger is the product.** Lose track of what was decided and the epic degrades into seven unrelated sessions.

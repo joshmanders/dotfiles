@@ -11,6 +11,35 @@ Generic patterns for GitHub operations using `gh` CLI.
 
 ---
 
+## Writes
+
+Every command here that changes something on GitHub is a write: `gh issue create`, `gh issue edit`, `gh issue comment`, `gh project item-add`, `gh pr create`, and every `gh api graphql` call whose query is a `mutation`. The `list`, `view`, `search`, and `checks` commands and the `query` GraphQL calls are reads.
+
+Each write follows the same three steps:
+
+1. Present it in full — the exact title and body for an issue, comment, or PR; the exact action and target for a label, type, status, project, or sub-issue change.
+2. Run it once Josh approves that exact text or action. Each write is its own ask at the moment of acting, including one that sat in a plan he approved.
+3. Verify what landed with the matching read below.
+
+```bash
+# After gh issue create, gh issue edit, or the updateIssue mutation
+gh issue view <number> --repo <org>/<repo> --json number,title,body,labels,issueType,state,url
+
+# After gh issue comment
+gh issue view <number> --repo <org>/<repo> --json comments --jq '.comments[-1] | {url, body}'
+
+# After gh project item-add, gh issue create --project, or the updateProjectV2ItemFieldValue mutation
+gh issue view <number> --repo <org>/<repo> --json projectItems --jq '.projectItems[] | {title, status: .status.name}'
+
+# After the addSubIssue or removeSubIssue mutation, on the parent
+gh issue view <parent-num> --repo <org>/<repo> --json subIssues --jq '[.subIssues.nodes[].url]'
+
+# After gh pr create
+gh pr view <number> --repo <org>/<repo> --json number,title,isDraft,state,url,closingIssuesReferences
+```
+
+---
+
 ## Issues
 
 ### Creating Issues
@@ -243,11 +272,13 @@ mutation {
 
 ## Quick Reference
 
-| Action         | Command                                       |
-| -------------- | --------------------------------------------- |
-| Create issue   | `gh issue create --repo <org>/<repo> ...`     |
-| Add to project | `gh project item-add <num> --owner <org> ...` |
-| List issues    | `gh issue list --repo <org>/<repo>`           |
-| View issue     | `gh issue view <num> --repo <org>/<repo>`     |
-| Search org     | `gh search issues --owner <org> "query"`      |
-| Create PR      | `gh pr create --draft --repo <org>/<repo> ...` (pbcopy URL) |
+| Action         | Command                                       | Kind  |
+| -------------- | --------------------------------------------- | ----- |
+| Create issue   | `gh issue create --repo <org>/<repo> ...`     | Write |
+| Add to project | `gh project item-add <num> --owner <org> ...` | Write |
+| List issues    | `gh issue list --repo <org>/<repo>`           | Read  |
+| View issue     | `gh issue view <num> --repo <org>/<repo>`     | Read  |
+| Search org     | `gh search issues --owner <org> "query"`      | Read  |
+| Create PR      | `gh pr create --draft --repo <org>/<repo> ...` (pbcopy URL) | Write |
+
+Writes follow the present, approve, verify steps under [Writes](#writes).
