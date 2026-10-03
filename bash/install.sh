@@ -6,9 +6,10 @@
 # Can be run standalone or sourced from the main install.sh.
 #
 # What it does:
-#   1. Runs fzf install for keybindings
-#   2. Symlinks bashrc to ~/.bashrc and ~/.bash_profile
-#   3. Sets Homebrew bash as default shell
+#   1. Symlinks bashrc to ~/.bashrc and ~/.bash_profile
+#   2. Sets Homebrew bash as default shell
+#
+# fzf keybindings (~/.fzf.bash, loaded by plugins.sh) come from fzf/install.sh.
 #
 # Usage:
 #   bash bash/install.sh
@@ -21,14 +22,6 @@ source "$DOTFILES/lib/index.sh"
 echo ""
 echo "=== Bash Shell Setup ==="
 echo ""
-
-# Run fzf install for keybindings
-if command -v fzf &>/dev/null && [[ ! -f "${HOME}/.fzf.bash" ]]; then
-    run "Install fzf keybindings" \
-        "$(brew --prefix)/opt/fzf/install" --key-bindings --completion --no-update-rc --no-fish --no-zsh
-else
-    echo "Skip: fzf keybindings already installed or fzf not found"
-fi
 
 # Create symlinks
 symlink "$DOTFILES/bash/bashrc" "$HOME/.bashrc"
