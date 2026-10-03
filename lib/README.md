@@ -78,6 +78,36 @@ load_install_hooks "$DOTFILES/claude" # explicit
 
 Use it for values that must be computed at install time rather than committed — file contents pulled into a generated config, machine-specific paths, anything derived from elsewhere in the repo. `claude/install.d/claim-check-prompt.sh` is the worked example: it reads a markdown file and exports it JSON-escaped for the settings template.
 
+### `skip_unless <requirement> <message>`
+
+Guards work that needs a command or an app. When the requirement is missing it prints `Skip: <message>` and the block after `||` is skipped; when it is present it prints nothing and the block runs.
+
+```bash
+skip_unless brew "Homebrew not installed" || {
+    symlink "$DOTFILES/caddy/Caddyfile" "$(brew --prefix)/etc/Caddyfile"
+}
+
+skip_unless "/Applications/Rectangle.app" "Rectangle not installed" || {
+    run "Set Rectangle preferences" bash "$DOTFILES/rectangle/defaults.sh"
+}
+
+# Two requirements: chain the calls, the block follows the last one
+skip_unless brew "Homebrew not installed" \
+    || skip_unless php "php not installed" || {
+    run "Install global Composer tools" composer global require laravel/pint
+}
+```
+
+**Behavior:**
+
+- A requirement without a slash is a command name, checked with `command -v`
+- A requirement with a slash is a path, checked with `-e`
+- Returns 0 when it skipped and 1 when the requirement is present
+- The message is `<X> not installed`, where X names the missing requirement; one call per requirement, each with its own message
+- Never calls `exit`: the main `install.sh` sources each module, so `exit` in a module ends the whole install and skips every module after it
+- `set -e` still applies inside the block, so a failing command there aborts the install
+- Any other condition (the OS, "already installed", a login item, a config directory) stays a plain `if` in the module
+
 ## Configuration
 
 Personal settings are stored in `config.sh` (gitignored).
@@ -131,3 +161,4 @@ bash homebrew/install.sh --non-interactive --allow
 - `env.sh` - Environment variable helpers
 - `symlink.sh` - Symlink creation with conflict handling
 - `run.sh` - Command wrapper with confirmation prompts
+- `skip.sh` - Guard for work that needs a command or an app

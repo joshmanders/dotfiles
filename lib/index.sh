@@ -19,6 +19,7 @@
 #   - env_require <var> <prompt> [default]  Require config, prompt if missing
 #   - ensure_config                   Check config.sh exists
 #   - load_install_hooks [module_dir] Source a module's install.d/*.sh
+#   - skip_unless <requirement> <message>  Skip work when a command or path is missing
 #
 # Flags (passed to script or set via environment):
 #   --non-interactive  Disable all prompts
@@ -38,6 +39,7 @@ source "$DOTFILES/lib/env.sh"
 source "$DOTFILES/lib/symlink.sh"
 source "$DOTFILES/lib/run.sh"
 source "$DOTFILES/lib/install_hooks.sh"
+source "$DOTFILES/lib/skip.sh"
 
 # Source user config if it exists
 if [[ -f "$DOTFILES/config.sh" ]]; then
