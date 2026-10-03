@@ -52,14 +52,6 @@ Uses macOS Keychain via `osxkeychain` helper. Authenticate with:
 gh auth login
 ```
 
-### Diff Tool
-
-Uses `icdiff` for side-by-side colored diffs:
-
-```bash
-git difftool <file>
-```
-
 ## Customization
 
 ### Add aliases
