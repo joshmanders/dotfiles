@@ -10,8 +10,10 @@ echo ""
 echo "=== npm Setup ==="
 echo ""
 
-symlink "$DOTFILES/npm/npmrc" "$HOME/.npmrc"
+skip_unless npm "npm not installed" || {
+    symlink "$DOTFILES/npm/npmrc" "$HOME/.npmrc"
 
-echo ""
-echo "npm setup complete!"
-echo "Note: Run 'npm login' to add auth tokens"
+    echo ""
+    echo "npm setup complete!"
+    echo "Note: Run 'npm login' to add auth tokens"
+}
