@@ -15,8 +15,18 @@
 	}
 }
 
-# Load snippets (laravel, etc.)
+# Load snippets (tls, client-ip, laravel)
 import /opt/homebrew/etc/caddy/snippets/*
+
+# Internal landing page (Concierge Dashboard), not managed by concierge
+# The site name "concierge" is reserved for it
+concierge.dev.local {
+	import dev-tls
+
+	root * /opt/homebrew/etc/caddy/dashboard
+	encode zstd gzip
+	file_server
+}
 
 # Load site configurations
 import /opt/homebrew/etc/caddy/sites/*

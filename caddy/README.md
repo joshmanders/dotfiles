@@ -11,18 +11,30 @@ Serves Laravel applications at `*.dev.local` domains with:
 - Wildcard subdomain support
 - Laravel Reverb websocket proxy
 
+`https://concierge.dev.local` is an internal site defined in the `Caddyfile`, serving the Concierge Dashboard placeholder from `dashboard/`. `concierge` does not manage it, and the site name `concierge` is reserved for it: a `concierge` site must not be named `concierge`.
+
 ## Files
 
-| File/Dir    | Purpose                                               |
-| ----------- | ----------------------------------------------------- |
-| `Caddyfile` | Main Caddy configuration                              |
-| `sites/`    | Site-specific configurations (managed by `concierge`) |
+| File/Dir     | Purpose                                                                      |
+| ------------ | ---------------------------------------------------------------------------- |
+| `Caddyfile`  | Main Caddy configuration, including the `concierge.dev.local` site           |
+| `snippets/`  | Shared snippets, one file per concern (see [Snippets](#snippets))            |
+| `sites/`     | Site-specific configurations (managed by `concierge`)                        |
+| `dashboard/` | Concierge Dashboard placeholder page served at `https://concierge.dev.local` |
 
 ## Installation
 
 ```bash
 bash caddy/install.sh
 ```
+
+The installer:
+
+1. Symlinks `Caddyfile` to `$(brew --prefix)/etc/Caddyfile`, and `snippets/`, `sites/` and `dashboard/` into `$(brew --prefix)/etc/caddy/`
+2. Starts the Caddy service
+3. Runs `caddy trust`, which adds Caddy's root certificate to the system keychain so `https://*.dev.local` sites are trusted
+
+It skips when Homebrew or `caddy` is not installed.
 
 ## Managing Sites
 
@@ -71,13 +83,27 @@ concierge remove mysite
 
 ### Caddyfile
 
-The main config defines a `(laravel)` snippet that:
+The main config imports `snippets/*` and `sites/*`, and defines the internal `concierge.dev.local` site, which serves `dashboard/` with Caddy's static file server. `concierge` reads and writes only the files in `sites/`, so `concierge add`, `remove` and `list` leave the `concierge.dev.local` site alone. A site file named `concierge` would claim the same host, so that name is reserved.
+
+### Snippets
+
+The `Caddyfile` imports every file in `snippets/`. A snippet can import one defined in another file whatever order the files load in.
+
+| File        | Snippet      | Usage                                  | Purpose                                                                                                     |
+| ----------- | ------------ | -------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| `tls`       | `dev-tls`    | `import dev-tls`                       | Internal CA certificate with a 365 day lifetime                                                             |
+| `client-ip` | `client-ip`  | `import client-ip <ip>`                | Sets `X-Forwarded-For` and `X-Real-IP` to `<ip>`; import it inside a `php_fastcgi` or `reverse_proxy` block |
+| `laravel`   | `reverb`     | `import reverb`                        | Proxies `/reverb/*` to Laravel Reverb websockets on `127.0.0.1:8081`                                        |
+| `laravel`   | `laravel`    | `import laravel <name> <path>`         | Laravel site                                                                                                |
+| `laravel`   | `laravel-ip` | `import laravel-ip <name> <path> <ip>` | Laravel site that imports `client-ip <ip>` in its `php_fastcgi` block                                       |
+
+The `(laravel)` snippet:
 
 1. Listens on `*.{name}.dev.local` and `{name}.dev.local`
-2. Uses internal CA for TLS certificates
+2. Imports `dev-tls` for an internal CA certificate
 3. Serves from `{path}/public`
 4. Proxies PHP to `127.0.0.1:9000`
-5. Proxies `/reverb/*` to Laravel Reverb websockets
+5. Imports `reverb` to proxy `/reverb/*` to Laravel Reverb websockets
 
 ### Site files
 
@@ -85,6 +111,12 @@ Each site is a file in `sites/` containing:
 
 ```
 import laravel mysite /path/to/project
+```
+
+A site added with `--ip <address>` contains:
+
+```
+import laravel-ip mysite /path/to/project <address>
 ```
 
 This creates:
@@ -106,13 +138,13 @@ concierge add
 
 ## Trusting the CA
 
-Caddy uses an internal CA. Trust it with:
+Caddy uses an internal CA. The installer trusts it by running:
 
 ```bash
 caddy trust
 ```
 
-This adds the Caddy root certificate to your system trust store.
+This fetches the root certificate from the running Caddy's admin API (`localhost:2019`) and adds it to the system keychain, so Caddy has to be running. Caddy calls `sudo` itself for the keychain write; run the command as your own user.
 
 ## Troubleshooting
 
@@ -142,6 +174,8 @@ Ensure PHP-FPM is running on port 9000:
 ```bash
 brew services start php
 ```
+
+See `php/README.md` for the PHP and PHP-FPM settings.
 
 ### DNS not resolving
 

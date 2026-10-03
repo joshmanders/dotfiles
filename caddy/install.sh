@@ -7,8 +7,9 @@
 #
 # What it does:
 #   1. Symlinks Caddyfile to $(brew --prefix)/etc/Caddyfile
-#   2. Symlinks snippets/ and sites/ directories to $(brew --prefix)/etc/caddy/
+#   2. Symlinks snippets/, sites/ and dashboard/ directories to $(brew --prefix)/etc/caddy/
 #   3. Starts Caddy service
+#   4. Trusts Caddy's local CA so https://*.dev.local sites are trusted
 #
 # Usage:
 #   bash caddy/install.sh
@@ -18,28 +19,40 @@ set -euo pipefail
 
 source "$DOTFILES/lib/index.sh"
 
-BREW_PREFIX="$(brew --prefix)"
-
 echo ""
 echo "=== Caddy Web Server Setup ==="
 echo ""
 
-# Symlink Caddyfile
-symlink "$DOTFILES/caddy/Caddyfile" "$BREW_PREFIX/etc/Caddyfile"
+skip_unless brew "Homebrew not installed" \
+    || skip_unless caddy "caddy not installed" || {
+    BREW_PREFIX="$(brew --prefix)"
 
-# Ensure directories exist
-mkdir -p "$DOTFILES/caddy/sites"
-mkdir -p "$BREW_PREFIX/etc/caddy"
+    # Symlink Caddyfile
+    symlink "$DOTFILES/caddy/Caddyfile" "$BREW_PREFIX/etc/Caddyfile"
 
-# Symlink snippets and sites to Homebrew location (Caddyfile imports from here)
-symlink "$DOTFILES/caddy/snippets" "$BREW_PREFIX/etc/caddy/snippets"
-symlink "$DOTFILES/caddy/sites" "$BREW_PREFIX/etc/caddy/sites"
+    # Ensure directories exist
+    mkdir -p "$DOTFILES/caddy/sites"
+    mkdir -p "$BREW_PREFIX/etc/caddy"
 
-# Start Caddy service
-run "Start Caddy service" \
-    brew services start caddy
+    # Symlink snippets, sites and dashboard to Homebrew location (Caddyfile reads from here)
+    symlink "$DOTFILES/caddy/snippets" "$BREW_PREFIX/etc/caddy/snippets"
+    symlink "$DOTFILES/caddy/sites" "$BREW_PREFIX/etc/caddy/sites"
+    symlink "$DOTFILES/caddy/dashboard" "$BREW_PREFIX/etc/caddy/dashboard"
 
-echo ""
-echo "Caddy setup complete!"
-echo ""
-echo "Add sites with: concierge add <name> [path]"
+    # Start Caddy service. A failure must not abort the other modules.
+    run "Start Caddy service" \
+        brew services start caddy \
+        || echo "Warning: Caddy service start failed; run 'brew services start caddy'" >&2
+
+    # After the service start: `caddy trust` fetches the root certificate from
+    # the running server's admin API. No sudo here: caddy calls sudo itself to
+    # write to the system keychain. A failure must not abort the other modules.
+    run "Trust Caddy's local CA in the system keychain" \
+        caddy trust \
+        || echo "Warning: caddy trust failed; run 'caddy trust' once Caddy is running" >&2
+
+    echo ""
+    echo "Caddy setup complete!"
+    echo ""
+    echo "Add sites with: concierge add <name> [path]"
+}

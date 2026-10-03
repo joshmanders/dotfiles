@@ -1,15 +1,6 @@
 # ============================================================================
-# Common Snippets
+# Laravel Snippets
 # ============================================================================
-
-# Internal TLS certificate (365 day lifetime)
-(dev-tls) {
-	tls {
-		issuer internal {
-			lifetime 365d
-		}
-	}
-}
 
 # Laravel Reverb websocket handler
 # Proxies /reverb/* to the Reverb server on port 8081
@@ -23,10 +14,6 @@
 		reverse_proxy 127.0.0.1:8081
 	}
 }
-
-# ============================================================================
-# Laravel Site Snippets
-# ============================================================================
 
 # Laravel Snippet (base)
 # Usage: import laravel <name> <path>
@@ -54,8 +41,7 @@
 		encode zstd gzip
 		file_server
 		php_fastcgi 127.0.0.1:9000 {
-			header_up X-Forwarded-For {args[2]}
-			header_up X-Real-IP {args[2]}
+			import client-ip {args[2]}
 		}
 
 		import reverb

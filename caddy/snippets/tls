@@ -1,0 +1,13 @@
+# ============================================================================
+# TLS Snippets
+# ============================================================================
+
+# Internal TLS certificate (365 day lifetime)
+# Usage: import dev-tls
+(dev-tls) {
+	tls {
+		issuer internal {
+			lifetime 365d
+		}
+	}
+}

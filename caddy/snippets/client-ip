@@ -1,0 +1,12 @@
+# ============================================================================
+# Client IP Snippets
+# ============================================================================
+
+# Client IP forwarding
+# Usage: import client-ip <ip>
+# Import inside a php_fastcgi or reverse_proxy block. The upstream sees <ip> as
+# the real client IP (rate limiting, geo-location, etc.)
+(client-ip) {
+	header_up X-Forwarded-For {args[0]}
+	header_up X-Real-IP {args[0]}
+}
