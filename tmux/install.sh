@@ -20,17 +20,14 @@ echo ""
 echo "=== tmux Setup ==="
 echo ""
 
-if ! command -v tmux &>/dev/null; then
-    echo "Skip: tmux not installed"
-    exit 0
-fi
+skip_unless tmux "tmux not installed" || {
+    symlink "$DOTFILES/tmux/tmux.conf" "$HOME/.tmux.conf"
 
-symlink "$DOTFILES/tmux/tmux.conf" "$HOME/.tmux.conf"
+    if [[ ! -d "$HOME/.tmux/plugins/tpm" ]]; then
+        run "Install TPM (tmux plugin manager)" \
+            git clone https://github.com/tmux-plugins/tpm "$HOME/.tmux/plugins/tpm"
+    fi
 
-if [[ ! -d "$HOME/.tmux/plugins/tpm" ]]; then
-    run "Install TPM (tmux plugin manager)" \
-        git clone https://github.com/tmux-plugins/tpm "$HOME/.tmux/plugins/tpm"
-fi
-
-echo ""
-echo "tmux setup complete!"
+    echo ""
+    echo "tmux setup complete!"
+}
