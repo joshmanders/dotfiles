@@ -1,0 +1,6 @@
+{
+	"cpu": 1,
+	"k8s.enable": true,
+	"k8s.expose_services": true,
+	"rosetta": false
+}
