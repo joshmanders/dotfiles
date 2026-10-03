@@ -1,10 +1,10 @@
 ### Linux
 
-\*~
+*~
 
 # temporary files which can be created if a process still has a handle open of a deleted file
 
-.fuse_hidden\*
+.fuse_hidden*
 
 # KDE directory preferences
 
@@ -12,15 +12,15 @@
 
 # Linux trash folder which might appear on any partition or disk
 
-.Trash-\*
+.Trash-*
 
 # .nfs files are created when an open file is removed but is still being accessed
 
-.nfs\*
+.nfs*
 
 ### macOS
 
-\*.DS_Store
+*.DS_Store
 .AppleDouble
 .LSOverride
 
@@ -30,7 +30,7 @@
 
 # Thumbnails
 
-.\_\*
+._*
 
 # Files that might appear in the root of a volume
 
@@ -68,17 +68,19 @@ $RECYCLE.BIN/
 
 # Windows Installer files
 
-_.cab
-_.msi
-_.msm
-_.msp
+*.cab
+*.msi
+*.msm
+*.msp
 
 # Windows shortcuts
 
-\*.lnk
+*.lnk
 
 # vscode
 
 .vscode
 
-.claude/settings.local.json
+# claude
+
+**/.claude/settings.local.json
