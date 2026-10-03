@@ -51,7 +51,7 @@ Ask: *does this apply everywhere Claude runs, or only when editing this repo?*
 | Belongs in **global**                                        | Belongs in **project**                                       |
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
 | Universal behavior (verify before claiming, never push without confirmation) | Dotfiles maintenance (update the bin-scripts skill when bin scripts change) |
-| Tools available everywhere (`gh`, `git`, `npm`)              | Tools internal to this repo (`brewdump`, dotfiles install patterns) |
+| Tools available everywhere (`gh`, `git`, `npm`)              | Tools internal to this repo (dotfiles install patterns)      |
 | Workflow patterns useful in any codebase (brainstorming, planning) | Workflow patterns specific to dotfiles (`adding-modules`)    |
 | Correction lessons that transcend projects ("never dismiss reported issues as pre-existing") | Corrections that only matter when editing this repo          |
 
