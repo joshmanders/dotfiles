@@ -78,6 +78,18 @@ load_install_hooks "$DOTFILES/claude" # explicit
 
 Use it for values that must be computed at install time rather than committed — file contents pulled into a generated config, machine-specific paths, anything derived from elsewhere in the repo. `claude/install.d/claim-check-prompt.sh` is the worked example: it reads a markdown file and exports it JSON-escaped for the settings template.
 
+### `hold_sudo`
+
+Asks for the sudo password once and keeps it alive until the calling script exits. The main `install.sh` calls it before the first module; modules call `sudo` themselves and never depend on it, so a module run on its own just gets sudo's usual prompt.
+
+**Behavior:**
+
+- Non-interactive without `--allow`: does nothing, since no command runs
+- Credentials already cached: no prompt
+- Otherwise: says why, then prompts with `sudo -v`
+- Prompt fails or is cancelled: prints a warning and carries on, so steps that need root prompt or fail on their own
+- A background loop refreshes the credentials with `sudo -n -v` every 60 seconds, never prompts, and stops when the script exits
+
 ### `skip_unless <requirement> <message>`
 
 Guards work that needs a command or an app. When the requirement is missing it prints `Skip: <message>` and the block after `||` is skipped; when it is present it prints nothing and the block runs.
@@ -161,4 +173,5 @@ bash homebrew/install.sh --non-interactive --allow
 - `env.sh` - Environment variable helpers
 - `symlink.sh` - Symlink creation with conflict handling
 - `run.sh` - Command wrapper with confirmation prompts
+- `sudo.sh` - One sudo prompt held for the whole run
 - `skip.sh` - Guard for work that needs a command or an app
