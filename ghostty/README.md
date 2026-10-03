@@ -8,6 +8,8 @@ Ghostty terminal emulator configuration.
 bash ghostty/install.sh
 ```
 
+Symlinks `config` to `~/.config/ghostty/config`. It skips when `/Applications/Ghostty.app` is not installed.
+
 ## Configuration
 
 Edit `config` to customize:
@@ -17,3 +19,6 @@ Edit `config` to customize:
 - `font-size` - Font size
 - `adjust-cell-height` - Line height (percentage)
 - `keybind` - Custom keybindings
+- `macos-option-as-alt` - Treat Option as Alt
+- `window-new-tab-position` - Where new tabs open
+- `tab-inherit-working-directory` - Whether new tabs start in the current tab's directory

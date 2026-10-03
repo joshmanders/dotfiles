@@ -3,5 +3,6 @@ font-family = "Hack Nerd Font Mono"
 font-size = 16
 adjust-cell-height = 20%
 keybind = shift+enter=text:\x1b\r
+macos-option-as-alt = true
 window-new-tab-position = end
 tab-inherit-working-directory = false

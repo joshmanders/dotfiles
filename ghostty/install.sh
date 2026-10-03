@@ -15,8 +15,10 @@ echo ""
 echo "=== Ghostty Setup ==="
 echo ""
 
-mkdir -p "$HOME/.config/ghostty"
-symlink "$DOTFILES/ghostty/config" "$HOME/.config/ghostty/config"
+skip_unless "/Applications/Ghostty.app" "Ghostty not installed" || {
+    mkdir -p "$HOME/.config/ghostty"
+    symlink "$DOTFILES/ghostty/config" "$HOME/.config/ghostty/config"
 
-echo ""
-echo "Ghostty setup complete!"
+    echo ""
+    echo "Ghostty setup complete!"
+}
