@@ -25,9 +25,7 @@ fi
 mkdir -p "$HOME/.config/cpanel"
 symlink "$CONFIG" "$HOME/.config/cpanel/config.json"
 
-if command -v bun &>/dev/null; then
+skip_unless bun "bun not installed" || {
     run "Install cpanel dependencies (bun install)" \
         bash -c "cd '$DOTFILES/cpanel' && bun install"
-else
-    echo "Skip: bun not installed — install via Brewfile, then re-run this script"
-fi
+}
