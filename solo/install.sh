@@ -15,7 +15,7 @@ echo ""
 mkdir -p "$DOTFILES/solo/configs"
 symlink "$DOTFILES/solo/configs" "$HOME/.config/solo"
 
-if command -v bun &>/dev/null; then
+skip_unless bun "bun not installed" || {
     run "Install solo dependencies (bun install)" \
         bash -c "cd '$DOTFILES/solo' && bun install"
 
@@ -27,6 +27,4 @@ if command -v bun &>/dev/null; then
     find "$DOTFILES/solo/node_modules/node-pty/prebuilds" \
          "$HOME/.bun/install/cache" \
          -name spawn-helper -type f -exec chmod +x {} + 2>/dev/null || true
-else
-    echo "Skip: bun not installed — install via Brewfile, then re-run this script"
-fi
+}
