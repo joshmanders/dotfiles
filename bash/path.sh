@@ -16,10 +16,6 @@ PATH="${DOTFILES}/bin:${HOMEBREW_PREFIX}/bin:${HOMEBREW_PREFIX}/sbin"
 # System paths
 PATH="${PATH}:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
 
-# Android SDK
-PATH="${PATH}:${ANDROID_HOME}/emulator"
-PATH="${PATH}:${ANDROID_HOME}/platform-tools"
-
 # Composer global
 PATH="${PATH}:${COMPOSER_HOME}/vendor/bin"
 

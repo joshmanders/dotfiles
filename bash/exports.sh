@@ -15,10 +15,6 @@ export BASH_SILENCE_DEPRECATION_WARNING=1
 # Homebrew
 export HOMEBREW_NO_AUTO_UPDATE="${DOTFILES_HOMEBREW_NO_AUTOUPDATE}"
 
-# Android SDK
-export JAVA_HOME="/Library/Java/JavaVirtualMachines/zulu-17.jdk/Contents/Home"
-export ANDROID_HOME="${HOME}/Library/Android/sdk"
-
 # Composer
 export COMPOSER_HOME="${HOME}/.composer"
 
