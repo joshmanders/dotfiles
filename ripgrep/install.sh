@@ -10,8 +10,11 @@ echo ""
 echo "=== ripgrep Setup ==="
 echo ""
 
-symlink "$DOTFILES/ripgrep/config" "$HOME/.ripgreprc"
-symlink "$DOTFILES/ripgrep/ignore" "$HOME/.ignore"
+# rg reads its flags from RIPGREP_CONFIG_PATH, which bash/exports.sh points
+# at ripgrep/config in this repo, so only the ignore file needs a link.
+skip_unless rg "ripgrep not installed" || {
+    symlink "$DOTFILES/ripgrep/ignore" "$HOME/.ignore"
 
-echo ""
-echo "ripgrep setup complete!"
+    echo ""
+    echo "ripgrep setup complete!"
+}
