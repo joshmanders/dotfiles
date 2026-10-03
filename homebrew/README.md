@@ -10,7 +10,6 @@ The `bundle` contains all packages to install:
 - **Brews**: Command-line tools
 - **Casks**: GUI applications
 - **MAS**: Mac App Store apps
-- **VSCode**: VS Code extensions
 - **Go**: Go packages
 
 ## Installation
@@ -23,6 +22,8 @@ bash homebrew/install.sh
 bash homebrew/install.sh --non-interactive --allow
 ```
 
+Running the module on its own reads `$DOTFILES` from the environment, which bashrc exports. On a new Mac, before bashrc is linked, run the root `bash install.sh`, which sets it.
+
 ## Managing Packages
 
 ### Add a package
@@ -33,8 +34,9 @@ Edit `bundle` and add:
 brew "package-name"           # CLI tool
 cask "app-name"               # GUI app
 mas "App Name", id: 123456    # Mac App Store
-vscode "publisher.extension"  # VS Code extension
 ```
+
+A third-party tap is trusted either on its `tap` line (`tap "owner/repo", trusted: true`) or on the formula line that uses it (`brew "owner/repo/formula", trusted: true`), so `brew bundle` can load its formulae on a new machine.
 
 Then run:
 
@@ -53,18 +55,6 @@ brew bundle --file="$DOTFILES/homebrew/bundle"
 brew update && brew upgrade
 ```
 
-### Generate bundle from installed packages
-
-```bash
-# Quick dump (overwrites bundle with current state)
-brew bundle dump --file="$DOTFILES/homebrew/bundle" --force
-
-# Interactive cleanup (review and remove unused packages first)
-brewdump
-```
-
-The `brewdump` script walks through leaf packages interactively, letting you mark items for removal before generating a clean bundle. Use `brewdump --dry-run` to preview without changes.
-
 ## Key Packages
 
 ### Shell enhancements
@@ -79,12 +69,14 @@ The `brewdump` script walks through leaf packages interactively, letting you mar
 
 ### Development
 
-| Package       | Purpose             |
-| ------------- | ------------------- |
-| `git`, `gh`   | Version control     |
-| `node`, `bun` | JavaScript runtimes |
-| `go`          | Go language         |
-| `composer`    | PHP package manager |
+| Package                | Purpose             |
+| ---------------------- | ------------------- |
+| `git`, `gh`, `lazygit` | Version control     |
+| `node`, `bun`          | JavaScript runtimes |
+| `go`                   | Go language         |
+| `rust`                 | Rust language       |
+| `php`                  | PHP 8.5 and php-fpm |
+| `composer`             | PHP package manager |
 
 ### Infrastructure
 
@@ -92,5 +84,5 @@ The `brewdump` script walks through leaf packages interactively, letting you mar
 | ------------------------------------- | ----------------------------- |
 | `caddy`                               | Web server for local dev      |
 | `dnsmasq`                             | DNS for `*.dev.local` domains |
-| `mysql@8.4`, `postgresql@14`, `redis` | Databases                     |
+| `mariadb`, `postgresql`, `redis`      | Databases                     |
 | `kubernetes-cli`                      | Kubernetes                    |
