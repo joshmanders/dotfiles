@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 #
-# claude/install.sh - Claude Code setup
+# claude/install.sh - Claude Code and Claude desktop setup
 #
-# This script sets up Claude Code configuration.
+# This script sets up Claude Code configuration and the Claude desktop app's
+# preferences.
 # Can be run standalone or sourced from the main install.sh.
 #
 # What it does:
@@ -13,6 +14,9 @@
 #   5. Renders settings.json.template into settings.json with the actual
 #      $DOTFILES path, then symlinks it to ~/.claude/settings.json
 #   6. Symlinks keybindings.json to ~/.claude/keybindings.json
+#   7. Symlinks desktop_config.json to
+#      ~/Library/Application Support/Claude/claude_desktop_config.json when the
+#      Claude desktop app is installed
 #
 # Usage:
 #   bash claude/install.sh
@@ -75,6 +79,13 @@ symlink "$DOTFILES/claude/agents" "$HOME/.claude/agents"
 symlink "$DOTFILES/claude/output-styles" "$HOME/.claude/output-styles"
 symlink "$DOTFILES/claude/settings.json" "$HOME/.claude/settings.json"
 symlink "$DOTFILES/claude/keybindings.json" "$HOME/.claude/keybindings.json"
+
+# The desktop app is a separate install from Claude Code, so its absence skips
+# only this step.
+skip_unless "/Applications/Claude.app" "Claude desktop not installed" || {
+    symlink "$DOTFILES/claude/desktop_config.json" "$HOME/Library/Application Support/Claude/claude_desktop_config.json"
+    echo "Note: Restart Claude desktop for changes to take effect"
+}
 
 echo ""
 echo "Claude Code setup complete!"
