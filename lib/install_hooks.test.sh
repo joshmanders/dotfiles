@@ -1,12 +1,16 @@
 #!/usr/bin/env bash
 # Tests for load_install_hooks.
 # Verifies hook loading, caller-directory defaulting, and failure handling.
-# Usage: ./install_hooks.test.sh
+# Usage: bash lib/install_hooks.test.sh
 # Exits non-zero on any failure.
 set -uo pipefail
 
 DOTFILES="${DOTFILES:-$(cd "$(dirname "$0")/.." && pwd)}"
 export DOTFILES
+
+# Child shells must not source bashrc through BASH_ENV; it would rebuild PATH
+# and run user config inside the shells under test.
+unset BASH_ENV
 
 PASS=0
 FAIL=0
