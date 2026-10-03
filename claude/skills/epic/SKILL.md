@@ -96,14 +96,14 @@ Only this issue, in the current working tree on branch <branch>. Other sub-issue
 **4c. Scrutinize.** Dispatch a reviewer with: (1) the full contents of `adversarial-review.md` in this skill's directory, (2) the sub-issue number, URL, and body, (3) the branch name and the fact that the diff is the uncommitted working tree, (4) the implementer's summary and its verbatim claims, (5) the relevant ledger slice.
 
 - **Code findings** → back to the implementer via `SendMessage`. All of them, no cherry-picking. If one looks wrong, dispatch an agent to check it before dismissing it.
-- **Claims findings** → to Josh, in your own message, immediately.
+- **Claims findings** → to Josh, in your own message: in full when it bears on the topic open with him, otherwise first once that topic is concluded.
 
 One pass: the implementer fixes every finding and meets every acceptance criterion on the sub-issue, then on to 4d. No second scrutinizer.
 
 **4d. Run the gate.** The project defines a `team-review` skill → invoke it yourself as the gate; it's a skill, not an agent to dispatch. Otherwise dispatch a `code-reviewer` agent with the diff (the uncommitted working tree on branch `<branch>`), the list of changed files, the sub-issue URL, and the implementer's claims quoted verbatim.
 
 - **Code findings** → back to the implementer via `SendMessage`. All of them, no cherry-picking. If one looks wrong, dispatch an agent to check it before dismissing it.
-- **Claims findings** → to Josh, in your own message, immediately.
+- **Claims findings** → to Josh, in your own message: in full when it bears on the topic open with him, otherwise first once that topic is concluded.
 
 One pass: the implementer fixes every finding, then the work goes to Josh. No second reviewer. **Tests failing means the issue isn't done** — it does not go to Josh with a caveat.
 
@@ -125,7 +125,7 @@ Log the sub-issue number, the SHA from `git rev-parse --short HEAD`, and the nam
 Queue empty → run the whole-branch gate. The project defines a `team-review` skill → invoke it yourself over the whole branch diff; it's a skill, not an agent to dispatch. Otherwise dispatch a `code-reviewer` agent with the whole branch diff (every commit on `<branch>` against the base branch), the list of changed files, the epic URL, and the implementers' claims quoted verbatim — no single-issue reviewer saw the commits together.
 
 - **Code findings** → back to the implementer that wrote the commit each one lands in, by the name recorded under Commits, via `SendMessage`. All of them, no cherry-picking. If one looks wrong, dispatch an agent to check it before dismissing it.
-- **Claims findings** → to Josh, in your own message, immediately.
+- **Claims findings** → to Josh, in your own message: in full when it bears on the topic open with him, otherwise first once that topic is concluded.
 
 A fix to already-committed work is a new commit, never an amend. One pass: the implementers fix every finding, then the branch goes to Josh. No second reviewer.
 
