@@ -2,15 +2,27 @@
 #
 # macos/defaults.sh - macOS system preferences
 
+set -euo pipefail
+
 # ============================================================================
 # Dock
 # ============================================================================
 
 # Pretend the dock doesn't exist:
-#   autohide              - hide the dock when not in use
-#   autohide-delay        - effectively disable hover-to-reveal (huge delay)
+#   autohide                - hide the dock when not in use
+#   autohide-delay          - effectively disable hover-to-reveal (huge delay)
+#   autohide-time-modifier  - no show/hide animation
+#   tilesize                - tiny icons
+#   show-recents            - no recent apps section
+#   show-process-indicators - no running-app dots
+#   minimize-to-application - minimize into the app icon, not a separate tile
 defaults write com.apple.dock autohide -bool true
 defaults write com.apple.dock autohide-delay -float 99999999
+defaults write com.apple.dock autohide-time-modifier -int 0
+defaults write com.apple.dock tilesize -float 16
+defaults write com.apple.dock show-recents -bool false
+defaults write com.apple.dock show-process-indicators -bool false
+defaults write com.apple.dock minimize-to-application -bool true
 
 # ============================================================================
 # Finder
@@ -42,6 +54,27 @@ defaults write com.apple.finder ShowRecentTags -bool false
 defaults write com.apple.finder _FXSortFoldersFirst -bool true
 
 # ============================================================================
+# Desktop / Window Tiling
+# ============================================================================
+
+# Clicking the wallpaper doesn't reveal the desktop
+defaults write com.apple.WindowManager EnableStandardClickToShowDesktop -bool false
+
+# No window tiling: drag to edges, drag to the top, Option-key accelerator, tile margins
+defaults write com.apple.WindowManager EnableTilingByEdgeDrag -bool false
+defaults write com.apple.WindowManager EnableTopTilingByEdgeDrag -bool false
+defaults write com.apple.WindowManager EnableTilingOptionAccelerator -bool false
+defaults write com.apple.WindowManager EnableTiledWindowMargins -bool false
+
+# Hide desktop items (standard and Stage Manager), Stage Manager off
+defaults write com.apple.WindowManager StandardHideDesktopIcons -bool true
+defaults write com.apple.WindowManager HideDesktop -bool true
+defaults write com.apple.WindowManager GloballyEnabled -bool false
+
+# No hard disks on the desktop
+defaults write com.apple.finder ShowHardDrivesOnDesktop -bool false
+
+# ============================================================================
 # Global (NSGlobalDomain)
 # ============================================================================
 
@@ -61,7 +94,19 @@ defaults write NSGlobalDomain AppleMiniaturizeOnDoubleClick -bool false
 defaults write NSGlobalDomain NSTableViewDefaultSizeMode -int 2
 
 # Reduce Liquid Glass diffusion (macOS Tahoe)
-defaults write NSGlobalDomain NSGlassDiffusionSetting -int 0
+defaults write NSGlobalDomain NSGlassDiffusionSetting -bool false
+
+# Always open documents in tabs
+defaults write NSGlobalDomain AppleWindowTabbingMode -string "always"
+
+# Don't tint window backgrounds with the wallpaper color
+defaults write NSGlobalDomain AppleReduceDesktopTinting -bool true
+
+# Dark icon style
+defaults write NSGlobalDomain AppleIconAppearanceTheme -string "RegularDark"
+
+# Show scroll bars only while scrolling
+defaults write NSGlobalDomain AppleShowScrollBars -string "WhenScrolling"
 
 # ============================================================================
 # Screenshots
@@ -71,7 +116,7 @@ defaults write NSGlobalDomain NSGlassDiffusionSetting -int 0
 defaults write com.apple.screencapture disable-shadow -bool true
 
 # Save screenshots to ~/Downloads
-defaults write com.apple.screencapture location -string "$HOME/Downloads"
+defaults write com.apple.screencapture location -string '~/Downloads'
 
 # Output goes to a file (not clipboard/preview)
 defaults write com.apple.screencapture target -string "file"
@@ -91,6 +136,24 @@ defaults write com.apple.menuextra.clock ShowDate -int 1
 
 # Hide day of week (Mon/Tue/etc)
 defaults write com.apple.menuextra.clock ShowDayOfWeek -bool false
+
+# Show day of month and AM/PM
+defaults write com.apple.menuextra.clock ShowDayOfMonth -bool true
+defaults write com.apple.menuextra.clock ShowAMPM -bool true
+
+# ============================================================================
+# Menu Bar
+# ============================================================================
+
+# Battery percentage next to the icon (per-host)
+defaults -currentHost write com.apple.controlcenter BatteryShowPercentage -bool true
+
+# Hide Sound, Wi-Fi, Bluetooth, Now Playing, and Display from the menu bar
+defaults write com.apple.controlcenter "NSStatusItem Visible Sound" -bool false
+defaults write com.apple.controlcenter "NSStatusItem Visible WiFi" -bool false
+defaults write com.apple.controlcenter "NSStatusItem Visible Bluetooth" -bool false
+defaults write com.apple.controlcenter "NSStatusItem Visible NowPlaying" -bool false
+defaults write com.apple.controlcenter "NSStatusItem Visible Display" -bool false
 
 # ============================================================================
 # Trackpad
@@ -114,6 +177,9 @@ defaults write NSGlobalDomain KeyRepeat -int 2
 defaults write NSGlobalDomain InitialKeyRepeat -int 15
 # Hold a key to repeat (not show the accent menu)
 defaults write NSGlobalDomain ApplePressAndHoldEnabled -bool false
+# Fn/Globe key opens Emoji & Symbols
+# (0=do nothing, 1=change input source, 2=show Emoji & Symbols, 3=start dictation)
+defaults write com.apple.HIToolbox AppleFnUsageType -int 2
 
 # ============================================================================
 # Mission Control / Spaces
@@ -142,6 +208,7 @@ defaults write com.apple.commerce AutoUpdate -bool true
 #
 # macOS stores keyboard shortcut overrides in com.apple.symbolichotkeys.
 # Values are nested dicts: { enabled, value: { type, parameters: (ascii, keycode, modifier) } }
+# enabled is a boolean and the parameters are integers, so entries are written as XML to keep those types.
 #
 # Modifier flag bits (OR them together):
 #   Shift   = 0x020000 (131072)
@@ -158,7 +225,7 @@ defaults write com.apple.commerce AutoUpdate -bool true
 set_hotkey() {
     local id=$1 enabled=$2 ascii=$3 keycode=$4 modifier=$5
     defaults write com.apple.symbolichotkeys AppleSymbolicHotKeys -dict-add "$id" \
-        "{enabled = $enabled; value = { parameters = ($ascii, $keycode, $modifier); type = 'standard'; }; }"
+        "<dict><key>enabled</key><$enabled/><key>value</key><dict><key>parameters</key><array><integer>$ascii</integer><integer>$keycode</integer><integer>$modifier</integer></array><key>type</key><string>standard</string></dict></dict>"
 }
 
 # Invert the macOS screenshot defaults so the muscle-memory shortcuts copy to
@@ -168,12 +235,12 @@ set_hotkey() {
 #   Cmd+Shift+4  ->  copy selected area to clipboard
 #   Cmd+Shift+5  ->  save selected area to file
 #
-#   id  action                             enabled  ascii  key  modifier
-set_hotkey 28  0  51 20 1441792   # save full screen to file (off; was Cmd+Shift+3)
-set_hotkey 29  1  51 20 1179648   # copy full screen to clipboard       (Cmd+Shift+3)
-set_hotkey 30  1  53 23 1179648   # save selected area to file          (Cmd+Shift+5)
-set_hotkey 31  1  52 21 1179648   # copy selected area to clipboard     (Cmd+Shift+4)
-set_hotkey 184 0  53 23 1179648   # screenshot toolbar UI (off; was Cmd+Shift+5)
+#   id  enabled (true/false)  ascii  key  modifier
+set_hotkey 28  false 51 20 1441792   # save full screen to file (off; was Cmd+Shift+3)
+set_hotkey 29  true  51 20 1179648   # copy full screen to clipboard       (Cmd+Shift+3)
+set_hotkey 30  true  53 23 1179648   # save selected area to file          (Cmd+Shift+5)
+set_hotkey 31  true  52 21 1179648   # copy selected area to clipboard     (Cmd+Shift+4)
+set_hotkey 184 false 53 23 1179648   # screenshot toolbar UI (off; was Cmd+Shift+5)
 
 # ============================================================================
 # Restart affected services
@@ -182,6 +249,7 @@ set_hotkey 184 0  53 23 1179648   # screenshot toolbar UI (off; was Cmd+Shift+5)
 killall Dock 2>/dev/null || true
 killall Finder 2>/dev/null || true
 killall SystemUIServer 2>/dev/null || true
+killall ControlCenter 2>/dev/null || true
 
 # symbolichotkeys changes need cfprefsd reload + logout/login (or a re-activation)
 # to take effect in the WindowServer.
