@@ -83,7 +83,6 @@ concierge add
 ├── git/               # Git configuration
 ├── homebrew/          # Package management
 ├── hyperkey/          # Hyperkey config
-├── kap/               # Kap preferences
 ├── lazygit/           # Lazygit config
 ├── lib/               # Installer utilities
 ├── macos/             # macOS system preferences
@@ -144,7 +143,6 @@ bash rectangle/install.sh   # Just Rectangle preferences
 bash hyperkey/install.sh    # Just Hyperkey preferences
 bash caffeine/install.sh    # Just Caffeine preferences
 bash dato/install.sh        # Just Dato preferences
-bash kap/install.sh         # Just Kap preferences
 bash orbstack/install.sh    # Just OrbStack preferences
 ```
 
@@ -166,7 +164,6 @@ Each directory has its own README with detailed documentation:
 - [git/README.md](git/README.md) - Git configuration
 - [homebrew/README.md](homebrew/README.md) - Package management
 - [hyperkey/README.md](hyperkey/README.md) - Hyperkey
-- [kap/README.md](kap/README.md) - Kap
 - [lib/README.md](lib/README.md) - Installer utilities
 - [macos/README.md](macos/README.md) - macOS system preferences
 - [neovim/README.md](neovim/README.md) - Neovim configuration

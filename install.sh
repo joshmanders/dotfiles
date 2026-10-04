@@ -44,7 +44,6 @@
 #   bash hyperkey/install.sh
 #   bash caffeine/install.sh
 #   bash dato/install.sh
-#   bash kap/install.sh
 #   bash orbstack/install.sh
 
 set -euo pipefail
@@ -88,7 +87,7 @@ hold_sudo
 # Run module installers
 # Order matters: homebrew first (installs dependencies), then bash (shell
 # config the fzf and ripgrep modules plug into), then configs; app preferences
-# (macos, rectangle, hyperkey, caffeine, dato, kap, orbstack) last
+# (macos, rectangle, hyperkey, caffeine, dato, orbstack) last
 
 source "$DOTFILES/homebrew/install.sh"
 source "$DOTFILES/bash/install.sh"
@@ -113,7 +112,6 @@ source "$DOTFILES/rectangle/install.sh"
 source "$DOTFILES/hyperkey/install.sh"
 source "$DOTFILES/caffeine/install.sh"
 source "$DOTFILES/dato/install.sh"
-source "$DOTFILES/kap/install.sh"
 source "$DOTFILES/orbstack/install.sh"
 
 echo ""
