@@ -23,11 +23,11 @@ bash macos/install.sh
 | Keyboard         | Faster key repeat, shorter delay, hold-to-repeat (no accent menu), Fn/Globe key opens Emoji & Symbols                                                                                       |
 | Mission Control  | Don't auto-rearrange Spaces, App Exposé gesture on                                                                                                                                          |
 | Software Update  | Check daily, background download, auto-update App Store apps                                                                                                                                |
-| Screenshot keys  | Invert macOS defaults so Cmd+Shift+3/4 copy to clipboard, Cmd+Shift+5 saves a region to file                                                                                                |
+| Screenshot keys  | Invert macOS defaults so Cmd+Shift+3/4 copy to clipboard and Cmd+Opt+Shift+3/4 save to file; Cmd+Shift+5 opens the toolbar                                                                  |
 | Power            | Display never sleeps on charger and sleeps after 30 minutes on battery (`install.sh` runs `sudo pmset -c` and `sudo pmset -b`)                                                              |
 | Default browser  | Brave, when installed (`install.sh` runs `open -a "Brave Browser" --args --make-default-browser`)                                                                                           |
 
-Restarts `Dock`, `Finder`, `SystemUIServer`, `ControlCenter`, and `cfprefsd` at the end so changes take effect immediately. Keyboard shortcut overrides require a logout/login to fully apply.
+Restarts `Dock`, `Finder`, `SystemUIServer`, `ControlCenter`, and `cfprefsd` at the end so changes take effect immediately, then runs `activateSettings -u` so the keyboard shortcut overrides apply to the current login session.
 
 ## Adding Settings
 

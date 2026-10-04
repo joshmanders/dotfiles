@@ -218,7 +218,7 @@ defaults write com.apple.commerce AutoUpdate -bool true
 #
 # Common combos:
 #   Cmd+Shift          = 1179648
-#   Cmd+Ctrl+Shift     = 1441792
+#   Cmd+Opt+Shift      = 1703936
 #
 # Key codes: 20=3, 21=4, 23=5 (matches the digit's ASCII as the first parameter)
 
@@ -229,18 +229,20 @@ set_hotkey() {
 }
 
 # Invert the macOS screenshot defaults so the muscle-memory shortcuts copy to
-# clipboard, and Cmd+Shift+5 saves a region to file instead of opening the toolbar.
+# clipboard, and adding Option saves to file. Cmd+Shift+5 opens the toolbar.
 #
-#   Cmd+Shift+3  ->  copy full screen to clipboard
-#   Cmd+Shift+4  ->  copy selected area to clipboard
-#   Cmd+Shift+5  ->  save selected area to file
+#   Cmd+Shift+3      ->  copy full screen to clipboard
+#   Cmd+Shift+4      ->  copy selected area to clipboard
+#   Cmd+Shift+5      ->  screenshot / screen recording toolbar
+#   Cmd+Opt+Shift+3  ->  save full screen to file
+#   Cmd+Opt+Shift+4  ->  save selected area to file
 #
 #   id  enabled (true/false)  ascii  key  modifier
-set_hotkey 28  false 51 20 1441792   # save full screen to file (off; was Cmd+Shift+3)
+set_hotkey 28  true  51 20 1703936   # save full screen to file            (Cmd+Opt+Shift+3)
 set_hotkey 29  true  51 20 1179648   # copy full screen to clipboard       (Cmd+Shift+3)
-set_hotkey 30  true  53 23 1179648   # save selected area to file          (Cmd+Shift+5)
+set_hotkey 30  true  52 21 1703936   # save selected area to file          (Cmd+Opt+Shift+4)
 set_hotkey 31  true  52 21 1179648   # copy selected area to clipboard     (Cmd+Shift+4)
-set_hotkey 184 false 53 23 1179648   # screenshot toolbar UI (off; was Cmd+Shift+5)
+set_hotkey 184 true  53 23 1179648   # screenshot / recording toolbar UI   (Cmd+Shift+5)
 
 # ============================================================================
 # Restart affected services
@@ -251,6 +253,8 @@ killall Finder 2>/dev/null || true
 killall SystemUIServer 2>/dev/null || true
 killall ControlCenter 2>/dev/null || true
 
-# symbolichotkeys changes need cfprefsd reload + logout/login (or a re-activation)
-# to take effect in the WindowServer.
+# symbolichotkeys changes reach the WindowServer in two steps: cfprefsd reloads
+# the preferences, then activateSettings applies the hotkeys to the current
+# login session.
 killall cfprefsd 2>/dev/null || true
+/System/Library/PrivateFrameworks/SystemAdministration.framework/Resources/activateSettings -u 2>/dev/null || true
