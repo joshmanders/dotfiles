@@ -59,6 +59,8 @@ mux list                          # list all registered sessions
 mux show                          # show panes for CWD's session
 mux show primcloud:platform       # show panes for a specific session
 mux copy primcloud:platform       # copy layout to CWD (panes, no commands)
+mux delete                        # kill CWD's session and remove it from the registry
+mux delete primcloud:platform     # same, for a specific session
 ```
 
 ### Pane layout persistence
@@ -133,14 +135,19 @@ Ctrl+; Delete        Equalize all panes (tiled layout)
 
 Or drag pane borders with the mouse.
 
-### Pane and window management
+### Pane, window, and session management
 
 ```
 Ctrl+; z             Zoom — toggle a pane fullscreen (again to restore)
 Ctrl+; w             Close the current pane (asks first)
 Ctrl+; t             Prompt for a tab name, opens it (mux-persisted)
 Ctrl+; W             Close the current tab (mux-persisted)
+Ctrl+; q             Close the current session (asks first)
 ```
+
+`Ctrl+; w` and `Ctrl+; q` open a confirmation menu in the center of the screen with No selected: `y` confirms; `n`, `Escape`, or `Enter` cancels.
+
+`Ctrl+; q` runs `mux delete` on the current session: every window and pane is killed and the session is removed from the `mux` registry, so its saved layout and tabs are gone too. It also works on sessions `mux` didn't create. The client detaches.
 
 Tabs created with `Ctrl+; t` are tracked by `mux` — they're restored next time
 the tmux server restarts. Running `mux` from a subdirectory of an already-
@@ -185,6 +192,7 @@ Scroll up with mouse wheel or trackpad. To copy text:
 | `Ctrl+; w`             | Close pane (confirms)             |
 | `Ctrl+; t`             | New tab (mux-persisted, named)    |
 | `Ctrl+; W`             | Close tab (mux-persisted)         |
+| `Ctrl+; q`             | Close session (confirms)          |
 | `Ctrl+; 1-9`           | Jump to window number             |
 | `Ctrl+; n/p`           | Next/previous window              |
 | `Ctrl+; s`             | Session picker                    |

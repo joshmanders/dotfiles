@@ -18,7 +18,7 @@
 #   mux show [name]           # show pane details (accepts parent:child or session name)
 #   mux title [name]          # set/show display title for terminal and status bar
 #   mux copy <name>           # copy layout from source to CWD's entry
-#   mux delete [name]         # remove session from registry
+#   mux delete [name]         # remove session from registry (kills it if running)
 #   mux kill [name]           # kill running tmux session
 #   mux tab <name> [path]     # create/switch to a named tab in the current session
 #   mux tab:kill [name]       # remove a tab from registry (kills window if running)
@@ -175,7 +175,7 @@ if [[ "${1:-}" == "show" ]]; then
     exit 0
 fi
 
-# --- Delete session from registry ---
+# --- Delete session: remove from registry, kill if running ---
 if [[ "${1:-}" == "delete" ]]; then
     target="${2:-}"
 
@@ -194,19 +194,26 @@ if [[ "${1:-}" == "delete" ]]; then
         'to_entries[] | select(.value.session == $s) | .key' \
         "$REGISTRY")
 
-    if [[ -z "$entry_dir" ]]; then
+    running=false
+    tmux has-session -t "=$src_session" 2>/dev/null && running=true
+
+    if [[ -z "$entry_dir" && "$running" == false ]]; then
         echo "No entry found for $target"
         exit 1
     fi
 
-    if tmux has-session -t "=$src_session" 2>/dev/null; then
-        tmux kill-session -t "=$src_session"
+    # Registry first: the kill takes this process down with it when run from
+    # one of the session's own panes, and it fires the --save hooks.
+    if [[ -n "$entry_dir" ]]; then
+        jq --arg dir "$entry_dir" 'del(.[$dir])' \
+            "$REGISTRY" > "$REGISTRY.tmp.$$" && mv "$REGISTRY.tmp.$$" "$REGISTRY"
     fi
 
-    jq --arg dir "$entry_dir" 'del(.[$dir])' \
-        "$REGISTRY" > "$REGISTRY.tmp.$$" && mv "$REGISTRY.tmp.$$" "$REGISTRY"
+    echo "Deleted $target${entry_dir:+ ($entry_dir)}"
 
-    echo "Deleted $target ($entry_dir)"
+    if [[ "$running" == true ]]; then
+        tmux kill-session -t "=$src_session"
+    fi
     exit 0
 fi
 
