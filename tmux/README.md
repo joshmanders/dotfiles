@@ -123,7 +123,7 @@ Shift+Up             Move up
 Shift+Right          Move right
 ```
 
-Or click a pane with the mouse.
+While the terminal window is in the background, the pane under the pointer becomes active, so clicking back into the window lands in that pane. While the window is focused, click a pane to select it — moving the mouse does not change panes.
 
 ### Resizing panes
 
