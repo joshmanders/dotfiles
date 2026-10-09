@@ -136,7 +136,7 @@ Or drag pane borders with the mouse.
 
 ```
 Ctrl+; z             Zoom — toggle a pane fullscreen (again to restore)
-Ctrl+; w             Close the current pane
+Ctrl+; w             Close the current pane (asks first)
 Ctrl+; t             Prompt for a tab name, opens it (mux-persisted)
 Ctrl+; W             Close the current tab (mux-persisted)
 ```
@@ -181,7 +181,7 @@ Scroll up with mouse wheel or trackpad. To copy text:
 | `Ctrl+; -/=/[/]`       | Resize panes                      |
 | `Ctrl+; Delete`        | Equalize panes                    |
 | `Ctrl+; z`             | Zoom pane                         |
-| `Ctrl+; w`             | Close pane                        |
+| `Ctrl+; w`             | Close pane (confirms)             |
 | `Ctrl+; t`             | New tab (mux-persisted, named)    |
 | `Ctrl+; W`             | Close tab (mux-persisted)         |
 | `Ctrl+; 1-9`           | Jump to window number             |
