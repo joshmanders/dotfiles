@@ -22,8 +22,8 @@ Plugins are auto-installed on first tmux start.
 
 ## Concepts
 
-- **Session** — a group of related projects (e.g. "niftyco", "primcloud")
-- **Window** — a tab within a session, one per project (e.g. "app", "api")
+- **Session** — one per project directory, named from the parent directory and the directory (e.g. "niftyco-app", "primcloud-platform")
+- **Window** — a tab within a session: the project's own window plus any tabs you add
 - **Pane** — a split within a window (e.g. claude on the left, terminal on the right)
 
 ## Daily Workflow
@@ -32,25 +32,29 @@ The prefix is `Ctrl+;`. Press it, release, then press the next key.
 
 ### Opening projects
 
-`mux` groups projects by their parent directory automatically:
+`mux` gives each project directory its own session, named `<parent>-<directory>`:
 
 ```bash
 cd ~/Code/niftyco/app
-mux                        # session "niftyco", window "app"
+mux                        # session "niftyco-app"
 
 cd ~/Code/niftyco/api
-mux                        # adds window "api" to "niftyco" session
+mux                        # session "niftyco-api"
 
 cd ~/Code/primcloud/platform
-mux                        # new session "primcloud", window "platform"
+mux                        # session "primcloud-platform"
 ```
+
+`mux list` shows sessions as `parent:directory` (e.g. `niftyco:app`), and commands that take a session accept either form.
 
 Override the session name with an argument:
 
 ```bash
 cd ~/Code/freelance/client-site
-mux freelance              # session "freelance", window "client-site"
+mux freelance              # session "freelance"
 ```
+
+Inside a session `mux` manages, running `mux` from another directory opens a tab in that session instead — see [Pane, window, and session management](#pane-window-and-session-management).
 
 ### Managing sessions
 
@@ -150,10 +154,10 @@ Ctrl+; q             Close the current session (asks first)
 `Ctrl+; q` runs `mux delete` on the current session: every window and pane is killed and the session is removed from the `mux` registry, so its saved layout and tabs are gone too. It also works on sessions `mux` didn't create. The client detaches.
 
 Tabs created with `Ctrl+; t` are tracked by `mux` — they're restored next time
-the tmux server restarts. Running `mux` from a subdirectory of an already-
-attached session opens a tab automatically rather than starting a new session,
-so `cd` + `mux` from a sibling package lands you in a new tab inside the
-existing project.
+the tmux server restarts. Running `mux` from another directory inside a
+session `mux` manages opens a tab automatically rather than starting a new
+session, so `cd` + `mux` from a sibling package lands you in a new tab inside
+the existing project.
 
 Inspect or script tabs from the shell:
 
@@ -199,7 +203,7 @@ Scroll up with mouse wheel or trackpad. To copy text:
 | `Ctrl+; d`             | Detach session                    |
 | `Ctrl+; v`             | Enter copy mode                   |
 | `Ctrl+; r`             | Reload config                     |
-| `Ctrl+; Ctrl+k`        | Clear screen + scrollback         |
+| `Ctrl+; k`             | Clear screen + scrollback         |
 
 ## Plugins
 
