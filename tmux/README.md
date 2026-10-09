@@ -47,7 +47,7 @@ mux                        # session "primcloud-platform"
 
 `mux list` shows sessions as `parent:directory` (e.g. `niftyco:app`), and commands that take a session accept either form.
 
-Override the session name with an argument:
+Override the session name with an argument the first time you open a directory:
 
 ```bash
 cd ~/Code/freelance/client-site
@@ -144,7 +144,7 @@ Or drag pane borders with the mouse.
 ```
 Ctrl+; z             Zoom — toggle a pane fullscreen (again to restore)
 Ctrl+; w             Close the current pane (asks first)
-Ctrl+; t             Prompt for a tab name, opens it (mux-persisted)
+Ctrl+; t             Prompt for a directory, opens a tab named after it (mux-persisted)
 Ctrl+; W             Close the current tab (mux-persisted)
 Ctrl+; q             Close the current session (asks first)
 ```
@@ -153,11 +153,7 @@ Ctrl+; q             Close the current session (asks first)
 
 `Ctrl+; q` runs `mux delete` on the current session: every window and pane is killed and the session is removed from the `mux` registry, so its saved layout and tabs are gone too. It also works on sessions `mux` didn't create. The client detaches.
 
-Tabs created with `Ctrl+; t` are tracked by `mux` — they're restored next time
-the tmux server restarts. Running `mux` from another directory inside a
-session `mux` manages opens a tab automatically rather than starting a new
-session, so `cd` + `mux` from a sibling package lands you in a new tab inside
-the existing project.
+Tabs created with `Ctrl+; t` are tracked by `mux` — they're restored next time the tmux server restarts. Running `mux` from another directory inside a session `mux` manages opens a tab automatically rather than starting a new session, so `cd` + `mux` from a sibling package lands you in a new tab inside the existing project. That tab is named `<parent>-<directory>` (e.g. "niftyco-api").
 
 Inspect or script tabs from the shell:
 
@@ -203,7 +199,7 @@ Scroll up with mouse wheel or trackpad. To copy text:
 | `Ctrl+; d`             | Detach session                    |
 | `Ctrl+; v`             | Enter copy mode                   |
 | `Ctrl+; r`             | Reload config                     |
-| `Ctrl+; k`             | Clear screen + scrollback         |
+| `Ctrl+; k`             | Clear screen + scrollback (sends `/clear` in Claude Code panes) |
 
 ## Plugins
 
