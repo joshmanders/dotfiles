@@ -4,6 +4,7 @@ tap "oven-sh/bun", trusted: true
 tap "shivammathur/extensions", trusted: true
 tap "shivammathur/php", trusted: true
 tap "stripe/stripe-cli", trusted: true
+tap "vheissulabs/tap"
 brew "fd"
 brew "actionlint"
 brew "awscli"
@@ -44,6 +45,7 @@ brew "getsentry/tools/sentry", trusted: true
 brew "oven-sh/bun/bun"
 brew "shivammathur/extensions/phpredis@8.5"
 brew "stripe/stripe-cli/stripe"
+brew "vheissulabs/tap/tql", trusted: true
 cask "1password"
 cask "aptakube"
 cask "arc"
