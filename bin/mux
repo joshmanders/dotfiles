@@ -17,7 +17,7 @@
 #   mux list                  # list all registered sessions
 #   mux show [name]           # show pane details (accepts parent:child or session name)
 #   mux title [name]          # set/show display title for terminal and status bar
-#   mux copy name             # copy layout from source to CWD's entry
+#   mux copy <name>           # copy layout from source to CWD's entry
 #   mux delete [name]         # remove session from registry
 #   mux kill [name]           # kill running tmux session
 #   mux tab <name> [path]     # create/switch to a named tab in the current session
@@ -239,7 +239,7 @@ fi
 if [[ "${1:-}" == "copy" ]]; then
     target="${2:-}"
     if [[ -z "$target" ]]; then
-        echo "Usage: mux copy session"
+        echo "Usage: mux copy <name>"
         exit 1
     fi
 
