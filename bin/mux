@@ -21,7 +21,7 @@
 #   mux delete [name]         # remove session from registry
 #   mux kill [name]           # kill running tmux session
 #   mux tab <name> [path]     # create/switch to a named tab in the current session
-#   mux tab:kill <name>       # remove a tab from registry (kills window if running)
+#   mux tab:kill [name]       # remove a tab from registry (kills window if running)
 #   mux tab:show [name]      # list tabs in a session (defaults to current)
 #   mux --save                # save pane layouts + commands (called by tmux hooks)
 
@@ -34,6 +34,15 @@ if [[ ! -f "$REGISTRY" ]]; then
 fi
 
 # --- Helpers ---
+
+# Turn a session name as typed (parent:child or session name) into a tmux
+# session name. Sessions mux didn't create can have uppercase names — only
+# lowercase when nothing is running under the name as given.
+resolve_session() {
+    local name="${1//:/-}"
+    tmux has-session -t "=$name" 2>/dev/null || name="${name,,}"
+    echo "$name"
+}
 
 # Emit JSON {layout, panes} for an existing session:window, or return 1 if not running.
 gather_window_state() {
@@ -138,8 +147,7 @@ if [[ "${1:-}" == "show" ]]; then
         target="$(echo "$entry" | jq -r '.session')"
     fi
 
-    src_session="${target//:/-}"
-    src_session="${src_session,,}"
+    src_session=$(resolve_session "$target")
 
     entry_dir=$(jq -r --arg s "$src_session" \
         'to_entries[] | select(.value.session == $s) | .key' \
@@ -180,8 +188,7 @@ if [[ "${1:-}" == "delete" ]]; then
         target="$(echo "$entry" | jq -r '.session')"
     fi
 
-    src_session="${target//:/-}"
-    src_session="${src_session,,}"
+    src_session=$(resolve_session "$target")
 
     entry_dir=$(jq -r --arg s "$src_session" \
         'to_entries[] | select(.value.session == $s) | .key' \
@@ -216,8 +223,7 @@ if [[ "${1:-}" == "kill" ]]; then
         target="$(echo "$entry" | jq -r '.session')"
     fi
 
-    src_session="${target//:/-}"
-    src_session="${src_session,,}"
+    src_session=$(resolve_session "$target")
 
     if ! tmux has-session -t "=$src_session" 2>/dev/null; then
         echo "No running session: $target"
@@ -237,8 +243,7 @@ if [[ "${1:-}" == "copy" ]]; then
         exit 1
     fi
 
-    src_session="${target//:/-}"
-    src_session="${src_session,,}"
+    src_session=$(resolve_session "$target")
 
     src_dir=$(jq -r --arg s "$src_session" \
         'to_entries[] | select(.value.session == $s) | .key' \
@@ -388,15 +393,16 @@ fi
 if [[ "${1:-}" == "tab:kill" ]]; then
     name="${2:-}"
 
-    # No name = current window (must be inside tmux)
+    # No name = current window (must be inside tmux), taken as is: a window
+    # mux didn't create must not match a tab by a normalized form of its name.
     if [[ -z "$name" ]]; then
         [[ -z "${TMUX:-}" ]] && { echo "Usage: mux tab:kill <name>"; exit 1; }
         name=$(tmux display-message -p '#W')
+    else
+        name="${name,,}"
+        name="${name//./-}"
+        name="${name//:/-}"
     fi
-
-    name="${name,,}"
-    name="${name//./-}"
-    name="${name//:/-}"
 
     # Resolve session: prefer current tmux session, else PWD's entry
     entry_dir=""
@@ -455,8 +461,7 @@ if [[ "${1:-}" == "tab:show" ]]; then
         fi
     fi
 
-    src_session="${target//:/-}"
-    src_session="${src_session,,}"
+    src_session=$(resolve_session "$target")
 
     entry_dir=$(jq -r --arg s "$src_session" \
         'to_entries[] | select(.value.session == $s) | .key' \
