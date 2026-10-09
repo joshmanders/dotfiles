@@ -67,10 +67,11 @@ First time you run `mux` for a directory, you get a clean session. Set up your p
 
 Next time the tmux server restarts and you run `mux`, your panes are recreated with the same layout and commands re-launched.
 
-Saves happen automatically when you:
-- Split or close a pane
-- Switch between panes
-- Detach from tmux
+Saves happen automatically when:
+- You split a pane (saved a few seconds later)
+- You close a pane with `Ctrl+; w`
+- A pane's shell exits
+- You detach from tmux
 
 ### Copying layouts between projects
 
