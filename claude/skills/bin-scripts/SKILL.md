@@ -100,19 +100,22 @@ Safety: all destructive actions go through a confirm dialog with the exact path 
 
 ## tmux Session Management
 
-| Script | Usage                       | Purpose                                            |
-| ------ | --------------------------- | -------------------------------------------------- |
-| `mux`  | `mux`                       | Create/attach session for CWD                      |
-| `mux`  | `mux my-session`            | Override session name                              |
-| `mux`  | `mux list`                  | List all registered sessions                       |
-| `mux`  | `mux show [session:window]` | Show pane details (defaults to CWD)                |
-| `mux`  | `mux copy session:window`   | Copy pane layout from source to CWD                |
-| `mux`  | `mux tab <name> [path]`     | Create/switch to a named tab in current session    |
-| `mux`  | `mux tab:show [session]`    | List tabs in a session (defaults to current)       |
-| `mux`  | `mux tab:kill <name>`       | Remove a tab from registry (kills window if alive) |
-| `mux`  | `mux tab:at <path>`         | Create a tab from a path; name = basename of path  |
+| Script | Usage                    | Purpose                                                                             |
+| ------ | ------------------------ | ----------------------------------------------------------------------------------- |
+| `mux`  | `mux`                    | Create/attach session for CWD                                                       |
+| `mux`  | `mux my-session`         | Override the derived session name (CWD not yet registered)                          |
+| `mux`  | `mux list`               | List all registered sessions                                                        |
+| `mux`  | `mux show [name]`        | Show saved panes and layout (defaults to CWD's session)                             |
+| `mux`  | `mux title [name]`       | Set display title for CWD's session; no name prints it                              |
+| `mux`  | `mux copy <name>`        | Copy a session's saved pane layout to CWD's entry, without commands                 |
+| `mux`  | `mux delete [name]`      | Remove session from registry, then kill it if running (defaults to CWD's session)   |
+| `mux`  | `mux kill [name]`        | Kill running session, keep its registry entry (defaults to CWD's session)           |
+| `mux`  | `mux tab <name> [path]`  | Create/switch to a named tab in current session                                     |
+| `mux`  | `mux tab:show [session]` | List tabs in a session (defaults to current)                                        |
+| `mux`  | `mux tab:kill [name]`    | Remove a tab from registry, kill its window if running (defaults to current window) |
+| `mux`  | `mux tab:at <path>`      | Create a tab from a path; name = basename of path                                   |
 
-Projects are grouped by parent directory (e.g. `~/Code/primcloud/platform` → session `primcloud`, window `platform`). Pane layouts and running commands are saved automatically and restored on next `mux`. Each session has a primary window (the project itself) plus any tabs the user adds — tabs persist across tmux restarts the same way panes do. Running `mux` from a subdirectory of an already-attached session opens a tab automatically instead of creating a new session.
+Each project directory gets its own session, named `<parent>-<dir>` in lowercase with `.` and `:` replaced by `-` (e.g. `~/Code/primcloud/platform` → session `primcloud-platform`); a directory directly under `$HOME` uses its own name alone (`~/.files` → `files`). The primary window takes the session's name, and `mux <name>` names both `<name>`. `show`, `copy`, `delete`, `kill` and `tab:show` accept the session name or `parent:child` (`primcloud:platform`). Pane layouts and running commands are saved by tmux hooks and restored the next time `mux` creates the session. Each session has a primary window (the project itself) plus any tabs the user adds — tabs are saved in the registry and restored with the session. Inside a registered session, `mux` from any other directory opens a tab named `<parent>-<dir>`; from the session's own directory it selects the primary window.
 
 ## Not Documented
 
