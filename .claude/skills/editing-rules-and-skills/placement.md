@@ -18,7 +18,7 @@ The global behavioral rules are a single flat bullet list, inline in `claude/CLA
 
 The list is loosely grouped by topic, not split into strict priority tiers:
 
-- It opens with **orchestration** (what you are — delegate the work, keep the conversation).
+- It opens with **agents** (when work goes to an agent, and how dispatches run).
 - Then **working with the user and voice** (terseness, presenting work, apologizing, corrections).
 - Then a long run of **task specifics** — commits, PRs, GitHub actions, git safety, where knowledge lives — grouped loosely by topic with no hard boundary between the groups. The git-safety items sit among the task specifics, after the commit-approval and code-reviewer-gate items, not in an earlier tier of their own.
 

@@ -9,7 +9,7 @@ argument-hint: "[epic-ref] [note]"
 
 Finish this epic: every open child issue, one commit each, in one sitting. Nothing else gets worked this session.
 
-CLAUDE.md's orchestration rules govern, without their escape hatch — issue work always goes to an agent, however small it looks. Your only exceptions are metadata: `gh` calls fetching issue context, `git` calls managing the branch and commit. What you keep is the conversation.
+Issue work always goes to an agent, however small it looks. Your only exceptions are metadata: `gh` calls fetching issue context, `git` calls managing the branch and commit. What you keep is the conversation.
 
 ## The Ledger
 
@@ -141,7 +141,7 @@ gh pr view <number> --repo <owner/repo> --json number,title,isDraft,state,url,cl
 
 ## Rules
 
-- **Dispatch, don't do.** Work touching code goes to an agent. You have no business reading a source file.
+- **Dispatch, don't do.** Code work goes to agents.
 - **Sequential, not parallel.** Sub-issues share a branch and usually a blast radius. One at a time, reviewed between each.
 - **The review gate is per issue.** Never commit two issues on one approval. Never commit without one.
 - **Josh sees finished work.** Scrutiny clean, `code-reviewer` gate clean, tests passing, acceptance criteria met. He should be able to LGTM on a skim.

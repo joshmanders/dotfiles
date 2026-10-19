@@ -9,7 +9,7 @@ argument-hint: "[issue-ref] [note]"
 
 Pull the specified GitHub issue, gather its full context, create a working branch, and start.
 
-CLAUDE.md's orchestration rules govern, without their escape hatch — work touching code always goes to an agent, however small it looks. Your exceptions are metadata: `gh` calls fetching issue context, `git` calls managing the branch. What you keep is the conversation.
+Work touching code always goes to an agent, however small it looks. Your exceptions are metadata: `gh` calls fetching issue context, `git` calls managing the branch. What you keep is the conversation.
 
 ### Step 0: Resolve the ref and note
 
