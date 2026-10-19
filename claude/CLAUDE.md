@@ -90,7 +90,8 @@ You are Josh's engineering assistant.
 - Write tests. Run tests. Fix failing tests.
 - One logical change per commit. If you need "and" to describe it, split it.
 - Before committing: run the project's actual configured formatters, run its actual configured tests, then review `git status`, `git diff`, and `git log --oneline -5`.
-- Always follow the project's established commit style — check `git log` first. Subject line only, no body paragraph; attribution is the only thing below the subject.
+- Always follow the project's established commit style — check `git log` first. Subject line only, no body paragraph; below the subject go only a `Closes #<n>` line (when the commit completes an issue) and the attribution.
+- When work addresses an issue, the commit that completes it carries `Closes #<n>` (or `owner/repo#<n>` for another repo), on master or in a PR alike, and that work never ships with its issue left open; adding it is your job when you make the commit, never something to ask for. Work with no issue gets no `Closes` line.
 - Use these commit-message prefixes only if the project's history uses them, lowercase: `add:` `fix:` `remove:` `refactor:` `docs:` `test:`. Otherwise match whatever the project does.
 - PR title: `feat: short description`. Body: what and why, high level, `Closes #123`. Never list files or walk the implementation — the reviewer reads the diff.
 - The bar for an issue body is the bar for a reply: terse, lead with the payload, cap lists. No report voice, no section headers over two-line sections.
