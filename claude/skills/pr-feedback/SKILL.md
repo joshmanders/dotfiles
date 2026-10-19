@@ -1,7 +1,7 @@
 ---
 name: pr-feedback
 description: |
-  Address review feedback on a PR Josh authored - fetch the review comments, understand them, implement the fixes locally, and resolve the threads it addressed once Josh has reviewed, approved, and pushed. Never posts on his behalf. Invoke when Josh says things like 'we got some feedback on our PR', 'address the review comments', 'the reviewer said X', 'my PR has comments on it', 'can you handle the feedback on #12', 'fix what the review flagged', or mentions someone reviewing a PR of his. Disambiguation with pr-review: authorship decides. A PR Josh authored with review comments to act on belongs here - cues are 'our PR', 'my PR', 'feedback we got', 'address the review', 'reviewer said'. A PR authored by someone else that he wants read belongs to pr-review - cues are 'review this PR', "take a look at Dave's PR", 'can you review #12'. When the phrasing is ambiguous ('look at PR 12'), check the PR author with gh before choosing. Takes an optional PR ref and note; with no ref, resolves the PR from the conversation or the current branch.
+  Address review feedback on a PR Josh authored - fetch the review comments, understand them, implement the fixes locally, and resolve the threads Josh decided, with the matching resolution reason, once he has reviewed and approved them. Never posts on his behalf. Invoke when Josh says things like 'we got some feedback on our PR', 'address the review comments', 'the reviewer said X', 'my PR has comments on it', 'can you handle the feedback on #12', 'fix what the review flagged', or mentions someone reviewing a PR of his. Disambiguation with pr-review: authorship decides. A PR Josh authored with review comments to act on belongs here - cues are 'our PR', 'my PR', 'feedback we got', 'address the review', 'reviewer said'. A PR authored by someone else that he wants read belongs to pr-review - cues are 'review this PR', "take a look at Dave's PR", 'can you review #12'. When the phrasing is ambiguous ('look at PR 12'), check the PR author with gh before choosing. Takes an optional PR ref and note; with no ref, resolves the PR from the conversation or the current branch.
 argument-hint: "[pr-ref] [note]"
 ---
 
@@ -21,7 +21,7 @@ You MUST NOT:
 - Approve, request changes, or merge
 - Run any other mutation or write request against the PR
 
-**One write is permitted: the `resolveReviewThread` mutation.** Resolving a thread is a state change with no content authored in Josh's name. Posting text is speaking for him, and that never happens without his explicit approval of the exact words. Resolve only threads whose feedback was actually addressed and pushed — Step 10 governs.
+**One write is permitted: the `resolveReviewThread` mutation, with the `resolutionReason` Josh's decision sets.** Resolving a thread is a state change with no content authored in Josh's name. Posting text is speaking for him, and that never happens without his explicit approval of the exact words. Resolve only threads Josh decided — fixed and pushed, or explicitly won't-fix or invalid — Step 10 governs.
 
 You implement fixes locally. Josh decides what to post and when to push.
 
@@ -238,19 +238,27 @@ For items you recommend pushing back on:
 
 Then **stop** and wait for his review. Changes requested → implementer via `SendMessage`, feedback verbatim, then back through steps 8 and 9. Signed off → commit only when he explicitly asks.
 
-Keep an **approved set** as he goes: one entry per item he signs off on, carrying the item, the file and line, and the thread `id` from Step 4. An item he pushes back on, defers, or wants draft reply text for does not enter the set, and neither does one he hasn't reached yet. This set is the whole input to Step 10 — it is built here, from what he actually said, and never reconstructed later from the diff.
+Keep an **approved set** as he goes: one entry per item he decides, carrying the item, the file and line, the thread `id` from Step 4, and the resolution reason his decision sets:
+
+| Josh's decision                             | Reason      |
+| ------------------------------------------- | ----------- |
+| Fix approved                                | `ADDRESSED` |
+| The finding is real but not worth acting on | `WONT_FIX`  |
+| The finding is wrong or doesn't hold up     | `INVALID`   |
+
+An item he defers does not enter the set, and neither does one he hasn't decided yet. This set is the whole input to Step 10 — it is built here, from what he actually said, and never reconstructed later from the diff.
 
 ### Step 10: Resolve the threads Josh approved
 
-Josh pushes, in his own shell. His `git push` appearing in the conversation is the go signal. Until it does, wait — nothing resolves, no polling, no asking again.
+Josh pushes, in his own shell. His `git push` appearing in the conversation is the go signal for `ADDRESSED` entries. Until it does, wait — no `ADDRESSED` thread resolves, no polling, no asking again. A `WONT_FIX` or `INVALID` entry resolves once his approved reply is on the thread, when he wants one.
 
-Once it lands, run one mutation per entry in the approved set:
+Run one mutation per entry in the approved set, passing its reason:
 
 ```bash
 GH_TOKEN=$(gh auth token --user "$DOTFILES_GITHUB_USERNAME") \
-  gh api graphql -f threadId=<thread-id> -f query='
-mutation($threadId: ID!) {
-  resolveReviewThread(input: { threadId: $threadId }) {
+  gh api graphql -f threadId=<thread-id> -f reason=<ADDRESSED|WONT_FIX|INVALID> -f query='
+mutation($threadId: ID!, $reason: PullRequestReviewThreadResolutionReason) {
+  resolveReviewThread(input: { threadId: $threadId, resolutionReason: $reason }) {
     thread { id isResolved }
   }
 }'
@@ -258,11 +266,14 @@ mutation($threadId: ID!) {
 
 Which threads get resolved:
 
-| Item                                                      | Resolve            |
-| --------------------------------------------------------- | ------------------ |
-| In the approved set from Step 9                            | Yes                |
-| Josh pushed back on, deferred, or wants draft reply text   | No — leave it open |
-| Not yet approved, even alongside items that were           | No                 |
+| Item                                                         | Resolve                                              |
+| ------------------------------------------------------------ | ---------------------------------------------------- |
+| Fixed, approved, and pushed                                  | Yes — `ADDRESSED`                                    |
+| Josh decided won't-fix                                       | Yes — `WONT_FIX`, after any approved reply is posted |
+| Josh decided the finding is invalid                          | Yes — `INVALID`, after any approved reply is posted  |
+| Deferred, or not yet decided, even alongside items that were | No — leave it open                                   |
+
+GitHub shows the reason on the thread: Addressed ("This suggestion has been addressed."), Won't fix ("This suggestion won't be addressed."), Incorrect ("This suggestion is incorrect or unhelpful.").
 
 Resolution only. No reply comment, no "fixed in `abc123`". The draft reply text from Step 9 stays Josh's to post.
 
@@ -270,9 +281,9 @@ When a call fails — a stale ID, a thread already resolved, permission you don'
 
 Then report what closed and what stayed open, with the reason for each one left open, so Josh reads it here rather than finding it on GitHub:
 
-> Resolved 3 threads: `src/auth.ts:42`, `src/auth.ts:88`, `README.md:12`. Left open: the `Cargo.toml` pinning thread — you're replying to that one yourself, draft is above.
+> Resolved 3 threads: `src/auth.ts:42` (addressed), `src/auth.ts:88` (addressed), `README.md:12` (won't fix). Left open: the `Cargo.toml` pinning thread — you deferred it.
 
-Josh can also ask for the threads to be closed at any point — a later session, or after the conversation has moved on. Pick up from the approved set and resolve exactly those. If that set is no longer in hand, re-fetch the threads per Step 4, show him the unresolved ones, and ask which to resolve. Never infer the set from the diff or the commits.
+Josh can also ask for the threads to be closed at any point — a later session, or after the conversation has moved on. Pick up from the approved set and resolve exactly those. If that set is no longer in hand, re-fetch the threads per Step 4, show him the unresolved ones, and ask which to resolve and with which reason. Never infer the set from the diff or the commits.
 
 ### Step 11: Restore original state (if needed)
 
