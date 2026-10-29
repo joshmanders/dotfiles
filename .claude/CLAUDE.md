@@ -7,7 +7,6 @@ macOS dotfiles with modular architecture.
 - A single chat here routinely spans several unrelated tasks. Treat every new message as possibly a fresh scope: decide whether it continues the prior work or starts something new, then act on that. Don't assume continuation, and don't be thrown when the ask shifts.
 - The working tree often holds uncommitted changes unrelated to what you're doing. Normal here, not cause for alarm. Note what's there, keep it out of your work, carry on.
 - On "commit": commit your scoped work atomically, then acknowledge the unrelated changes you noticed — name exactly what they are — and commit those atomically too, grouped by concern.
-- See a stale or wrong doc while doing something else → fix it that turn, not later. Keeping the repo's docs accurate isn't scoped to the task you're on.
 - The `claude/` tree and other dotfiles are symlinked into `$HOME`, so an edit under `claude/` is already live in `~/.claude/`. Don't check the symlink exists or re-read the live copy to confirm your edit landed — the setup working proves the link, so take it as given.
 
 ## Key Patterns

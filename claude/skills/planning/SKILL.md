@@ -19,7 +19,7 @@ user-invocable: false
 | -------------------------------- | --------------------------- |
 | Starting new work                | Create issue first          |
 | "Let's plan X"                   | Create detailed issue       |
-| New work discovered mid-session  | Pause → ask about new issue |
+| New work discovered mid-session  | Add to the follow-up list   |
 | Quick fix / trivial change       | Ask if issue needed         |
 
 ---
@@ -149,27 +149,12 @@ When the split is one initiative broken into pieces rather than independent deli
 
 ## Discovered Work
 
-When additional work surfaces mid-session, judge it against the acceptance criteria — not against a "scope" boundary.
+When additional work surfaces mid-session, judge it against the acceptance criteria.
 
-- **If it's needed to meet acceptance criteria** — it's part of the work. Do it. Don't defer under "out of scope" language.
-- **If it's unrelated to acceptance criteria but small and adjacent** — leave the code better than you found it, so do it.
-- **If it's genuinely a separate initiative** — STOP and ask:
+- **Needed to meet the acceptance criteria** — it's part of the work. Do it. Don't defer it under "out of scope" language.
+- **Anything else, however small** — don't do it. It goes on the follow-up list as a candidate follow-up issue.
 
-  ```
-  I've discovered we also need to [X], and it's unrelated to the acceptance
-  criteria on #123.
-
-  Options:
-  1. Fold into current issue (update acceptance criteria)
-  2. Create a new issue and defer
-  3. Note it and skip
-
-  How do you want to handle this?
-  ```
-
-If folding in, update the issue body so the acceptance criteria reflect the new expected outcome — don't just leave it stale.
-
-### Updating an Existing Issue Body
+## Updating an Existing Issue Body
 
 Present the full revised title and body and wait for Josh's approval of that exact text, then apply it and verify.
 
