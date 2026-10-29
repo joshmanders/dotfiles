@@ -39,7 +39,13 @@ const WIZARD_BINDINGS: ReadonlyArray<[string, string]> = [
   ["esc", "Cancel"],
 ];
 
-export function App() {
+interface AppProps {
+  // Hands the live ProcessManager to the entry point, whose signal handlers
+  // must outlive this tree: a signal's own teardown unmounts it.
+  onManager?: (pm: ProcessManager) => void;
+}
+
+export function App({ onManager }: AppProps) {
   const renderer = useRenderer();
   const cwd = useMemo(() => process.cwd(), []);
   const [config, setConfig] = useState<SoloConfig>(() => {
@@ -169,6 +175,8 @@ export function App() {
     } catch {}
     setImmediate(() => process.exit(0));
   }, [renderer]);
+
+  useEffect(() => onManager?.(pm), [pm, onManager]);
 
   useEffect(() => {
     if (!quitting) return;

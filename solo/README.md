@@ -99,7 +99,7 @@ One pty per command. The process layer is responsible for:
 - **Sizing.** Every pty and emulator runs at the output pane's text-area width with one column always kept for the scrollbar, so the size doesn't change as the scrollbar appears and disappears. Output fills the pane when the scrollbar shows and stops one column short when it doesn't. A pane resize (debounced) resizes all processes, running or not, and xterm reflows their scrollback.
 - **Restart policy** (`never` / `on-fail` / `always`) with exponential backoff and an attempt cap. Delays double from 300ms up to 30s; after 8 consecutive attempts the process is left failed with a note in its scrollback. A run that stays up long enough to look healthy resets the budget, and a user-initiated stop sets a flag that suppresses the policy for that exit.
 - **Process-group signals.** With `bash -lc cmd`, signals don't reliably propagate to the actual child. The pty puts the child in a new session (`setsid`), so the pty pid is the process-group leader. Send SIGTERM to `-pid` to hit every process in the group; escalate to SIGKILL after ~2s.
-- **Clean shutdown.** On quit, SIGTERM all live processes, wait for exit handlers, hard timeout at 2s.
+- **Clean shutdown.** On quit, SIGTERM all live processes, wait for exit handlers, hard timeout at 2s, then SIGKILL every process group so nothing outlives solo. SIGHUP (the tmux pane closing), SIGINT, SIGTERM, SIGQUIT, SIGABRT, SIGPIPE and SIGBUS take the same path, then exit with 128 + the signal number; a repeat signal mid-shutdown is ignored.
 
 ### ANSI handling
 

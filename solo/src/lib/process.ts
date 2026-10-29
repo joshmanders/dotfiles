@@ -71,14 +71,24 @@ function killTree(pty: IPty): void {
     } catch {}
   }
   // Escalate to SIGKILL if anything is still alive after 2s.
-  setTimeout(() => {
-    try {
-      process.kill(-pid, 0);
-      process.kill(-pid, "SIGKILL");
-    } catch {
-      // ESRCH — group already gone.
-    }
-  }, 2000);
+  setTimeout(() => forceKillGroup(pid), 2000);
+}
+
+function groupAlive(pid: number): boolean {
+  try {
+    process.kill(-pid, 0);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function forceKillGroup(pid: number): void {
+  try {
+    process.kill(-pid, "SIGKILL");
+  } catch {
+    // ESRCH — group already gone.
+  }
 }
 
 export type ProcStatus = "idle" | "running" | "exited" | "failed";
@@ -493,18 +503,41 @@ export class ProcessManager extends EventEmitter {
     for (const entry of this.procs.values()) this.cancelRestart(entry);
     const live = Array.from(this.procs.values()).filter((e) => e.pty);
     if (live.length === 0) return Promise.resolve();
+    const groups = live.map((e) => e.pty!.pid);
     return new Promise((resolve) => {
       let remaining = live.length;
-      const done = () => {
-        if (--remaining <= 0) resolve();
+      // Callers exit right after this resolves, which cancels killTree's
+      // SIGKILL escalation. Kill every group here instead, so neither a child
+      // that ignores SIGTERM nor a straggler outliving its leader survives.
+      // Resolve only once the groups are actually gone, since the caller's
+      // exit is what must not race them. SIGKILL can't be ignored, so the
+      // deadline only guards against a process stuck in the kernel.
+      let finished = false;
+      const finish = () => {
+        if (finished) return;
+        finished = true;
+        clearTimeout(backstop);
+        groups.forEach(forceKillGroup);
+        const deadline = Date.now() + 2000;
+        const reap = () => {
+          if (groups.some(groupAlive) && Date.now() < deadline) {
+            setTimeout(reap, 10);
+          } else {
+            resolve();
+          }
+        };
+        reap();
       };
+      const done = () => {
+        if (--remaining === 0) finish();
+      };
+      // Backstop in case finalizeExit doesn't fire for one of them.
+      const backstop = setTimeout(finish, 2000);
       for (const entry of live) {
         entry.manualStop = true;
         entry.onNextExit = done;
         killTree(entry.pty!);
       }
-      // Backstop in case finalizeExit doesn't fire for one of them.
-      setTimeout(resolve, 2000);
     });
   }
 

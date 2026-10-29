@@ -311,3 +311,18 @@ test("clearing wipes the buffer of a running process", async () => {
   pm.clear("clearable");
   expect(proc(pm, "clearable").lineCount).toBe(0);
 }, 20_000);
+
+test("shutdown leaves no process group behind, even one ignoring SIGTERM", async () => {
+  const pm = makeManager();
+  pm.register({
+    name: "stubborn",
+    command: `trap "" TERM; echo ready; sleep 600`,
+  });
+  pm.start("stubborn");
+  await waitFor(() => output(pm, "stubborn").some((l) => l === "ready"));
+  const pid = proc(pm, "stubborn").pid!;
+
+  await pm.shutdown();
+
+  expect(() => process.kill(-pid, 0)).toThrow();
+});
