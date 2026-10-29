@@ -85,11 +85,11 @@ Operating rules live inline in `CLAUDE.md` as a flat bullet list, loaded every s
 
 Subagent definitions live in `agents/`, symlinked to `~/.claude/agents/`.
 
-| Agent           | Purpose                                                     |
-| --------------- | ----------------------------------------------------------- |
-| `implementer`   | Make file changes within a defined scope and report back    |
-| `code-reviewer` | Read-only quality gate over a diff before human review      |
-| `audit`         | Read-only audit of a test suite for real confidence         |
+| Agent         | Purpose                                                  |
+| ------------- | -------------------------------------------------------- |
+| `implementer` | Make file changes within a defined scope and report back |
+| `reviewer`    | Read-only quality gate over a diff before human review   |
+| `auditor`     | Read-only audit of a test suite for real confidence      |
 
 ## Skills
 

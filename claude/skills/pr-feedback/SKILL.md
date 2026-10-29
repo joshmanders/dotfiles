@@ -215,7 +215,7 @@ Only these items, in the current working tree on branch <branch>. Do not push.
 
 ### Step 8: Run the gate
 
-Dispatch a `code-reviewer` agent with the diff (the uncommitted working tree on branch `<branch>`), the list of changed files, the PR URL, and the implementer's claims quoted verbatim.
+Dispatch a `reviewer` agent with the diff (the uncommitted working tree on branch `<branch>`), the list of changed files, the PR URL, and the implementer's claims quoted verbatim.
 
 - **Code findings** → back to the implementer via `SendMessage`. All of them, no cherry-picking. If one looks wrong, dispatch an agent to check it before dismissing it.
 - **Claims findings** → to Josh, in your own message: in full when it bears on the topic open with him, otherwise first once that topic is concluded.

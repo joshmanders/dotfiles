@@ -149,9 +149,9 @@ git diff --name-only "$BASE_SHA"..HEAD
 
 **Never use `gh pr diff`** — API diffs can be inaccurate. Local diff is the source of truth.
 
-### Step 6: Deep review via the code-reviewer agent
+### Step 6: Deep review via the reviewer agent
 
-Dispatch the `code-reviewer` agent (Agent tool, `subagent_type: code-reviewer`) to do the actual review. It reads every changed file cold, traces code paths, re-derives claims by running them, sweeps for debug code, runs the documented tests and formatters, and returns findings without touching a file. The review criteria and output discipline live in the agent — don't restate them here.
+Dispatch the `reviewer` agent (Agent tool, `subagent_type: reviewer`) to do the actual review. It reads every changed file cold, traces code paths, re-derives claims by running them, sweeps for debug code, runs the documented tests and formatters, and returns findings without touching a file. The review criteria and output discipline live in the agent — don't restate them here.
 
 Give it, in the prompt:
 

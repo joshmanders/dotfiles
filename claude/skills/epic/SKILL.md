@@ -100,7 +100,7 @@ Only this issue, in the current working tree on branch <branch>. Other sub-issue
 
 One pass: the implementer fixes every finding and meets every acceptance criterion on the sub-issue, then on to 4d. No second scrutinizer.
 
-**4d. Run the gate.** The project defines a `team-review` skill → invoke it yourself as the gate; it's a skill, not an agent to dispatch. Otherwise dispatch a `code-reviewer` agent with the diff (the uncommitted working tree on branch `<branch>`), the list of changed files, the sub-issue URL, and the implementer's claims quoted verbatim.
+**4d. Run the gate.** The project defines a `team-review` skill → invoke it yourself as the gate; it's a skill, not an agent to dispatch. Otherwise dispatch a `reviewer` agent with the diff (the uncommitted working tree on branch `<branch>`), the list of changed files, the sub-issue URL, and the implementer's claims quoted verbatim.
 
 - **Code findings** → back to the implementer via `SendMessage`. All of them, no cherry-picking. If one looks wrong, dispatch an agent to check it before dismissing it.
 - **Claims findings** → to Josh, in your own message: in full when it bears on the topic open with him, otherwise first once that topic is concluded.
@@ -122,7 +122,7 @@ Log the sub-issue number, the SHA from `git rev-parse --short HEAD`, and the nam
 
 ## Step 5: Close out the epic
 
-Queue empty → run the whole-branch gate. The project defines a `team-review` skill → invoke it yourself over the whole branch diff; it's a skill, not an agent to dispatch. Otherwise dispatch a `code-reviewer` agent with the whole branch diff (every commit on `<branch>` against the base branch), the list of changed files, the epic URL, and the implementers' claims quoted verbatim — no single-issue reviewer saw the commits together.
+Queue empty → run the whole-branch gate. The project defines a `team-review` skill → invoke it yourself over the whole branch diff; it's a skill, not an agent to dispatch. Otherwise dispatch a `reviewer` agent with the whole branch diff (every commit on `<branch>` against the base branch), the list of changed files, the epic URL, and the implementers' claims quoted verbatim — no single-issue reviewer saw the commits together.
 
 - **Code findings** → back to the implementer that wrote the commit each one lands in, by the name recorded under Commits, via `SendMessage`. All of them, no cherry-picking. If one looks wrong, dispatch an agent to check it before dismissing it.
 - **Claims findings** → to Josh, in your own message: in full when it bears on the topic open with him, otherwise first once that topic is concluded.
@@ -144,7 +144,7 @@ gh pr view <number> --repo <owner/repo> --json number,title,isDraft,state,url,cl
 - **Dispatch, don't do.** Code work goes to agents.
 - **Sequential, not parallel.** Sub-issues share a branch and usually a blast radius. One at a time, reviewed between each.
 - **The review gate is per issue.** Never commit two issues on one approval. Never commit without one.
-- **Josh sees finished work.** Scrutiny clean, `code-reviewer` gate clean, tests passing, acceptance criteria met. He should be able to LGTM on a skim.
+- **Josh sees finished work.** Scrutiny clean, `reviewer` gate clean, tests passing, acceptance criteria met. He should be able to LGTM on a skim.
 - **Nothing leaves without a sign-off.** No commit without his per-issue approval. No push, PR, or merge without his approval of the finished branch. No PR without his approval of its exact title and body.
 - **100% or ask.** Anything short of certainty goes to Josh.
 - **Scope expands → stop.** Out-of-issue work gets reported, logged as deferred, and decided by Josh. It does not get quietly fixed.

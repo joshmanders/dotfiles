@@ -10,7 +10,7 @@ Load this to decide which physical file an artifact belongs in. Two questions st
 A correction that encodes a behavioral lesson has two possible homes. Classify which before touching anything:
 
 - **A lesson about how the session works** → a terse bullet in the flat list in `claude/CLAUDE.md`. Calm, imperative, one concern per item.
-- **A lesson about how code gets authored or reviewed** → prose in the relevant agent def: `claude/agents/implementer.md` for authoring, cleanup, tests, and docs; `claude/agents/code-reviewer.md` for review and review output. Match that file's existing prose.
+- **A lesson about how code gets authored or reviewed** → prose in the relevant agent def: `claude/agents/implementer.md` for authoring, cleanup, tests, and docs; `claude/agents/reviewer.md` for review and review output. Match that file's existing prose.
 
 ## The flat list in `claude/CLAUDE.md`
 
@@ -20,7 +20,7 @@ The list is loosely grouped by topic, not split into strict priority tiers:
 
 - It opens with **agents** (when work goes to an agent, and how dispatches run).
 - Then **working with the user and voice** (terseness, presenting work, apologizing, corrections).
-- Then a long run of **task specifics** — commits, PRs, GitHub actions, git safety, where knowledge lives — grouped loosely by topic with no hard boundary between the groups. The git-safety items sit among the task specifics, after the commit-approval and code-reviewer-gate items, not in an earlier tier of their own.
+- Then a long run of **task specifics** — commits, PRs, GitHub actions, git safety, where knowledge lives — grouped loosely by topic with no hard boundary between the groups. The git-safety items sit among the task specifics, after the commit-approval and reviewer-gate items, not in an earlier tier of their own.
 
 To place a new item: find the existing items on the same topic and drop it next to them. Match your neighbors — don't compute a tier, and don't hardcode a count anywhere, since it rots on the next edit.
 

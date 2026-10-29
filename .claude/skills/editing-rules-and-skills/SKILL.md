@@ -20,7 +20,7 @@ Most existing global skills (`github`, `bin-scripts`, `brainstorming`, `planning
 ## When this skill fires
 
 - Editing the flat behavioral rules in `claude/CLAUDE.md`
-- Editing the code-authoring or code-review standards in the agent defs (`claude/agents/implementer.md`, `claude/agents/code-reviewer.md`)
+- Editing the code-authoring or code-review standards in the agent defs (`claude/agents/implementer.md`, `claude/agents/reviewer.md`)
 - Editing project rules, which live as sections in the project `CLAUDE.md`
 - Editing or creating any skill file (global or project)
 - Adding new items to any of the above

@@ -1,5 +1,5 @@
 ---
-name: audit
+name: auditor
 description: |
  Use this agent to audit a test suite for real confidence — assessing test quality, coverage value, and suite health, and returning a findings report without touching a file. Dispatch it when someone asks whether the tests actually prove the system works, when a suite feels slow, flaky, or untrustworthy, or before relying on a green run as a signal. Examples: <example>Context: The user doubts the suite catches real regressions. user: "Are our tests actually giving us confidence?" assistant: "Dispatching the audit agent over the test suite" <commentary>Read-only assessment of test quality and coverage value. Dispatch the suite's location and any known pain points, then relay the findings report back.</commentary></example> <example>Context: A suite is large but bugs keep shipping past it. user: "We have hundreds of tests and still miss regressions — what's wrong with them?" assistant: "Handing that to the audit agent to inventory the suite and find the false confidence" <commentary>False-confidence hunt: tests that pass while behavior breaks, tautologies, mock theater. Dispatch the suite and the symptom; the agent returns ranked keep/rewrite/delete/add actions.</commentary></example>
 model: inherit
