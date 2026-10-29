@@ -74,7 +74,6 @@ concierge add
 ├── caddy/             # Web server config
 ├── caffeine/          # Caffeine preferences
 ├── claude/            # Claude Code config, rules, and skills; Claude desktop app preferences
-├── cpanel/            # Claude Panel TUI (Bun/React)
 ├── dato/              # Dato preferences
 ├── dnsmasq/           # DNS resolver config
 ├── fzf/               # Fuzzy finder config
@@ -132,7 +131,6 @@ bash php/install.sh         # Just PHP settings
 bash npm/install.sh         # Just npm config
 bash ripgrep/install.sh     # Just ripgrep global ignore
 bash claude/install.sh      # Just Claude Code config and Claude desktop app preferences
-bash cpanel/install.sh      # Just Claude Panel TUI (config symlink + bun install)
 bash solo/install.sh        # Just solo TUI (configs symlink + bun install)
 bash lazygit/install.sh     # Just Lazygit config
 bash neovim/install.sh      # Just Neovim config
@@ -155,7 +153,6 @@ Each directory has its own README with detailed documentation:
 - [caddy/README.md](caddy/README.md) - Web server
 - [caffeine/README.md](caffeine/README.md) - Caffeine
 - [claude/README.md](claude/README.md) - Claude Code config and Claude desktop app preferences
-- [cpanel/README.md](cpanel/README.md) - Claude Panel TUI (browse/mine `~/.claude`)
 - [dato/README.md](dato/README.md) - Dato
 - [dnsmasq/README.md](dnsmasq/README.md) - DNS resolver
 - [fzf/README.md](fzf/README.md) - Fuzzy finder
@@ -189,7 +186,6 @@ Each directory has its own README with detailed documentation:
 | `git save "msg"` | Quick commit                       |
 | `git sync`       | Fetch and rebase on upstream       |
 | `git undo`       | Undo last commit                   |
-| `cpanel`         | TUI for everything in `~/.claude`  |
 | `solo`           | Per-cwd process-runner TUI         |
 
 ## Contributing

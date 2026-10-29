@@ -14,17 +14,16 @@ PATH="${PATH}:${DOTFILES}/bin"
 
 ### System Utilities
 
-| Script      | Description                                                                                |
-| ----------- | ------------------------------------------------------------------------------------------ |
-| `concierge` | Manage local dev sites (Caddy/dnsmasq)                                                     |
-| `artisan`   | Laravel artisan wrapper (finds artisan in parent dirs)                                     |
-| `cpx`       | Composer package executor (like npx for PHP)                                               |
-| `killport`  | Kill process on a specified port                                                           |
-| `hiroshima` | Nuke all Docker containers and prune system                                                |
-| `edit`      | Open files/configs in editor                                                               |
-| `mux`       | tmux session orchestrator (CWD-aware)                                                      |
-| `cpanel`    | Claude Panel TUI for `~/.claude/` (Bun/React; see [cpanel/README.md](../cpanel/README.md)) |
-| `solo`      | Per-cwd process-runner TUI (Bun/React; see [solo/README.md](../solo/README.md))            |
+| Script      | Description                                                                     |
+| ----------- | ------------------------------------------------------------------------------- |
+| `concierge` | Manage local dev sites (Caddy/dnsmasq)                                          |
+| `artisan`   | Laravel artisan wrapper (finds artisan in parent dirs)                          |
+| `cpx`       | Composer package executor (like npx for PHP)                                    |
+| `killport`  | Kill process on a specified port                                                |
+| `hiroshima` | Nuke all Docker containers and prune system                                     |
+| `edit`      | Open files/configs in editor                                                    |
+| `mux`       | tmux session orchestrator (CWD-aware)                                           |
+| `solo`      | Per-cwd process-runner TUI (Bun/React; see [solo/README.md](../solo/README.md)) |
 
 ### Git Workflow
 

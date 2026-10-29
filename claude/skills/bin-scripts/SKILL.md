@@ -75,20 +75,6 @@ Custom shell scripts available on your PATH for common development workflows.
 
 **concierge commands:** `add <name>`, `remove <name>`, `list`. Optional `--ip <addr>` for X-Forwarded-For testing.
 
-## Claude Internals
-
-| Script   | Usage    | Purpose                                                              |
-| -------- | -------- | -------------------------------------------------------------------- |
-| `cpanel` | `cpanel` | TUI for everything in `~/.claude/` — browse, search, mine, and clean |
-
-**cpanel:** React/Bun TUI for everything in `~/.claude/` — browse, search, mine, and clean. Requires `bun`.
-
-Panels (in tab order): **Dashboard** (overview cards) · **Insights** (correction/pattern/stuck-loop/wasted-work miners with `s` to scaffold rules + skills) · **Conversations** (chat-rendered reader for every session) · **Live** (real-time monitor of running Claude Code sessions) · **Search** (ripgrep over all jsonls) · **Cost** ($ per day/project/session from token×rate) · **Digest** (daily activity rollup) · **Plans** · **Sessions** (with `r` to resume in a new terminal) · **Projects** · **Settings** (incl. backup restore) · **Cleanup**.
-
-Config: `~/.config/cpanel/config.json`. Currently one option: `ignoreProjects: string[]` — path prefixes hidden from UI lists; aggregates still include them. Press `.` from any panel to toggle showing them temporarily.
-
-Safety: all destructive actions go through a confirm dialog with the exact path + size before deleting.
-
 ## Per-cwd Process Runner
 
 | Script | Usage               | Purpose                                                           |

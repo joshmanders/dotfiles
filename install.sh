@@ -33,7 +33,6 @@
 #   bash npm/install.sh
 #   bash ripgrep/install.sh
 #   bash claude/install.sh
-#   bash cpanel/install.sh
 #   bash solo/install.sh
 #   bash lazygit/install.sh
 #   bash neovim/install.sh
@@ -101,7 +100,6 @@ source "$DOTFILES/php/install.sh"
 source "$DOTFILES/npm/install.sh"
 source "$DOTFILES/ripgrep/install.sh"
 source "$DOTFILES/claude/install.sh"
-source "$DOTFILES/cpanel/install.sh"
 source "$DOTFILES/solo/install.sh"
 source "$DOTFILES/lazygit/install.sh"
 source "$DOTFILES/neovim/install.sh"
