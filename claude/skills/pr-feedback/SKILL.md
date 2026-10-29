@@ -188,6 +188,8 @@ Every item gets a decision from you, not from Josh:
 | The implementer pushes back with sound technical reasoning           | Decline it, with a draft reply                    |
 | Its right handling turns on Josh's preference or facts only he has   | Ask Josh, then handle it per his answer           |
 
+A bot reviewer's item is real review feedback, decided on the same terms as a human's, but checked harder before acting on it: a bot is AI and more likely to be wrong, while a human's finding is more likely right.
+
 A declined item carries its resolution reason from the pushback: `WONT_FIX` when the finding is real but not worth acting on, `INVALID` when it's wrong or doesn't hold up.
 
 The `implementer` evaluates each point technically before applying it — tracing it against the actual code, pushing back on anything wrong or unsafe through its `BLOCKED:` path, and YAGNI-checking suggested additions. You don't pre-verify or pre-implement; the dispatch (Step 7) and the gate (Step 8) carry the work.
@@ -199,7 +201,7 @@ Dispatch an `implementer` with every item that doesn't wait on Josh. An item tha
 ```
 Address review feedback on PR #<n> in <owner/repo>: <title>
 ## The feedback
-<each item verbatim, with the file and line it points at>
+<each item verbatim, with the file and line it points at, and whether its author is a bot>
 ## Direction
 <the note, and Josh's answer on any item that needed him>
 ```
