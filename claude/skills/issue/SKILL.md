@@ -167,8 +167,6 @@ Work GitHub issue #<n> in <owner/repo>: <title>
 <comments carrying requirements or constraints>
 ## Direction
 <the note, the approved plan, the root cause traced in triage — whatever applies>
-## Your scope
-Only this issue, in the current working tree on branch <branch>.
 ```
 
 `BLOCKED: <question>` comes back — **100% confident** from the conversation or the issue → answer it and resume the same agent with `SendMessage` so its context survives. **Anything less** → put the question to Josh verbatim with the context needed to answer it; don't soften it, don't answer around it, don't hand him a guess to confirm.
@@ -177,7 +175,7 @@ Scope expands past the issue → stop and ask about a new issue.
 
 ### Step 8: Run the gate
 
-The project defines a `team-review` skill → invoke it yourself as the gate; it's a skill, not an agent to dispatch. Otherwise dispatch a `reviewer` agent with the diff (the uncommitted working tree on branch `<branch>`), the list of changed files, the issue URL, and the implementer's claims quoted verbatim.
+The project defines a `team-review` skill → invoke it yourself as the gate; it's a skill, not an agent to dispatch. Otherwise dispatch a `reviewer` agent with the list of changed files, the issue URL, and the implementer's claims quoted verbatim.
 
 - **Code findings** → back to the implementer via `SendMessage`. All of them, no cherry-picking. If one looks wrong, dispatch an agent to check it before dismissing it.
 - **Claims findings** → to Josh, in your own message: in full when it bears on the topic open with him, otherwise first once that topic is concluded.

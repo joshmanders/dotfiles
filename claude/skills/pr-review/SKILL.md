@@ -151,7 +151,7 @@ git diff --name-only "$BASE_SHA"..HEAD
 
 ### Step 6: Deep review via the reviewer agent
 
-Dispatch the `reviewer` agent (Agent tool, `subagent_type: reviewer`) to do the actual review. It reads every changed file cold, traces code paths, re-derives claims by running them, sweeps for debug code, runs the documented tests and formatters, and returns findings without touching a file. The review criteria and output discipline live in the agent — don't restate them here.
+Dispatch the `reviewer` agent (Agent tool, `subagent_type: reviewer`) to do the actual review. The review criteria and output discipline live in the agent — don't restate them here.
 
 Give it, in the prompt:
 
@@ -159,7 +159,7 @@ Give it, in the prompt:
 - The changed-file list from `git diff --name-only "$BASE_SHA"..HEAD`
 - The requirement to measure against: the PR title and body, plus any linked-issue titles and bodies gathered in Step 4
 - The note from Step 0, if present, as review guidance
-- That this is a third-party PR review — read-only, post nothing
+- That this is someone else's PR, so findings come back to you rather than to an implementer
 
 The agent returns a `Findings` list (each item as `path:line — problem`) and, when the work carried claims, a `Claims` block. Both are your input to Step 7, not Josh's output — you reshape them into copyable markdown there.
 

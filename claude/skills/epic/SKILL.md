@@ -87,20 +87,18 @@ Sub-issue of epic #<parent> — <parent title>.
 <the lines from the parent that bear on this issue>
 ## What's already been decided
 <the relevant slice of the ledger>
-## Your scope
-Only this issue, in the current working tree on branch <branch>. Other sub-issues own their own commits on this branch — leave files outside this issue's scope alone.
 ```
 
 **4b. Handle a block.** **100% confident** from the conversation, ledger, issue, or epic → answer it. **Anything less** → put the question to Josh verbatim with the context needed to answer it; don't soften it, don't answer around it, don't hand him a guess to confirm. Never invent an answer. Resume the same implementer with `SendMessage` so its context survives, and log the resolution.
 
-**4c. Scrutinize.** Dispatch a reviewer with: (1) the full contents of `adversarial-review.md` in this skill's directory, (2) the sub-issue number, URL, and body, (3) the branch name and the fact that the diff is the uncommitted working tree, (4) the implementer's summary and its verbatim claims, (5) the relevant ledger slice.
+**4c. Scrutinize.** Dispatch a fresh `general-purpose` agent — not the `reviewer` agent — whose prompt carries: (1) the full contents of `adversarial-review.md` in this skill's directory, (2) the sub-issue number, URL, and body, (3) the branch name and the fact that the diff is the uncommitted working tree, (4) the implementer's summary and its verbatim claims, (5) the relevant ledger slice.
 
 - **Code findings** → back to the implementer via `SendMessage`. All of them, no cherry-picking. If one looks wrong, dispatch an agent to check it before dismissing it.
 - **Claims findings** → to Josh, in your own message: in full when it bears on the topic open with him, otherwise first once that topic is concluded.
 
 One pass: the implementer fixes every finding and meets every acceptance criterion on the sub-issue, then on to 4d. No second scrutinizer.
 
-**4d. Run the gate.** The project defines a `team-review` skill → invoke it yourself as the gate; it's a skill, not an agent to dispatch. Otherwise dispatch a `reviewer` agent with the diff (the uncommitted working tree on branch `<branch>`), the list of changed files, the sub-issue URL, and the implementer's claims quoted verbatim.
+**4d. Run the gate.** The project defines a `team-review` skill → invoke it yourself as the gate; it's a skill, not an agent to dispatch. Otherwise dispatch a `reviewer` agent with the list of changed files, the sub-issue URL, the implementer's claims quoted verbatim, and the fact that this sub-issue's work is the uncommitted working tree — the commits already on the branch belong to earlier sub-issues and were gated with them.
 
 - **Code findings** → back to the implementer via `SendMessage`. All of them, no cherry-picking. If one looks wrong, dispatch an agent to check it before dismissing it.
 - **Claims findings** → to Josh, in your own message: in full when it bears on the topic open with him, otherwise first once that topic is concluded.
@@ -122,7 +120,7 @@ Log the sub-issue number, the SHA from `git rev-parse --short HEAD`, and the nam
 
 ## Step 5: Close out the epic
 
-Queue empty → run the whole-branch gate. The project defines a `team-review` skill → invoke it yourself over the whole branch diff; it's a skill, not an agent to dispatch. Otherwise dispatch a `reviewer` agent with the whole branch diff (every commit on `<branch>` against the base branch), the list of changed files, the epic URL, and the implementers' claims quoted verbatim — no single-issue reviewer saw the commits together.
+Queue empty → run the whole-branch gate. The project defines a `team-review` skill → invoke it yourself over the whole branch diff; it's a skill, not an agent to dispatch. Otherwise dispatch a `reviewer` agent with the list of changed files, the epic URL, and the implementers' claims quoted verbatim — no single-issue reviewer saw the commits together.
 
 - **Code findings** → back to the implementer that wrote the commit each one lands in, by the name recorded under Commits, via `SendMessage`. All of them, no cherry-picking. If one looks wrong, dispatch an agent to check it before dismissing it.
 - **Claims findings** → to Josh, in your own message: in full when it bears on the topic open with him, otherwise first once that topic is concluded.
