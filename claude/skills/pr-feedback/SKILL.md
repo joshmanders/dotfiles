@@ -1,7 +1,7 @@
 ---
 name: pr-feedback
 description: |
-  Address review feedback on a PR Josh authored - fetch the review comments, understand them, implement the fixes locally, and resolve the threads Josh decided, with the matching resolution reason, once he has reviewed and approved them. Never posts on his behalf. Invoke when Josh says things like 'we got some feedback on our PR', 'address the review comments', 'the reviewer said X', 'my PR has comments on it', 'can you handle the feedback on #12', 'fix what the review flagged', or mentions someone reviewing a PR of his. Disambiguation with pr-review: authorship decides. A PR Josh authored with review comments to act on belongs here - cues are 'our PR', 'my PR', 'feedback we got', 'address the review', 'reviewer said'. A PR authored by someone else that he wants read belongs to pr-review - cues are 'review this PR', "take a look at Dave's PR", 'can you review #12'. When the phrasing is ambiguous ('look at PR 12'), check the PR author with gh before choosing. Takes an optional PR ref and note; with no ref, resolves the PR from the conversation or the current branch.
+  Address review feedback on a PR Josh authored - fetch the review comments, decide each item, fix the sound ones locally, decline the ones that don't hold up with a draft reply, and resolve the threads Josh's sign-off on the finished work covers, with the matching resolution reason. Never posts on his behalf. Invoke when Josh says things like 'we got some feedback on our PR', 'address the review comments', 'the reviewer said X', 'my PR has comments on it', 'can you handle the feedback on #12', 'fix what the review flagged', or mentions someone reviewing a PR of his. Disambiguation with pr-review: authorship decides. A PR Josh authored with review comments to act on belongs here - cues are 'our PR', 'my PR', 'feedback we got', 'address the review', 'reviewer said'. A PR authored by someone else that he wants read belongs to pr-review - cues are 'review this PR', "take a look at Dave's PR", 'can you review #12'. When the phrasing is ambiguous ('look at PR 12'), check the PR author with gh before choosing. Takes an optional PR ref and note; with no ref, resolves the PR from the conversation or the current branch.
 argument-hint: "[pr-ref] [note]"
 ---
 
@@ -21,9 +21,9 @@ You MUST NOT:
 - Approve, request changes, or merge
 - Run any other mutation or write request against the PR
 
-**One write is permitted: the `resolveReviewThread` mutation, with the `resolutionReason` Josh's decision sets.** Resolving a thread is a state change with no content authored in Josh's name. Posting text is speaking for him, and that never happens without his explicit approval of the exact words. Resolve only threads Josh decided — fixed and pushed, or explicitly won't-fix or invalid — Step 10 governs.
+**One write is permitted: the `resolveReviewThread` mutation, with the `resolutionReason` Josh's decision sets.** Resolving a thread is a state change with no content authored in Josh's name. Posting text is speaking for him, and that never happens without his explicit approval of the exact words. Resolve only threads Josh's sign-off covers — Step 10 governs.
 
-You implement fixes locally. Josh decides what to post and when to push.
+You decide each item and implement fixes locally. Josh signs off on the finished work, approves any reply text, and decides what to post and when to push.
 
 ---
 
@@ -174,85 +174,70 @@ Each node is one conversation on the diff:
 
 Carry each item's thread `id` alongside the feedback from here on. Step 10 needs it.
 
-### Step 5: Categorize feedback
+### Step 5: Collect the open items
 
-Separate feedback into:
+Unresolved items (`isResolved: false`) are the ones to handle. Resolved items are already addressed; skip them.
 
-- **Unresolved items** — `isResolved: false`, active feedback that needs attention
-- **Resolved items** — `isResolved: true`, already addressed, skip these
+### Step 6: Decide each item
 
-For unresolved items, group by reviewer and present a summary to Josh:
+Every item gets a decision from you, not from Josh:
 
-- What each reviewer is asking for
-- Which items are clear vs. need clarification
+| Item                                                                 | Decision                                          |
+| -------------------------------------------------------------------- | ------------------------------------------------- |
+| Sound                                                                | Fix it                                            |
+| The implementer pushes back with sound technical reasoning           | Decline it, with a draft reply                    |
+| Its right handling turns on Josh's preference or facts only he has   | Ask Josh, then handle it per his answer           |
 
-### Step 6: Feedback handling is the implementer's job
+A declined item carries its resolution reason from the pushback: `WONT_FIX` when the finding is real but not worth acting on, `INVALID` when it's wrong or doesn't hold up.
 
-The `implementer` you dispatch in Step 7 evaluates each point technically before applying it — tracing it against the actual code, pushing back with reasoning on anything wrong or unsafe through its `BLOCKED:` path, and YAGNI-checking suggested additions rather than adding them reflexively. You don't pre-verify or pre-implement here; the dispatch (Step 7) and the gate (Step 8) carry the work.
-
-What's yours at this step is what the implementer can't do from a cold start:
-
-- **Clarify anything unclear with Josh first.** If any item is ambiguous, present what you understand and what needs clarification before dispatching. Don't hand over a partial or guessed-at scope.
-- Carry Josh's direction on each item into the dispatch prompt.
+The `implementer` evaluates each point technically before applying it — tracing it against the actual code, pushing back on anything wrong or unsafe through its `BLOCKED:` path, and YAGNI-checking suggested additions. You don't pre-verify or pre-implement; the dispatch (Step 7) and the gate (Step 8) carry the work.
 
 ### Step 7: Dispatch the implementer
 
-For items Josh agrees should be addressed, dispatch an `implementer` agent. It starts cold, so everything bearing on the fixes goes in the prompt:
+Dispatch an `implementer` with every item that doesn't wait on Josh. An item that does joins the work once he answers, resumed into the same agent with `SendMessage`.
 
 ```
 Address review feedback on PR #<n> in <owner/repo>: <title>
 ## The feedback
-<each agreed item verbatim, with the file and line it points at>
+<each item verbatim, with the file and line it points at>
 ## Direction
-<the note, and anything Josh decided about how to handle an item>
-## Order
-Blocking issues (breaks, security), then simple fixes (typos, imports), then complex fixes (refactoring, logic). One at a time, tested individually, no regressions.
-## Your scope
-Only these items, in the current working tree on branch <branch>. Do not push.
+<the note, and Josh's answer on any item that needed him>
 ```
 
-`BLOCKED: <question>` comes back — **100% confident** from the conversation or the review thread → answer it and resume the same agent with `SendMessage` so its context survives. **Anything less** → put the question to Josh verbatim with the context needed to answer it; don't soften it, don't answer around it, don't hand him a guess to confirm.
+When `BLOCKED:` comes back:
+
+- **Pushback on an item** — reasoning sound → the item is declined; draft the reply and tell the implementer to drop it. Reasoning unsound → send it back with why the item holds.
+- **A question** — the facts settle it → answer and resume. It turns on Josh's preference or facts only he has → it goes to Josh.
 
 ### Step 8: Run the gate
 
-Dispatch a `reviewer` agent with the diff (the uncommitted working tree on branch `<branch>`), the list of changed files, the PR URL, and the implementer's claims quoted verbatim.
+Dispatch a `reviewer` agent with the PR URL and the feedback items, the list of changed files, and the implementer's claims quoted verbatim. **Tests failing means the feedback isn't addressed** — it does not go to Josh with a caveat.
 
-- **Code findings** → back to the implementer via `SendMessage`. All of them, no cherry-picking. If one looks wrong, dispatch an agent to check it before dismissing it.
-- **Claims findings** → to Josh, in your own message: in full when it bears on the topic open with him, otherwise first once that topic is concluded.
+### Step 9: Present the finished work
 
-One pass: the implementer fixes every finding, then the work goes to Josh. No second reviewer. **Tests failing means the feedback isn't addressed** — it does not go to Josh with a caveat.
+Josh reviews the work once, as a whole:
 
-### Step 9: Present results and record what Josh approves
+- **Fixed** — what the reviewer asked for, and what changed
+- **Declined** — what the reviewer asked for, why it isn't done, its resolution reason, and the draft reply text for him to approve before anything is posted
+- **Handled per his answer** — how each item that needed him landed
 
-For each addressed item, show:
+Then **stop** and wait for his review. Changes requested → implementer via `SendMessage`, his feedback verbatim, then back through steps 8 and 9. Commit only when he explicitly asks.
 
-- What the reviewer asked for
-- What was changed (file:line)
-- Brief explanation of the fix
+His sign-off sets the resolution reason for every item the signed-off work covers:
 
-For items you recommend pushing back on:
+| Item in the signed-off work                  | Reason      |
+| -------------------------------------------- | ----------- |
+| Fixed                                        | `ADDRESSED` |
+| Declined: real but not worth acting on       | `WONT_FIX`  |
+| Declined: wrong or doesn't hold up           | `INVALID`   |
 
-- What the reviewer asked for
-- Why it shouldn't be done (technical reasoning)
-- Draft reply text for Josh to review and post himself if he agrees
+Record that as the **signed-off set**: one entry per item, carrying the item, the file and line, the thread `id` from Step 4, and its reason. An item he pulls out, defers, or changes the handling of enters the set only as he signs it off. This set is the whole input to Step 10 — it is built here, from what he signed off on, and never reconstructed later from the diff.
 
-Then **stop** and wait for his review. Changes requested → implementer via `SendMessage`, feedback verbatim, then back through steps 8 and 9. Signed off → commit only when he explicitly asks.
-
-Keep an **approved set** as he goes: one entry per item he decides, carrying the item, the file and line, the thread `id` from Step 4, and the resolution reason his decision sets:
-
-| Josh's decision                             | Reason      |
-| ------------------------------------------- | ----------- |
-| Fix approved                                | `ADDRESSED` |
-| The finding is real but not worth acting on | `WONT_FIX`  |
-| The finding is wrong or doesn't hold up     | `INVALID`   |
-
-An item he defers does not enter the set, and neither does one he hasn't decided yet. This set is the whole input to Step 10 — it is built here, from what he actually said, and never reconstructed later from the diff.
-
-### Step 10: Resolve the threads Josh approved
+### Step 10: Resolve the signed-off threads
 
 Josh pushes, in his own shell. His `git push` appearing in the conversation is the go signal for `ADDRESSED` entries. Until it does, wait — no `ADDRESSED` thread resolves, no polling, no asking again. A `WONT_FIX` or `INVALID` entry resolves once his approved reply is on the thread, when he wants one.
 
-Run one mutation per entry in the approved set, passing its reason:
+Run one mutation per entry in the signed-off set, passing its reason:
 
 ```bash
 GH_TOKEN=$(gh auth token --user "$DOTFILES_GITHUB_USERNAME") \
@@ -266,12 +251,12 @@ mutation($threadId: ID!, $reason: PullRequestReviewThreadResolutionReason) {
 
 Which threads get resolved:
 
-| Item                                                         | Resolve                                              |
-| ------------------------------------------------------------ | ---------------------------------------------------- |
-| Fixed, approved, and pushed                                  | Yes — `ADDRESSED`                                    |
-| Josh decided won't-fix                                       | Yes — `WONT_FIX`, after any approved reply is posted |
-| Josh decided the finding is invalid                          | Yes — `INVALID`, after any approved reply is posted  |
-| Deferred, or not yet decided, even alongside items that were | No — leave it open                                   |
+| Item                                                                | Resolve                                              |
+| ------------------------------------------------------------------- | ---------------------------------------------------- |
+| Fixed, signed off, and pushed                                       | Yes — `ADDRESSED`                                    |
+| Declined as not worth acting on, signed off                         | Yes — `WONT_FIX`, after any approved reply is posted |
+| Declined as wrong, signed off                                       | Yes — `INVALID`, after any approved reply is posted  |
+| Outside his sign-off — deferred, pulled out, or not yet signed off  | No — leave it open                                   |
 
 GitHub shows the reason on the thread: Addressed ("This suggestion has been addressed."), Won't fix ("This suggestion won't be addressed."), Incorrect ("This suggestion is incorrect or unhelpful.").
 
@@ -283,7 +268,7 @@ Then report what closed and what stayed open, with the reason for each one left 
 
 > Resolved 3 threads: `src/auth.ts:42` (addressed), `src/auth.ts:88` (addressed), `README.md:12` (won't fix). Left open: the `Cargo.toml` pinning thread — you deferred it.
 
-Josh can also ask for the threads to be closed at any point — a later session, or after the conversation has moved on. Pick up from the approved set and resolve exactly those. If that set is no longer in hand, re-fetch the threads per Step 4, show him the unresolved ones, and ask which to resolve and with which reason. Never infer the set from the diff or the commits.
+Josh can also ask for the threads to be closed at any point — a later session, or after the conversation has moved on. Pick up from the signed-off set and resolve exactly those. If that set is no longer in hand, re-fetch the threads per Step 4, show him the unresolved ones, and ask which to resolve and with which reason. Never infer the set from the diff or the commits.
 
 ### Step 11: Restore original state (if needed)
 
