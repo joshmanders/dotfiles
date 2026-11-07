@@ -90,6 +90,7 @@ concierge add
 ├── orbstack/          # OrbStack preferences
 ├── php/               # PHP and PHP-FPM settings
 ├── rectangle/         # Window manager config
+├── rex/               # Rex terminal multiplexer config and preferences
 ├── ripgrep/           # Ripgrep config
 ├── solo/              # Process-runner TUI (Bun/React)
 ├── ssh/               # SSH configuration
@@ -135,6 +136,7 @@ bash solo/install.sh        # Just solo TUI (configs symlink + bun install)
 bash lazygit/install.sh     # Just Lazygit config
 bash neovim/install.sh      # Just Neovim config
 bash tmux/install.sh        # Just tmux config
+bash rex/install.sh         # Just Rex config and preferences
 bash ghostty/install.sh     # Just Ghostty config
 bash macos/install.sh       # Just macOS system preferences
 bash rectangle/install.sh   # Just Rectangle preferences
@@ -169,6 +171,7 @@ Each directory has its own README with detailed documentation:
 - [orbstack/README.md](orbstack/README.md) - OrbStack
 - [php/README.md](php/README.md) - PHP and PHP-FPM settings
 - [rectangle/README.md](rectangle/README.md) - Window manager
+- [rex/README.md](rex/README.md) - Rex terminal multiplexer
 - [ripgrep/README.md](ripgrep/README.md) - Ripgrep
 - [solo/README.md](solo/README.md) - Process-runner TUI (per-cwd command set)
 - [ssh/README.md](ssh/README.md) - SSH configuration
