@@ -45,7 +45,7 @@ autocmd({ "BufRead", "BufNewFile" }, {
   end,
 })
 
--- When launched on a directory, cd into it, show an empty buffer, and open lazygit
+-- When launched on a directory, cd into it and show an empty buffer
 autocmd("VimEnter", {
   group = augroup("dir_to_empty_buffer", { clear = true }),
   callback = function()
@@ -55,7 +55,6 @@ autocmd("VimEnter", {
     vim.cmd("cd " .. vim.fn.fnameescape(arg))
     vim.cmd("enew")
     vim.cmd("bd #")
-    vim.cmd("Lazygit")
   end,
 })
 
