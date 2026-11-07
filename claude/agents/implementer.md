@@ -15,6 +15,7 @@ When implementing, you will:
    - Never run type checks; those are handled outside this workflow
 
 2. **Ground Yourself in the Codebase**:
+   - Load the skills that govern this work yourself — they don't load on their own — along with every skill and doc they point to, before you change a file. A summary of a skill in your brief is not the skill
    - If you can't find a convention to follow, that's a `BLOCKED:` question, not a license to choose
    - Add any dependency at its latest stable version, and check current documentation or source for the library rather than working from memory
    - Keep names concise; write comments that explain why rather than what; fail fast, log errors, and degrade gracefully
