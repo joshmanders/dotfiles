@@ -13,7 +13,7 @@ Generic patterns for GitHub operations using `gh` CLI.
 
 ## Writes
 
-Every command here that changes something on GitHub is a write: `gh issue create`, `gh issue edit`, `gh issue comment`, `gh project item-add`, `gh pr create`, and every `gh api graphql` call whose query is a `mutation`. The `list`, `view`, `search`, and `checks` commands and the `query` GraphQL calls are reads.
+Every command here that changes something on GitHub is a write: `gh issue create`, `gh issue edit`, `gh issue comment`, `gh project item-add`, `gh pr create`, `gh pr edit`, `gh pr comment`, and every `gh api graphql` call whose query is a `mutation`. The `list`, `view`, `search`, and `checks` commands and the `query` GraphQL calls are reads.
 
 Each write follows the same three steps:
 
@@ -34,8 +34,11 @@ gh issue view <number> --repo <org>/<repo> --json projectItems --jq '.projectIte
 # After the addSubIssue or removeSubIssue mutation, on the parent
 gh issue view <parent-num> --repo <org>/<repo> --json subIssues --jq '[.subIssues.nodes[].url]'
 
-# After gh pr create
-gh pr view <number> --repo <org>/<repo> --json number,title,isDraft,state,url,closingIssuesReferences
+# After gh pr create or gh pr edit
+gh pr view <number> --repo <org>/<repo> --json number,title,body,isDraft,state,url,closingIssuesReferences
+
+# After gh pr comment
+gh pr view <number> --repo <org>/<repo> --json comments --jq '.comments[-1] | {url, body}'
 ```
 
 ---
@@ -166,6 +169,26 @@ printf '%s' "$PR_URL" | pbcopy   # draft PR URL copied to clipboard, ready to pa
 echo "$PR_URL"
 ```
 
+### Attaching Screenshots and Video
+
+Upload images and video yourself with `--attach` — never tell Josh to drag them in on GitHub. It works on `gh pr create`, `gh pr edit`, `gh pr comment`, `gh issue create`, `gh issue edit`, and `gh issue comment`; repeat it for each file, up to 50 per command.
+
+To place an image, reference the local path in the body; `gh` rewrites it to the uploaded asset URL. A file the body doesn't reference is appended to the end.
+
+```bash
+# pr-body.md holds the approved body, with the image above the closes line:
+#   ![Claim To Finish report](./claim-to-finish.png)
+#
+#   Closes #17332
+gh pr edit 17402 --body-file pr-body.md --attach ./claim-to-finish.png
+```
+
+- Alt text goes after `#`: `--attach './login.png#The login error state'`. Without it the filename is used; video takes none.
+- `gh pr edit` or `gh issue edit` with `--attach` and no body flag keeps the existing body and appends the file.
+- If some uploads fail, the rest still land and the command exits non-zero — check the result with the matching read.
+
+The attachments are part of the body Josh approves: present the body with the image references in place and name the files being attached. Before the write, `open <file>` each screenshot so Josh sees it, and get his sign-off on each one; attach only the ones he approved.
+
 ### PR Operations
 
 ```bash
@@ -280,5 +303,6 @@ mutation {
 | View issue     | `gh issue view <num> --repo <org>/<repo>`     | Read  |
 | Search org     | `gh search issues --owner <org> "query"`      | Read  |
 | Create PR      | `gh pr create --draft --repo <org>/<repo> ...` (pbcopy URL) | Write |
+| Attach media   | `gh pr edit <num> --body-file <file> --attach ./shot.png` | Write |
 
 Writes follow the present, approve, verify steps under [Writes](#writes).
