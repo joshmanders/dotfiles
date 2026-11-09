@@ -155,6 +155,14 @@ From [coreyhaines31/marketingskills](https://github.com/coreyhaines31/marketings
 | [`site-architecture`](skills/site-architecture/SKILL.md) | Page hierarchy, navigation, internal linking                      |
 | [`social`](skills/social/SKILL.md) | Social content, video scripts, and listening                      |
 
+### Security (cloudflare)
+
+From [cloudflare/security-audit-skill](https://github.com/cloudflare/security-audit-skill), pinned at commit `c1c8a8c1471069fb0e188eeaff69b8e8db6564a8`. Upstream's MIT `LICENSE` ships inside the skill directory. The copy carries one local change on top of that commit: full-audit output defaults to `.security-audit/run-<N>` at the audited project's root, and every phase excludes that directory from the audit and the sandbox's view of the target. `git/ignore` keeps `.security-audit/` out of every project's commits.
+
+| Skill                           | Purpose                                                           |
+| ------------------------------- | ----------------------------------------------------------------- |
+| [`security-audit`](skills/security-audit/SKILL.md) | Security guidance and source-first vulnerability audits           |
+
 ## Customization
 
 ### Add a new skill
