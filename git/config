@@ -18,8 +18,6 @@
 	excludesfile = ~/.gitignore
 	ignorecase = false
 	editor = nvim
-[http]
-	sslVerify = false
 [rerere]
 	enabled = true
 [branch]
