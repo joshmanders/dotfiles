@@ -80,9 +80,8 @@ brew update && brew upgrade
 
 ### Infrastructure
 
-| Package                               | Purpose                       |
-| ------------------------------------- | ----------------------------- |
-| `caddy`                               | Web server for local dev      |
-| `dnsmasq`                             | DNS for `*.dev.local` domains |
-| `mariadb`, `postgresql`, `redis`      | Databases                     |
-| `kubernetes-cli`                      | Kubernetes                    |
+| Package          | Purpose                       |
+| ---------------- | ----------------------------- |
+| `caddy`          | Web server for local dev      |
+| `dnsmasq`        | DNS for `*.dev.local` domains |
+| `kubernetes-cli` | Kubernetes                    |

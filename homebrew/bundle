@@ -23,14 +23,11 @@ brew "httpie"
 brew "jq"
 brew "kubernetes-cli"
 brew "lazygit"
-brew "mariadb", restart_service: :changed
 brew "mas"
 brew "neovim"
 brew "node"
 brew "oh-my-posh"
 brew "php", restart_service: :changed
-brew "postgresql", restart_service: :changed
-brew "redis", restart_service: :changed
 brew "ripgrep"
 brew "rust"
 brew "trash", link: true
