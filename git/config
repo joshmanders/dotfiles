@@ -12,6 +12,8 @@
 	default = simple
 	followTags = true
 	autoSetupRemote = true
+[pull]
+	rebase = true
 [core]
 	excludesfile = ~/.gitignore
 	ignorecase = false
