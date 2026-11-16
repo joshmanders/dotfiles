@@ -6,14 +6,6 @@ user-invocable: false
 
 # Adding Dotfiles Modules
 
-## When This Applies
-
-Use this skill when:
-
-- Adding a new tool/config to dotfiles
-- Creating a new module directory
-- Adding new config options
-
 ## Checklist
 
 1. Create module directory: `modulename/`
@@ -74,8 +66,6 @@ bash install.sh --non-interactive --overwrite --allow
 ```
 
 ## Reference Modules
-
-Look at these for patterns:
 
 - `git/install.sh` — Config + run commands
 - `bash/install.sh` — Multiple symlinks

@@ -1,84 +1,64 @@
-# Placement: Where an Artifact Lives
+# Placement
 
-Load this to decide which physical file an artifact belongs in. Two questions stack here, and they're independent of voice (correction vs informative):
+Two questions, independent of voice:
 
-1. **Which home** does a behavioral lesson land in — the flat list or an agent def?
-2. **Which tree** does a rule or skill belong in — global (everywhere) or project (this repo only)?
+1. Which home does a behavioral lesson land in: the flat list or an agent def?
+2. Which tree does a rule or skill belong in: global or project?
 
-## Two homes for a behavioral lesson
+## Homes for a behavioral lesson
 
-A correction that encodes a behavioral lesson has two possible homes. Classify which before touching anything:
+- **How the session works** → a bullet in the flat list in `claude/CLAUDE.md`.
+- **How code gets authored** (cleanup, tests, docs) → prose in `claude/agents/implementer.md`, matching its existing prose.
 
-- **A lesson about how the session works** → a terse bullet in the flat list in `claude/CLAUDE.md`. Calm, imperative, one concern per item.
-- **A lesson about how code gets authored or reviewed** → prose in the relevant agent def: `claude/agents/implementer.md` for authoring, cleanup, tests, and docs; `claude/agents/reviewer.md` for review and review output. Match that file's existing prose.
+## The flat list
 
-## The flat list in `claude/CLAUDE.md`
+The global rules are one flat bullet list in `claude/CLAUDE.md`, after the `---`, with no headings. It's short and loosely grouped by topic (agent orchestration, verification, commits, git safety, posting, and similar), with no hard boundaries or priority tiers. Place a new item next to existing items on the same topic. Never hardcode a count.
 
-The global behavioral rules are a single flat bullet list, inline in `claude/CLAUDE.md` right after the `---` that follows "You are Josh's engineering assistant." No `## Rules` heading, no section headings — just the bullet items, uniformly terse.
+Each item:
 
-The list is loosely grouped by topic, not split into strict priority tiers:
-
-- It opens with **agents** (when work goes to an agent, and how dispatches run).
-- Then **working with the user and voice** (terseness, presenting work, apologizing, corrections).
-- Then a long run of **task specifics** — commits, PRs, GitHub actions, git safety, where knowledge lives — grouped loosely by topic with no hard boundary between the groups. The git-safety items sit among the task specifics, after the commit-approval and reviewer-gate items, not in an earlier tier of their own.
-
-To place a new item: find the existing items on the same topic and drop it next to them. Match your neighbors — don't compute a tier, and don't hardcode a count anywhere, since it rots on the next edit.
-
-An item that belongs here gets no bold heading, no `**Why:**` block, no `---` separator — one or two imperative sentences, one concern each. Match the surrounding items exactly:
-
-- Portable wording — **"the user", never "Josh"**. These rules ship to every project.
-- `master`, never `main`.
-- Imperative voice, one concern per item.
-- No heading, no Why/How block, no separator.
+- One or two imperative sentences, one concern
+- "the user", never "Josh"; these rules ship to every project
+- `master`, never `main`
+- No heading, Why/How block, or separator
 
 ## The two trees
 
-The dotfiles repo contains two Claude config trees that look superficially identical and are easy to confuse:
+| Directory            | Scope   | Symlinked to    | Loads when                                |
+| -------------------- | ------- | --------------- | ----------------------------------------- |
+| `$DOTFILES/claude/`  | Global  | `~/.claude/`    | Every project, every session              |
+| `$DOTFILES/.claude/` | Project | (not symlinked) | Only when CWD is inside the dotfiles repo |
 
-| Directory            | Scope     | Symlinked to    | Loads when                                 |
-| -------------------- | --------- | --------------- | ------------------------------------------ |
-| `$DOTFILES/claude/`  | Global    | `~/.claude/`    | Every project, every session               |
-| `$DOTFILES/.claude/` | Project   | (not symlinked) | Only when CWD is inside the dotfiles repo  |
-
-`$DOTFILES` is the env var pointing at the dotfiles repo root (defaults to `$HOME/.files` if unset; check the install template in the project CLAUDE.md). Use `$DOTFILES` in references so paths don't break if the repo lives somewhere else.
-
-Global is the source of truth for what becomes `~/.claude/` after install. Project is dotfiles-internal — it loads only when working on the dotfiles themselves.
+`$DOTFILES` is the repo root (default `$HOME/.files`). Use it in references.
 
 ## Global vs project
 
-Ask: *does this apply everywhere Claude runs, or only when editing this repo?*
+Ask: does this apply everywhere Claude runs, or only in this repo?
 
-| Belongs in **global**                                        | Belongs in **project**                                       |
-| ------------------------------------------------------------ | ------------------------------------------------------------ |
-| Universal behavior (verify before claiming, never push without confirmation) | Dotfiles maintenance (update the bin-scripts skill when bin scripts change) |
-| Tools available everywhere (`gh`, `git`, `npm`)              | Tools internal to this repo (dotfiles install patterns)      |
-| Workflow patterns useful in any codebase (brainstorming, planning) | Workflow patterns specific to dotfiles (`adding-modules`)    |
-| Correction lessons that transcend projects ("never dismiss reported issues as pre-existing") | Corrections that only matter when editing this repo          |
+| Global                                                       | Project                                                    |
+| ------------------------------------------------------------ | ---------------------------------------------------------- |
+| Universal behavior (verify before claiming, never push without confirmation) | Dotfiles maintenance (update `bin-scripts` when bin scripts change) |
+| Tools available everywhere (`gh`, `git`, `npm`)              | Repo-internal tooling (install patterns)                   |
+| Workflows useful in any codebase (brainstorming, planning)   | Dotfiles workflows (`adding-modules`)                      |
+| Corrections that transcend projects                          | Corrections that matter only in this repo                  |
 
-## Failure modes of misclassification
+Project content in global adds noise to every other project. Global content in project silently stops applying outside this repo. When in doubt: behavior → global, maintenance and repo tooling → project.
 
-**Putting project-scoped content in global** pollutes every other project Claude works in with irrelevant noise. A "when you change a bin script, update the skill" rule in the global tree fires in some random Laravel project where there are no bin scripts and confuses the model.
+## Layout
 
-**Putting global content in project** means the rule silently stops applying the moment you `cd` out of the dotfiles repo. A "never push without confirmation" rule in the project tree only protects you when working on dotfiles, which is not where you usually need protection.
+**Global** (`$DOTFILES/claude/`):
 
-When in doubt, prefer global for **behavior** and project for **maintenance / repo-specific tooling**.
+| Path                | Purpose                                              |
+| ------------------- | ---------------------------------------------------- |
+| `CLAUDE.md`         | Global instructions and the flat rules list          |
+| `agents/*.md`       | Subagent definitions; code-authoring standards       |
+| `skills/*/SKILL.md` | Capability skills                                    |
 
-## Where things live within each tree
+**Project** (`$DOTFILES/.claude/`):
 
-**Global tree** (`$DOTFILES/claude/`):
+| Path                  | Purpose                                     |
+| --------------------- | ------------------------------------------- |
+| `CLAUDE.md`           | Project instructions; project rules as sections |
+| `skills/*/SKILL.md`   | Project skills                              |
+| `settings.local.json` | Project-local settings overrides            |
 
-| Path                | Purpose                                                                                        |
-| ------------------- | --------------------------------------------------------------------------------------------- |
-| `CLAUDE.md`         | Top-level global instructions and the inline flat behavioral-rules list                       |
-| `agents/*.md`       | Subagent definitions, and the home of the code-authoring and code-review standards            |
-| `skills/*/SKILL.md` | Capability skills                                                                              |
-
-**Project tree** (`$DOTFILES/.claude/`):
-
-| Path                  | Purpose                                              |
-| --------------------- | ---------------------------------------------------- |
-| `CLAUDE.md`           | Project-scoped instructions for working on dotfiles  |
-| `skills/*/SKILL.md`   | Project-scoped skills (e.g. `adding-modules`, `editing-rules-and-skills`) |
-| `settings.local.json` | Project-local settings overrides                     |
-
-Project doesn't have a `rules/` directory by convention — project-scoped rules live in `CLAUDE.md` as sections, or in the `.claude/skills/` directory if they're substantive enough to warrant a skill.
+There's no project `rules/` directory: project rules go in `CLAUDE.md` sections, or a skill if substantial.

@@ -6,7 +6,7 @@ description: |
 
 # Syncing App Settings
 
-Apps with a defaults domain kept in the repo: `macos`, `hyperkey`, `caffeine`, `rectangle`, `dato`, `rex`. Each module has a `defaults.sh` of `defaults write` lines, run from its `install.sh`. That's the repo's established pattern for app preferences, so settings go through `defaults write` in `defaults.sh`.
+Apps with a defaults domain kept in the repo: `macos`, `hyperkey`, `caffeine`, `rectangle`, `dato`, `rex`. Each module has a `defaults.sh` of `defaults write` lines, run from its `install.sh`.
 
 `rex/defaults.sh` and `rex/README.md` are the worked example.
 
@@ -83,7 +83,7 @@ defaults export <domain> - > after.plist
 diff before.plist after.plist
 ```
 
-Keep the snapshots in the scratchpad. An empty diff means the values and types match the live app.
+Keep the snapshots in the scratchpad. The diff must be empty.
 
 ## Update the README
 

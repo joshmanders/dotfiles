@@ -6,33 +6,29 @@ user-invocable: false
 
 # Editing Rules and Skills
 
-## Two flavors of work — classify first
+## Classify first
 
-Before touching anything, identify which kind of work this is. The two flavors look superficially similar but want very different voices and processes, and classifying wrong is the single biggest way this skill gets misapplied.
+- **Correction-driven**: Josh wants a lesson encoded after Claude got something wrong, usually in another project or session. Load `correction-driven.md`.
+- **Informative / capability**: Josh wants Claude to know a tool, command, workflow, or process. No incident. Load `informative-capability.md`.
 
-- **Correction-driven** — Josh has been burned by Claude getting something wrong and wants the lesson encoded so it doesn't recur. Reactive: a frustration arrived from another project or session. Load **`correction-driven.md`** before editing.
-- **Informative / capability** — Josh wants to surface a tool, command, workflow, or process so Claude can use it competently. Proactive: no incident, just a capability worth documenting. Load **`informative-capability.md`** before editing.
+If unsure, ask: "Is this you correcting a behavior, or you wanting me to know about a capability?"
 
-If unsure, ask Josh in one sentence: "Is this you correcting a behavior, or you wanting me to know about a capability?"
+Most global skills are informative; most flat behavioral rules are correction-driven.
 
-Most existing global skills (`github`, `bin-scripts`, `brainstorming`, `planning`, `dispatch-parallel-agents`, `humanize`) are informative. Most of the flat behavioral rules are correction-driven.
+## Scope
 
-## When this skill fires
+- The flat behavioral rules in `claude/CLAUDE.md`
+- The code-authoring standards in `claude/agents/implementer.md`
+- Project rules, as sections in the project `CLAUDE.md`
+- Any skill file, global or project
 
-- Editing the flat behavioral rules in `claude/CLAUDE.md`
-- Editing the code-authoring or code-review standards in the agent defs (`claude/agents/implementer.md`, `claude/agents/reviewer.md`)
-- Editing project rules, which live as sections in the project `CLAUDE.md`
-- Editing or creating any skill file (global or project)
-- Adding new items to any of the above
-- Anytime Josh says "let's document this so it doesn't happen again" (correction) or "let's make sure you know about X" (informative)
+## Placement
 
-## Where it lands
+Which file and which tree an item belongs in is separate from voice. Load `placement.md` for both.
 
-Voice is one axis; location is a separate one. Whichever voice the work takes, it also needs a home: which file a behavioral lesson lands in (the flat list or an agent def) and which tree a rule or skill belongs in (global everywhere, or project only in this repo). Get either wrong and the artifact pollutes every project, silently stops applying, or lands in the wrong voice. Load **`placement.md`** for both decisions.
+## Never
 
-## What this skill is NOT
-
-- Not a license to make the terse behavioral rules or agent defs dramatic for the sake of drama.
-- Not a license to invent incidents to anchor a correction.
-- Not a license to change the semantics of a rule while reframing it.
-- Not a license to dress informative reference up in correction voice.
+- Dramatize the terse rules or agent defs.
+- Invent an incident.
+- Change a rule's meaning while rewording it.
+- Write informative reference in correction voice.
