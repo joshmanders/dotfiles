@@ -88,7 +88,6 @@ Subagent definitions live in `agents/`, symlinked to `~/.claude/agents/`.
 | Agent         | Purpose                                                  |
 | ------------- | -------------------------------------------------------- |
 | `implementer` | Make file changes within a defined scope and report back |
-| `reviewer`    | Read-only quality gate over a diff before human review   |
 | `auditor`     | Read-only audit of a test suite for real confidence      |
 
 ## Skills
@@ -104,7 +103,6 @@ Subagent definitions live in `agents/`, symlinked to `~/.claude/agents/`.
 | [`issue`](skills/issue/SKILL.md) | Work a single GitHub issue end to end                             |
 | [`epic`](skills/epic/SKILL.md) | Orchestrate a parent issue's sub-issues through dispatched agents |
 | [`pr-review`](skills/pr-review/SKILL.md) | Read-only review of someone else's PR                             |
-| [`pr-feedback`](skills/pr-feedback/SKILL.md) | Address review feedback on a PR Josh authored                     |
 | [`dispatch-parallel-agents`](skills/dispatch-parallel-agents/SKILL.md) | Run independent tasks concurrently                                |
 | [`bin-scripts`](skills/bin-scripts/SKILL.md) | Custom shell scripts for dev workflows                            |
 | [`handoff`](skills/handoff/SKILL.md) | Distill a long session into the next one's opening prompt         |
