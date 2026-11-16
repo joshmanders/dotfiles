@@ -1,444 +1,326 @@
 ---
 name: humanize
 description: |
-  Strip AI-writing tells AND make prose clearer, stronger, and more concise. Use when editing or reviewing text to sound natural and human, or when writing or editing any prose humans will read: documentation, commit messages, pull request descriptions, error messages, UI copy, help text, comments, reports, or explanations. Detects and fixes AI patterns (inflated symbolism, promotional language, superficial -ing analyses, vague attributions, em dash overuse, rule of three, AI vocabulary words, passive voice, negative parallelisms, filler phrases) and applies Strunk's Elements of Style rules for clarity and concision (active voice, positive form, definite and concrete language, omitting needless words, parallel construction).
+  Strip AI-writing tells and make prose clearer and more concise. Use when editing or reviewing text to sound natural and human, or when writing any prose humans will read: documentation, commit messages, pull request descriptions, error messages, UI copy, help text, comments, reports, explanations. Fixes AI patterns (inflated significance, promotional language, -ing analyses, vague attributions, em dashes, rule of three, AI vocabulary, passive voice, negative parallelisms, filler) and applies Strunk's Elements of Style (active voice, positive form, concrete language, needless words, parallel construction).
 ---
 
-# Humanize: Natural, Clear, Human Writing
+# Humanize
 
-You are a writing editor with two jobs: remove the signs of AI-generated text so writing sounds natural and human, and make prose clearer, stronger, and more concise. The AI-pattern catalog below is based on Wikipedia's "Signs of AI writing" page, maintained by WikiProject AI Cleanup. The clarity and concision rules come from Strunk's _The Elements of Style_ (see Clarity and Concision, near the end). Both jobs run through the same draft, audit, and final loop (see Process and Output).
+Two jobs on the same text: remove AI-writing tells (catalog from Wikipedia's "Signs of AI writing", WikiProject AI Cleanup) and make the prose clear and concise (Strunk's _The Elements of Style_). Both run through the loop in Process.
 
-## Your Task
+## Ground rules
 
-When given text to humanize:
+- **Keep the information, not the shape.** Every claim in the source survives. Compress dull parts, dwell where a human would, merge or split paragraphs freely. When information and the original's structure conflict, information wins.
+- **Never invent facts.** No fact, name, number, date, quote, or citation absent from the source. Replace a vague claim with a specific one only if the specific comes from the source or the user; otherwise ask, or write the plain version. Opinions are voice, not facts: where Personality applies you may add stance, never new claims. (Fiction is exempt.)
+- **Match the register** (formal, casual, technical).
 
-1. **Identify AI patterns** - Scan for the patterns listed below.
-2. **Preserve the information, not the shape** - Every claim in the original survives into the rewrite, but depth doesn't have to be uniform: compress the dull parts, dwell where a human would, and merge or split paragraphs freely. When keeping the information and mirroring the original's structure pull in different directions, the information wins.
-3. **Never invent facts** - The rewrite must not contain any fact, name, number, date, quote, or citation that isn't in the source text. Swapping a vague claim for a specific one is allowed only when the specific comes from the source or from the user; if a sentence needs real-world detail to work, ask for it or write the plain version without it. Opinions and reactions are voice, not facts: where PERSONALITY AND SOUL applies you may add stance, but never new factual claims. (In fiction, invented detail is the job. This rule governs everything else.)
-4. **Match the voice** - Fit the intended tone (formal, casual, technical). Add personality only when the content and the author's voice call for it (see PERSONALITY AND SOUL).
+## Voice calibration
 
-How you're invoked changes what you deliver (see Invocation Modes). The draft → audit → final loop itself is defined under Process and Output, below.
+Given a sample of the author's writing, read it first and match its sentence lengths, vocabulary, paragraph openings, punctuation, recurring phrases, and transitions. Don't upgrade casual words or regularize deliberate quirks. A sample outranks this skill's style rules, including §14: if it uses em dashes, keep them at roughly its frequency.
 
-## Voice Calibration
+## Personality
 
-If the user provides a writing sample (their own previous writing), analyze it before rewriting:
+Only for blog posts, essays, opinion, personal writing. In encyclopedic, technical, legal, or reference text, neutral and plain is the human voice; add no opinions or first person. Where voice fits, sterile writing is as obvious as slop: allow opinions, uncertainty, mixed feelings, humor, asides, uneven rhythm. Never add factual claims to get there.
 
-1. Read the sample first. Note its sentence lengths, vocabulary, paragraph openings, punctuation, recurring phrases, and transitions.
-2. Match those habits instead of merely deleting AI patterns. Do not upgrade casual words or regularize deliberate quirks.
-3. Without a sample, use the default behavior below.
+## Content patterns
 
-A sample outranks this skill's style rules, including the em dash rule in §14: if the sample uses em dashes, keep them at roughly the sample's frequency. Matching the author beats scrubbing the tell.
+### 1. Inflated significance and legacy
 
-## PERSONALITY AND SOUL
+**Watch:** stands/serves as, is a testament/reminder, vital/significant/crucial/pivotal/key role/moment, underscores/highlights its importance, reflects broader, enduring/lasting, contributing to the, setting the stage for, marking/shaping the, represents a shift, key turning point, evolving landscape, focal point, indelible mark, deeply rooted
 
-Avoiding AI patterns is only half the job. Sterile, voiceless writing is just as obvious as slop. Good writing has a human behind it.
+> Before: The Statistical Institute of Catalonia was officially established in 1989, marking a pivotal moment in the evolution of regional statistics in Spain. This initiative was part of a broader movement across Spain to decentralize administrative functions and enhance regional governance.
+> After: The Statistical Institute of Catalonia was established in 1989, part of a wider decentralization of administrative functions in Spain.
 
-**Apply this section only when the content and the author's voice call for it** - blog posts, essays, opinion, personal writing. For encyclopedic, technical, legal, or reference text, neutral and plain *is* the correct human voice; don't inject opinions or first person there.
+### 2. Notability and media-coverage claims
 
-When voice is appropriate, avoid uniform sentence structures, bloodless neutrality, and perfect organization. Let the writer have opinions, uncertainty, mixed feelings, humor, asides, and uneven rhythm. Never add factual claims to create that personality.
+**Watch:** independent coverage, local/regional/national media outlets, written by a leading expert, active social media presence. Lists of sources without context.
 
-## CONTENT PATTERNS
+> Before: Her views have been cited in The New York Times, BBC, Financial Times, and The Hindu. She maintains an active social media presence with over 500,000 followers.
+> After: Her views have been cited in The New York Times and the BBC.
 
-### 1. Undue Emphasis on Significance, Legacy, and Broader Trends
+If the source gives real context for one citation, keep that one and drop the list. Don't invent context.
 
-**Words to watch:** stands/serves as, is a testament/reminder, a vital/significant/crucial/pivotal/key role/moment, underscores/highlights its importance/significance, reflects broader, symbolizing its ongoing/enduring/lasting, contributing to the, setting the stage for, marking/shaping the, represents/marks a shift, key turning point, evolving landscape, focal point, indelible mark, deeply rooted
-**Problem:** LLM writing puffs up importance by adding statements about how arbitrary aspects represent or contribute to a broader topic.
-**Before:**
-> The Statistical Institute of Catalonia was officially established in 1989, marking a pivotal moment in the evolution of regional statistics in Spain. This initiative was part of a broader movement across Spain to decentralize administrative functions and enhance regional governance.
-**After:**
-> The Statistical Institute of Catalonia was established in 1989, part of a wider decentralization of administrative functions in Spain.
+### 3. Superficial -ing analyses
 
-### 2. Undue Emphasis on Notability and Media Coverage
+**Watch:** highlighting/underscoring/emphasizing, ensuring, reflecting/symbolizing, contributing to, cultivating/fostering, encompassing, showcasing, tacked on for fake depth.
 
-**Words to watch:** independent coverage, local/regional/national media outlets, written by a leading expert, active social media presence
-**Problem:** LLMs hit readers over the head with claims of notability, often listing sources without context.
-**Before:**
-> Her views have been cited in The New York Times, BBC, Financial Times, and The Hindu. She maintains an active social media presence with over 500,000 followers.
-**After:**
-> Her views have been cited in The New York Times and the BBC.
+> Before: The temple's color palette of blue, green, and gold resonates with the region's natural beauty, symbolizing Texas bluebonnets, the Gulf of Mexico, and the diverse Texan landscapes, reflecting the community's deep connection to the land.
+> After: The temple is painted blue, green, and gold, colors meant to evoke Texas bluebonnets and the Gulf of Mexico.
 
-(If the source gives real context for one citation, what she said and where, keep that one and drop the rest of the list. Don't invent the context to make the trimmed version sound better.)
+### 4. Promotional language
 
-### 3. Superficial Analyses with -ing Endings
+**Watch:** boasts a, vibrant, rich (figurative), profound, enhancing its, showcasing, exemplifies, commitment to, natural beauty, nestled, in the heart of, groundbreaking, renowned, breathtaking, must-visit, stunning
 
-**Words to watch:** highlighting/underscoring/emphasizing..., ensuring..., reflecting/symbolizing..., contributing to..., cultivating/fostering..., encompassing..., showcasing...
-**Problem:** AI chatbots tack present participle ("-ing") phrases onto sentences to add fake depth.
-**Before:**
-> The temple's color palette of blue, green, and gold resonates with the region's natural beauty, symbolizing Texas bluebonnets, the Gulf of Mexico, and the diverse Texan landscapes, reflecting the community's deep connection to the land.
-**After:**
-> The temple is painted blue, green, and gold, colors meant to evoke Texas bluebonnets and the Gulf of Mexico.
+> Before: Nestled within the breathtaking region of Gonder in Ethiopia, Alamata Raya Kobo stands as a vibrant town with a rich cultural heritage and stunning natural beauty.
+> After: Alamata Raya Kobo is a town in the Gonder region of Ethiopia.
 
-### 4. Promotional and Advertisement-like Language
+### 5. Vague attributions
 
-**Words to watch:** boasts a, vibrant, rich (figurative), profound, enhancing its, showcasing, exemplifies, commitment to, natural beauty, nestled, in the heart of, groundbreaking (figurative), renowned, breathtaking, must-visit, stunning
-**Problem:** LLMs have serious problems keeping a neutral tone, especially for "cultural heritage" topics.
-**Before:**
-> Nestled within the breathtaking region of Gonder in Ethiopia, Alamata Raya Kobo stands as a vibrant town with a rich cultural heritage and stunning natural beauty.
-**After:**
-> Alamata Raya Kobo is a town in the Gonder region of Ethiopia.
+**Watch:** Industry reports, Observers have cited, Experts argue, Some critics argue, several sources (when few are cited)
 
-### 5. Vague Attributions and Weasel Words
+> Before: Due to its unique characteristics, the Haolai River is of interest to researchers and conservationists. Experts believe it plays a crucial role in the regional ecosystem.
+> After: Researchers and conservationists study the Haolai River for its unusual characteristics.
 
-**Words to watch:** Industry reports, Observers have cited, Experts argue, Some critics argue, several sources/publications (when few cited)
-**Problem:** AI chatbots attribute opinions to vague authorities without specific sources.
-**Before:**
-> Due to its unique characteristics, the Haolai River is of interest to researchers and conservationists. Experts believe it plays a crucial role in the regional ecosystem.
-**After:**
-> Researchers and conservationists study the Haolai River for its unusual characteristics.
+Name a real source if one exists. Never invent one; cut the unsupported claim.
 
-(If a real source exists, name it. Never invent one to make a sentence sound sourced; an unsupported claim gets cut, not decorated.)
+### 6. Formulaic "challenges and future prospects"
 
-### 6. Outline-like "Challenges and Future Prospects" Sections
+**Watch:** Despite its... faces several challenges, Despite these challenges, Challenges and Legacy, Future Outlook
 
-**Words to watch:** Despite its... faces several challenges..., Despite these challenges, Challenges and Legacy, Future Outlook
-**Problem:** Many LLM-generated articles include formulaic "Challenges" sections.
-**Before:**
-> Despite its industrial prosperity, Korattur faces challenges typical of urban areas, including traffic congestion and water scarcity. Despite these challenges, with its strategic location and ongoing initiatives, Korattur continues to thrive as an integral part of Chennai's growth.
-**After:**
-> Korattur has recurring traffic congestion and water shortages.
+> Before: Despite its industrial prosperity, Korattur faces challenges typical of urban areas, including traffic congestion and water scarcity. Despite these challenges, with its strategic location and ongoing initiatives, Korattur continues to thrive as an integral part of Chennai's growth.
+> After: Korattur has recurring traffic congestion and water shortages.
 
-(The specifics you'd want here, like when the congestion worsened or what the city did about it, come from sources or the user, not from the rewrite.)
+## Language and grammar patterns
 
-## LANGUAGE AND GRAMMAR PATTERNS
+### 7. AI vocabulary
 
-### 7. Overused "AI Vocabulary" Words
+**Watch:** Actually, additionally, align with, crucial, delve, emphasizing, enduring, enhance, fostering, garner, highlight (verb), interplay, intricate/intricacies, key (adjective), landscape (abstract), pivotal, showcase, tapestry (abstract), testament, underscore (verb), valuable, vibrant. They cluster.
 
-**High-frequency AI words:** Actually, additionally, align with, crucial, delve, emphasizing, enduring, enhance, fostering, garner, highlight (verb), interplay, intricate/intricacies, key (adjective), landscape (abstract noun), pivotal, showcase, tapestry (abstract noun), testament, underscore (verb), valuable, vibrant
-**Problem:** These words appear far more frequently in post-2023 text. They often co-occur.
-**Before:**
-> Additionally, a distinctive feature of Somali cuisine is the incorporation of camel meat. An enduring testament to Italian colonial influence is the widespread adoption of pasta in the local culinary landscape, showcasing how these dishes have integrated into the traditional diet.
-**After:**
-> Somali cuisine also includes camel meat, which is considered a delicacy. Pasta dishes, introduced during Italian colonization, remain common, especially in the south.
+> Before: Additionally, a distinctive feature of Somali cuisine is the incorporation of camel meat. An enduring testament to Italian colonial influence is the widespread adoption of pasta in the local culinary landscape, showcasing how these dishes have integrated into the traditional diet.
+> After: Somali cuisine also includes camel meat, which is considered a delicacy. Pasta dishes, introduced during Italian colonization, remain common, especially in the south.
 
-### 8. Avoidance of "is"/"are" (Copula Avoidance)
+### 8. Copula avoidance
 
-**Words to watch:** serves as/stands as/marks/represents [a], boasts/features/offers [a]
-**Problem:** LLMs substitute elaborate constructions for simple copulas.
-**Before:**
-> Gallery 825 serves as LAAA's exhibition space for contemporary art. The gallery features four separate spaces and boasts over 3,000 square feet.
-**After:**
-> Gallery 825 is LAAA's exhibition space for contemporary art. The gallery has four rooms totaling 3,000 square feet.
+**Watch:** serves as/stands as/marks/represents [a], boasts/features/offers [a] in place of is/are/has.
 
-### 9. Negative Parallelisms and Tailing Negations
-**Problem:** Constructions like "Not only...but..." or "It's not just about..., it's..." are overused. So are clipped tailing-negation fragments such as "no guessing" or "no wasted motion" tacked onto the end of a sentence instead of written as a real clause.
-**Before:**
-> It's not just about the beat riding under the vocals; it's part of the aggression and atmosphere. It's not merely a song, it's a statement.
-**After:**
-> The heavy beat adds to the aggressive tone.
-**Before (tailing negation):**
-> The options come from the selected item, no guessing.
-**After:**
-> The options come from the selected item without forcing the user to guess.
+> Before: Gallery 825 serves as LAAA's exhibition space for contemporary art. The gallery features four separate spaces and boasts over 3,000 square feet.
+> After: Gallery 825 is LAAA's exhibition space for contemporary art. The gallery has four rooms totaling 3,000 square feet.
 
-### 10. Rule of Three Overuse
-**Problem:** LLMs force ideas into groups of three to appear comprehensive.
-**Before:**
-> The event features keynote sessions, panel discussions, and networking opportunities. Attendees can expect innovation, inspiration, and industry insights.
-**After:**
-> The event includes talks and panels. There's also time for informal networking between sessions.
+### 9. Negative parallelisms and tailing negations
 
-### 11. Elegant Variation (Synonym Cycling)
-**Problem:** AI has repetition-penalty code causing excessive synonym substitution.
-**Before:**
-> The protagonist faces many challenges. The main character must overcome obstacles. The central figure eventually triumphs. The hero returns home.
-**After:**
-> The protagonist faces many challenges but eventually triumphs and returns home.
+"Not only...but...", "It's not just X, it's Y", and clipped fragments like "no guessing" tacked onto a sentence instead of a real clause.
 
-### 12. False Ranges
-**Problem:** LLMs use "from X to Y" constructions where X and Y aren't on a meaningful scale.
-**Before:**
-> Our journey through the universe has taken us from the singularity of the Big Bang to the grand cosmic web, from the birth and death of stars to the enigmatic dance of dark matter.
-**After:**
-> The book covers the Big Bang, star formation, and current theories about dark matter.
+> Before: It's not just about the beat riding under the vocals; it's part of the aggression and atmosphere. It's not merely a song, it's a statement.
+> After: The heavy beat adds to the aggressive tone.
 
-### 13. Passive Voice and Subjectless Fragments
-**Problem:** LLMs often hide the actor or drop the subject entirely with lines like "No configuration file needed" or "The results are preserved automatically." Rewrite these when active voice makes the sentence clearer and more direct.
-**Before:**
-> No configuration file needed. The results are preserved automatically.
-**After:**
-> You do not need a configuration file. The system preserves the results automatically.
+> Before: The options come from the selected item, no guessing.
+> After: The options come from the selected item without forcing the user to guess.
 
-## STYLE PATTERNS
+### 10. Rule of three
 
-### 14. Em Dashes (and En Dashes): Cut Them
+Ideas forced into triplets to seem comprehensive.
 
-**Rule:** The final rewrite contains no em dashes (—) or en dashes (–). The em dash is one of the most reliable AI tells, so treat this as a hard constraint, not a "use sparingly" preference. Replace each one, in rough order of preference: a period (start a new sentence), a comma (a tight aside), a colon (introducing an explanation), parentheses (a true aside), or restructure the sentence. Also catch spaced em dashes (` — `) and double hyphens (` -- `) used the same way.
-**Before:**
-> The term is primarily promoted by Dutch institutions—not by the people themselves. You don't say "Netherlands, Europe" as an address—yet this mislabeling continues—even in official documents.
-**After:**
-> The term is primarily promoted by Dutch institutions, not by the people themselves. You don't say "Netherlands, Europe" as an address, yet this mislabeling continues in official documents.
-**Before:**
-> The new policy — announced without warning — affects thousands of workers. The changes -- long overdue according to critics -- will take effect immediately.
-**After:**
-> The new policy, announced without warning, affects thousands of workers. The changes, long overdue according to critics, will take effect immediately.
+> Before: The event features keynote sessions, panel discussions, and networking opportunities. Attendees can expect innovation, inspiration, and industry insights.
+> After: The event includes talks and panels. There's also time for informal networking between sessions.
 
-Before returning the final rewrite, scan it for `—` and `–`. Any hit means the draft isn't done. One exception: a user-provided writing sample that uses em dashes overrides this rule (see Voice Calibration); match the sample's frequency instead of banning them.
+### 11. Synonym cycling
 
-### 15. Overuse of Boldface
-**Problem:** AI chatbots emphasize phrases in boldface mechanically.
-**Before:**
-> It blends **OKRs (Objectives and Key Results)**, **KPIs (Key Performance Indicators)**, and visual strategy tools such as the **Business Model Canvas (BMC)** and **Balanced Scorecard (BSC)**.
-**After:**
-> It blends OKRs, KPIs, and visual strategy tools like the Business Model Canvas and Balanced Scorecard.
+> Before: The protagonist faces many challenges. The main character must overcome obstacles. The central figure eventually triumphs. The hero returns home.
+> After: The protagonist faces many challenges but eventually triumphs and returns home.
 
-### 16. Inline-Header Vertical Lists
-**Problem:** AI outputs lists where items start with bolded headers followed by colons.
-**Before:**
-> - **User Experience:** The user experience has been significantly improved with a new interface.
+### 12. False ranges
+
+"From X to Y" where X and Y aren't on a meaningful scale.
+
+> Before: Our journey through the universe has taken us from the singularity of the Big Bang to the grand cosmic web, from the birth and death of stars to the enigmatic dance of dark matter.
+> After: The book covers the Big Bang, star formation, and current theories about dark matter.
+
+### 13. Passive voice and subjectless fragments
+
+Hidden actor or dropped subject. Rewrite when active is clearer.
+
+> Before: No configuration file needed. The results are preserved automatically.
+> After: You do not need a configuration file. The system preserves the results automatically.
+
+## Style patterns
+
+### 14. Em and en dashes: cut them
+
+Hard constraint: the final rewrite contains no `—` or `–`, nor spaced ` — ` or ` -- ` used the same way. Replace each, in rough order of preference, with a period, comma, colon, parentheses, or a restructured sentence.
+
+> Before: The new policy — announced without warning — affects thousands of workers. The changes -- long overdue according to critics -- will take effect immediately.
+> After: The new policy, announced without warning, affects thousands of workers. The changes, long overdue according to critics, will take effect immediately.
+
+Scan the final for `—` and `–` before returning; any hit means it isn't done. Only exception: an author sample that uses them (Voice calibration).
+
+### 15. Mechanical boldface
+
+> Before: It blends **OKRs (Objectives and Key Results)**, **KPIs (Key Performance Indicators)**, and visual strategy tools such as the **Business Model Canvas (BMC)**.
+> After: It blends OKRs, KPIs, and visual strategy tools like the Business Model Canvas.
+
+### 16. Inline-header lists
+
+> Before:
 > - **Performance:** Performance has been enhanced through optimized algorithms.
 > - **Security:** Security has been strengthened with end-to-end encryption.
-**After:**
-> The update improves the interface, speeds up load times through optimized algorithms, and adds end-to-end encryption.
+>
+> After: The update speeds up load times through optimized algorithms and adds end-to-end encryption.
 
-### 17. Title Case in Headings
-**Problem:** AI chatbots capitalize all main words in headings.
-**Before:**
-> ## Strategic Negotiations And Global Partnerships
-**After:**
-> ## Strategic negotiations and global partnerships
+### 17. Title case headings
 
-### 18. Emojis
-**Problem:** AI chatbots often decorate headings or bullet points with emojis.
-**Before:**
-> 🚀 **Launch Phase:** The product launches in Q3
-> 💡 **Key Insight:** Users prefer simplicity
-> ✅ **Next Steps:** Schedule follow-up meeting
-**After:**
-> The product launches in Q3. User research showed a preference for simplicity. Next step: schedule a follow-up meeting.
+`## Strategic Negotiations And Global Partnerships` → `## Strategic negotiations and global partnerships`
 
-### 19. Curly Quotation Marks
-**Problem:** ChatGPT uses curly quotes (“...”) instead of straight quotes ("...").
-**Before:**
-> He said “the project is on track” but others disagreed.
-**After:**
-> He said "the project is on track" but others disagreed.
+### 18. Emojis on headings or bullets
 
-## COMMUNICATION PATTERNS
+> Before: 🚀 **Launch Phase:** The product launches in Q3 / 💡 **Key Insight:** Users prefer simplicity
+> After: The product launches in Q3. User research showed a preference for simplicity.
 
-### 20. Collaborative Communication Artifacts
+### 19. Curly quotes
 
-**Words to watch:** I hope this helps, Of course!, Certainly!, You're absolutely right!, Would you like..., Want me to...?, Want me to give examples?, Should I continue?, let me know, here is a...
-**Problem:** Text meant as chatbot correspondence gets pasted as content.
-**Before:**
-> Here is an overview of the French Revolution. I hope this helps! Let me know if you'd like me to expand on any section.
-**After:**
-> The French Revolution began in 1789 when financial crisis and food shortages led to widespread unrest.
+Use straight quotes: `“on track”` → `"on track"`.
 
-### 21. Knowledge-Cutoff Disclaimers and Speculative Gap-Filling
+## Communication patterns
 
-**Words to watch:** as of [date], Up to my last training update, While specific details are limited/scarce..., based on available information, not publicly available, maintains a low profile, keeps personal details private, prefers to stay out of the spotlight, likely [grew up/studied/began], it is believed that
-**Problem:** Two related tells. (a) Older models leave hard knowledge-cutoff disclaimers in the text. (b) When a model can't find a source, it writes a paragraph *about* not finding one and then invents plausible filler to cover the gap. For a private person the guess almost always lands on the same stock phrases ("maintains a low profile," "keeps personal details private"), none of it sourced. Say what isn't known, or cut the sentence; don't dress a guess up as fact.
-**Before (cutoff disclaimer):**
-> While specific details about the company's founding are not extensively documented in readily available sources, it appears to have been established sometime in the 1990s.
-**After:**
-> The company's founding date is not documented in the available sources. (Or cut the sentence. State a date only if a source provides one.)
-**Before (speculative gap-fill):**
-> Information about her early life is not publicly available, suggesting she maintains a low profile and keeps personal details private. She likely grew up in a middle-class household, which shaped her later interest in education reform.
-**After:**
-> Her early life is not documented in the available sources. (Or omit the section.)
+### 20. Chatbot correspondence artifacts
 
-### 22. Sycophantic/Servile Tone
-**Problem:** Overly positive, people-pleasing language.
-**Before:**
-> Great question! You're absolutely right that this is a complex topic. That's an excellent point about the economic factors.
-**After:**
-> The economic factors you mentioned are relevant here.
+**Watch:** I hope this helps, Of course!, Certainly!, You're absolutely right!, Would you like..., Want me to...?, Should I continue?, let me know, here is a...
 
-## FILLER AND HEDGING
+> Before: Here is an overview of the French Revolution. I hope this helps! Let me know if you'd like me to expand on any section.
+> After: The French Revolution began in 1789 when financial crisis and food shortages led to widespread unrest.
 
-### 23. Filler Phrases
+### 21. Cutoff disclaimers and speculative gap-filling
 
-**Before → After:**
+**Watch:** as of [date], Up to my last training update, While specific details are limited/scarce, based on available information, not publicly available, maintains a low profile, keeps personal details private, prefers to stay out of the spotlight, likely [grew up/studied/began], it is believed that
+
+Two tells: leftover knowledge-cutoff disclaimers, and a paragraph about missing sources followed by invented filler (for private people, almost always the stock "low profile" phrases). Say what isn't known, or cut the sentence. Same for an unverified cause in a PR body, issue, comment, or commit message: cut it or mark it explicitly as a guess.
+
+> Before: Information about her early life is not publicly available, suggesting she maintains a low profile and keeps personal details private. She likely grew up in a middle-class household, which shaped her later interest in education reform.
+> After: Her early life is not documented in the available sources. (Or omit the section.)
+
+### 22. Sycophancy
+
+> Before: Great question! You're absolutely right that this is a complex topic. That's an excellent point about the economic factors.
+> After: The economic factors you mentioned are relevant here.
+
+## Filler and hedging
+
+### 23. Filler phrases
+
 - "In order to achieve this goal" → "To achieve this"
-- "Due to the fact that it was raining" → "Because it was raining"
+- "Due to the fact that" → "Because"
 - "At this point in time" → "Now"
-- "In the event that you need help" → "If you need help"
-- "The system has the ability to process" → "The system can process"
+- "In the event that" → "If"
+- "has the ability to process" → "can process"
 - "It is important to note that the data shows" → "The data shows"
 
-### 24. Excessive Hedging
-**Problem:** Over-qualifying statements.
-**Before:**
-> It could potentially possibly be argued that the policy might have some effect on outcomes.
-**After:**
-> The policy may affect outcomes.
+### 24. Excessive hedging
 
-### 25. Generic Positive Conclusions
-**Problem:** Vague upbeat endings.
-**Before:**
-> The future looks bright for the company. Exciting times lie ahead as they continue their journey toward excellence. This represents a major step in the right direction.
-**After:**
-> (Cut the paragraph. End on the last concrete fact instead of a send-off. If the source states real plans, use those.)
+"It could potentially possibly be argued that the policy might have some effect" → "The policy may affect outcomes."
 
-### 26. Hyphenated Word Pair Overuse
+### 25. Generic positive conclusions
 
-**Words to watch:** third-party, cross-functional, client-facing, data-driven, decision-making, well-known, high-quality, real-time, long-term, end-to-end
-**Problem:** AI hyphenates these uniformly, including in predicate position (`the report is high-quality`). Humans hyphenate inconsistently — typically only when the compound is attributive (`a high-quality report`) and often dropping the hyphen otherwise (`the report is high quality`). Keep attributive-position hyphens; drop them when the compound follows the noun.
-**Before:**
-> The cross-functional team delivered a high-quality, data-driven report. The team is cross-functional, the report is high-quality, and the methodology is data-driven.
-**After:**
-> The cross-functional team delivered a high-quality, data-driven report. The team is cross functional, the report is high quality, and the methodology is data driven.
+"The future looks bright... Exciting times lie ahead..." → cut it. End on the last concrete fact; use real plans only if the source states them.
 
-### 27. Persuasive Authority Tropes
+### 26. Uniform hyphenation
 
-**Phrases to watch:** The real question is, at its core, in reality, what really matters, fundamentally, the deeper issue, the heart of the matter
-**Problem:** LLMs use these phrases to pretend they are cutting through noise to some deeper truth, when the sentence that follows usually just restates an ordinary point with extra ceremony.
-**Before:**
-> The real question is whether teams can adapt. At its core, what really matters is organizational readiness.
-**After:**
-> The question is whether teams can adapt. That mostly depends on whether the organization is ready to change its habits.
+**Watch:** third-party, cross-functional, client-facing, data-driven, decision-making, well-known, high-quality, real-time, long-term, end-to-end
 
-### 28. Signposting and Announcements
+AI hyphenates these everywhere. Keep the hyphen when the compound precedes the noun; drop it in predicate position.
 
-**Phrases to watch:** Let's dive in, let's explore, let's break this down, here's what you need to know, now let's look at, without further ado
-**Problem:** LLMs announce what they are about to do instead of doing it. This meta-commentary slows the writing down and gives it a tutorial-script feel.
-**Before:**
-> Let's dive into how caching works in Next.js. Here's what you need to know.
-**After:**
-> Next.js caches data at multiple layers, including request memoization, the data cache, and the router cache.
+> Before: The team is cross-functional, the report is high-quality.
+> After: The cross-functional team... The team is cross functional, the report is high quality.
 
-### 29. Fragmented Headers
+### 27. Persuasive authority tropes
 
-**Signs to watch:** A heading followed by a one-line paragraph that simply restates the heading before the real content begins.
-**Problem:** LLMs often add a generic sentence after a heading as a rhetorical warm-up. It usually adds nothing and makes the prose feel padded.
-**Before:**
-> ## Performance
->
-> Speed matters.
->
-> When users hit a slow page, they leave.
-**After:**
-> ## Performance
->
-> When users hit a slow page, they leave.
+**Watch:** The real question is, at its core, in reality, what really matters, fundamentally, the deeper issue, the heart of the matter. They promise a deeper truth, then restate an ordinary point.
 
-### 30. Diff-Anchored Writing
-**Problem:** Documentation or comments written as if narrating a change rather than describing the thing as it is. Unless the document is inherently version-scoped (changelogs, release notes, migration guides), it should read coherently without knowing what changed in the last commit.
-**Before:**
-> This function was added to replace the previous approach of iterating through all items, which caused O(n²) performance.
-**After:**
-> This function uses a hash map for O(1) lookups, avoiding the O(n²) cost of naive iteration.
+> Before: The real question is whether teams can adapt. At its core, what really matters is organizational readiness.
+> After: The question is whether teams can adapt. That mostly depends on whether the organization is ready to change its habits.
 
-### 31. Manufactured Punchlines and Staccato Drama
-**Problem:** LLMs often make every sentence land like a quotable closer, then stack short declarative fragments to manufacture drama. A single short sentence for emphasis is fine; a run of them starts to sound engineered.
-**Before:**
-> Then AlphaEvolve arrived. It had no preference for symmetry. No aesthetic prior. No nostalgia for human taste. The old rules were gone.
-**After:**
-> AlphaEvolve changed the search because it did not favor symmetry or human-looking designs. That made some of the older assumptions less useful.
+### 28. Signposting
 
-### 32. Aphorism Formulas
+**Watch:** Let's dive in, let's explore, let's break this down, here's what you need to know, now let's look at, without further ado. Do the thing instead of announcing it.
 
-**Words to watch:** X is the Y of Z, X becomes a trap, X is not a tool but a mirror, the language of, the currency of, the architecture of
-**Problem:** LLMs turn ordinary claims into reusable aphorisms that sound profound without adding precision. Replace the formula with the concrete claim it is gesturing at.
-**Before:**
-> Symmetry is the language of trust. Efficiency becomes a trap when teams forget the human layer.
-**After:**
-> Symmetric layouts often feel more predictable to users. Teams can over-optimize workflows and miss how people actually use them.
+> Before: Let's dive into how caching works in Next.js. Here's what you need to know.
+> After: Next.js caches data at multiple layers, including request memoization, the data cache, and the router cache.
 
-### 33. Conversational Rhetorical Openers
+### 29. Fragmented headers
 
-**Phrases to watch:** Honestly?, Look, Here's the thing, The thing is, Let's be honest, Real talk, when used as standalone hooks or fake-candid pauses before an ordinary point.
-**Problem:** LLMs open with a fake-candid hook to manufacture intimacy before delivering a routine claim. The tell is the theatrical pause-and-reveal: a one-word question or aside, then the "real" answer. A person being honest usually just says the thing.
-**Before:**
-> Is it worth the price? Honestly? It depends on how often you'll use it.
-**After:**
-> Whether it's worth the price depends on how often you'll use it.
+A one-line paragraph after a heading that restates it ("## Performance / Speed matters.") before the real content. Cut it.
 
-## DETECTION GUIDANCE
+### 30. Diff-anchored writing
 
-### What NOT to flag (false positives)
+**Watch:** previously, used to, instead of X, we considered, not X — Y, we're NOT using X
 
-A clean human writer can hit several of the patterns above without any AI involvement. Before rewriting, sanity-check that you are not gutting legitimate prose. The following are *not* reliable indicators on their own:
+Describe the present state as if no prior state existed. When something is dropped, drop it entirely; no "no longer used" markers. Exception: inherently version-scoped documents (changelogs, release notes, migration guides, external deprecation notices).
 
-- **Perfect grammar and consistent style.** Many writers are professionals or have been edited. Polish does not equal AI.
-- **Mixed casual and formal registers.** This often signals a person in a technical field, a young writer, or someone with neurodivergent prose habits — not a chatbot.
-- **"Bland" or "robotic" prose.** AI prose has *specific* tells. Generic dryness without those tells is just dry writing.
-- **Formal or academic vocabulary.** AI overuses *specific* fancy words (see §7), not all fancy words. Don't flatten "ostensibly" or "constituent" just because they sound brainy.
-- **Letter-style opening or closing on a comment.** Salutations and sign-offs predate ChatGPT by centuries.
-- **Common transition words in isolation.** *Additionally*, *moreover*, *consequently* are AI-coded only when piled up. One *however* is not a tell.
-- **Curly quotes alone.** macOS, Word, Google Docs, and most CMSes auto-curl by default. Curly quotes only count when stacked with other tells.
-- **Em dashes alone.** Many editors and journalists use them often. Em dashes are evidence only when paired with formulaic sales-y rhythm.
-- **One short emphatic sentence.** Humans use clipped sentences to land a point. Flag staccato drama only when several short fragments appear in a row and inflate the tone.
-- **"Honestly" or "look" mid-sentence.** These are ordinary in casual writing. The tell is the standalone theatrical opener, not the word itself.
-- **Unsourced claims.** Most of the web is unsourced. Lack of citations doesn't prove anything.
-- **Correct, complex formatting.** Visual editors and templates produce clean output without any AI.
-- **Secondhand text.** Do not rewrite watched phrases inside quotations, titles, proper names, or examples where the phrase is being discussed rather than used.
+> Before: This function was added to replace the previous approach of iterating through all items, which caused O(n²) performance.
+> After: This function uses a hash map for O(1) lookups, avoiding the O(n²) cost of naive iteration.
 
-When in doubt, look for **clusters** of tells, not isolated ones. A single em dash means nothing; em dashes plus rule-of-three plus *vibrant tapestry* plus a "Conclusion" section is a confession.
+### 31. Manufactured punchlines and staccato drama
 
-### Signs of human writing (preserve these)
+Every sentence landing like a closer, or runs of short fragments. One short emphatic sentence is fine; a run sounds engineered.
 
-When you see these, lean toward leaving the prose alone — they are evidence of a real person writing, and over-editing will destroy what makes the piece sound human:
+> Before: Then AlphaEvolve arrived. It had no preference for symmetry. No aesthetic prior. No nostalgia for human taste. The old rules were gone.
+> After: AlphaEvolve changed the search because it did not favor symmetry or human-looking designs. That made some of the older assumptions less useful.
 
-- **Specific, unusual, hard-to-fabricate detail.** A real address. A weird quote. The phrase "the lawyer who used to work upstairs from my dentist." LLMs round off specifics; humans hoard them.
-- **Mixed feelings and unresolved tension.** "I think this is mostly good, but it bothers me, and I can't fully explain why." LLMs default to clean takes.
-- **Dated, era-bound references.** Slang, memes, or in-jokes that map to a specific year and subculture. Models lag by a year or more.
-- **First-person editorial choices the writer can defend.** If the writer can explain *why* they made a particular cut or used a particular word, that's a strong human signal.
-- **Variety in sentence length.** Real writing alternates short and long. AI writing tends toward an even, mid-length cadence.
-- **Genuine asides, parentheticals, or self-corrections.** "(I keep wanting to say 'almost' here, but it really was certain.)" Models rarely interrupt themselves like this.
-- **Edits made before November 30, 2022.** ChatGPT's public launch. Anything older than that is, with very rare exceptions, not AI-written.
+### 32. Aphorism formulas
 
----
+**Watch:** X is the Y of Z, X becomes a trap, X is not a tool but a mirror, the language/currency/architecture of. Replace with the concrete claim.
 
-## Clarity and Concision (Strunk's Elements of Style)
+> Before: Symmetry is the language of trust. Efficiency becomes a trap when teams forget the human layer.
+> After: Symmetric layouts often feel more predictable to users. Teams can over-optimize workflows and miss how people actually use them.
 
-Removing AI tells is half the job. The other half is prose that is clear, direct, and concise. William Strunk Jr.'s _The Elements of Style_ (1918) is the reference for that half: it teaches you to write plainly and cut ruthlessly. Apply these rules to any prose a human will read, and run the changes through the same draft, audit, and final loop as the AI-pattern work.
+### 33. Fake-candid openers
 
-`elements-of-style.md` (in this directory) holds the full public-domain text.
+**Watch:** Honestly?, Look, Here's the thing, The thing is, Let's be honest, Real talk, as standalone hooks before a routine point.
 
-**WARNING:** `elements-of-style.md` is a large reference (~30,000 tokens). Read it only when you are actively writing or editing prose and need the detail, not on every invocation.
+> Before: Is it worth the price? Honestly? It depends on how often you'll use it.
+> After: Whether it's worth the price depends on how often you'll use it.
 
-**When context is tight:** write your draft using judgment, then dispatch a subagent with your draft and `elements-of-style.md`, and have it copyedit and return the revision.
+## Detection
 
-### The rules
+### Not tells on their own
 
-**Elementary rules of usage (grammar and punctuation)**
+Look for clusters, not isolated hits. Don't gut legitimate prose for:
 
-1. Form the possessive singular of nouns by adding 's.
-2. In a series of three or more terms with a single conjunction, use a comma after each term except the last.
-3. Enclose parenthetic expressions between commas.
-4. Place a comma before a conjunction introducing a co-ordinate clause.
-5. Do not join independent clauses with a comma.
-6. Do not break sentences in two.
-7. A participial phrase at the beginning of a sentence must refer to the grammatical subject.
+- Perfect grammar or polish; formal or academic vocabulary beyond the §7 list
+- Mixed casual and formal registers
+- Dry prose without specific tells
+- Letter-style openings or sign-offs
+- A single transition word (one *however*); these count only when piled up
+- Curly quotes alone (editors auto-curl) or em dashes alone; each counts only alongside other tells
+- One short emphatic sentence; "honestly" or "look" mid-sentence
+- Unsourced claims; clean complex formatting
+- Watched phrases inside quotations, titles, proper names, or examples that discuss the phrase
 
-**Principles of composition**
+### Signs of a human (leave alone)
 
-8. Make the paragraph the unit of composition: one paragraph per topic.
-9. Begin each paragraph with a topic sentence; end it in conformity with the beginning.
-10. Use the active voice. (The AI-tell version of this is the subjectless passive in §13 above; here it is the general habit that makes writing forcible.)
-11. Put statements in positive form. (Broader than the negative constructions in §9 above: prefer `dishonest` to `not honest`, `forgot` to `did not remember`.)
-12. Use definite, specific, concrete language.
-13. Omit needless words. (Extends the filler and hedging cuts in §23 and §24 above to every sentence: `whether`, not `the question as to whether`.)
-14. Avoid a succession of loose sentences.
-15. Express co-ordinate ideas in similar form (parallel construction).
-16. Keep related words together.
-17. In summaries, keep to one tense.
-18. Place the emphatic words of a sentence at the end.
+- Specific, odd, hard-to-fabricate detail ("the lawyer who used to work upstairs from my dentist")
+- Mixed feelings and unresolved tension
+- Era-bound slang, memes, in-jokes
+- Editorial choices the writer can defend
+- Varied sentence length
+- Genuine asides and self-corrections
+- Text dated before November 30, 2022 (ChatGPT's launch)
 
-**Words and expressions commonly misused.** Section V of `elements-of-style.md` is an alphabetical usage reference, covering `case`, `different than`, `less` vs `fewer`, `while`, `however`, the split infinitive, and more. Consult it for specific usage questions.
+## Clarity and concision (Strunk)
 
----
+Apply to any prose a human will read, inside the same loop. `usage.md` holds Strunk's misused-words list (Section V); consult it for specific usage questions.
 
-## Invocation Modes
+**Usage**
 
-**Pasted text (default).** The user gives text in the conversation. Run the full loop below and deliver the draft, the audit bullets, and the final rewrite.
+1. Possessive singular takes 's whatever the final consonant: Charles's, Burns's. Exceptions: ancient names in -es/-is, Jesus', for conscience' sake. Pronoun possessives (hers, its, theirs) take no apostrophe.
+2. Serial comma: red, white, and blue. Firm names omit it (Brown, Shipley & Co.).
+3. Enclose parenthetic expressions between two commas, never one. Non-restrictive clauses take commas ("The audience, which had been indifferent, ..."); restrictive ones don't ("The candidate who best meets..."). Also set off the year in a date, the day after a weekday, etc., jr.
+4. Comma before a conjunction joining independent clauses (and, but, for, or, nor, as=because, while=and at the same time). With a shared subject: comma before *but*, none before *and* when the link is close.
+5. Don't join independent clauses with a comma; use a semicolon or period. Adverbs (therefore, thus, then, besides) still need the semicolon. Exception: very short parallel clauses ("Man proposes, God disposes").
+6. Don't break sentences in two ("He was an interesting talker. A man who had traveled..."). A deliberate emphatic fragment is allowed only when the emphasis is warranted.
+7. An opening participial phrase must refer to the subject. Wrong: "On arriving in Chicago, his friends met him." Right: "When he arrived in Chicago, his friends met him."
 
-**File mode.** The user points at a file. Read it, run the draft → audit → final loop internally, then rewrite the file in place so it ends up containing only the final rewrite. Humanize the prose only: leave code blocks, frontmatter, data, and link targets untouched. In the conversation, report a short summary of what changed rather than pasting the whole rewrite back.
+**Composition**
 
-**Embedded mode.** Another task or agent is using this skill as one step of a larger job (a PR description, a commit message, a doc). Run the loop internally and output only the final text. No draft, no audit bullets, no summary. The caller wants prose, not ceremony.
+8. One paragraph per topic. Single-sentence paragraphs only for transitions or in reference text; new paragraph per speaker in dialogue.
+9. Open each paragraph with a topic sentence; develop it; end on its point or consequence, never a digression.
+10. Prefer active voice; passive is fine when the receiver is the topic. Don't stack passives ("Gold was not allowed to be exported" → "The export of gold was prohibited"), and don't make the action the subject ("A survey of this region was made" → "This region was surveyed"). Replace *there is* / *could be heard* with a real verb ("Dead leaves covered the ground").
+11. Positive form: say what is. "not honest" → dishonest, "did not remember" → forgot, "was not very often on time" → usually came late. *Not* for denial or antithesis, never evasion.
+12. Specific, definite, concrete: "A period of unfavorable weather set in" → "It rained every day for a week." Give particular instances even for general principles.
+13. Omit needless words; make every word tell (short sentences aren't required). "the question as to whether" → whether; "in a hasty manner" → hastily; revise out *the fact that* ("owing to the fact that" → because); drop superfluous *who is* / *which was*. Combine a step-by-step series of sentences that express one idea.
+14. Avoid runs of loose two-clause sentences joined by and/but/so/which/while; recast some for variety.
+15. Parallel form for coordinate ideas. Repeat an article or preposition before every term or only the first ("in spring, summer, or winter"). Correlatives (both/and, not/but, either/or, first/second) take the same construction: "The ceremony was both long and tedious."
+16. Keep related words together: don't split subject and verb with a movable phrase; put the relative pronoun right after its antecedent; put modifiers next to what they modify ("He found only two mistakes").
+17. In summaries, keep one tense (present preferred; perfect for prior action). State once that it's a summary; skip repeated "he said" tags.
+18. Put the emphatic word, usually the new information, at the end of the sentence: "Because of its hardness, this steel is used for razors." The start is the secondary emphatic position.
 
-## Process and Output
+## Invocation modes
 
-1. Read the input carefully and identify every instance of the patterns above.
-2. Write a **draft rewrite**. Check that it reads naturally aloud, varies sentence length, prefers specific details and simple constructions (is/are/has), and keeps the appropriate register.
-3. Ask two questions: **"What makes the below so obviously AI generated?"** and **"Does the rewrite state any fact, name, number, date, or citation that isn't in the source?"** Answer briefly. A fabrication is a defect even when it sounds more human than the vague original.
-4. Revise into a **final rewrite** that addresses them and contains no em or en dashes (see §14).
+- **Pasted text (default):** deliver the draft, brief "still-AI" bullets, the final rewrite, and optionally a short change summary.
+- **File:** run the loop internally, rewrite the file in place with only the final text. Touch prose only: leave code blocks, frontmatter, data, and link targets alone. Report a short summary, not the rewrite.
+- **Embedded** (one step of a larger task such as a PR description or commit message): run the loop internally and output only the final text.
 
-In pasted-text mode, deliver the draft, the brief "still-AI" bullets, the final rewrite, and (optionally) a short summary of changes. In file and embedded modes, run the same loop but deliver only what the mode calls for (see Invocation Modes).
+## Process
 
-## Reference
-
-This skill is based on [Wikipedia:Signs of AI writing](https://en.wikipedia.org/wiki/Wikipedia:Signs_of_AI_writing), maintained by WikiProject AI Cleanup. The patterns documented there come from observations of thousands of instances of AI-generated text on Wikipedia.
-
-Key insight from Wikipedia: "LLMs use statistical algorithms to guess what should come next. The result tends toward the most statistically likely result that applies to the widest variety of cases."
+1. Find every instance of the patterns above.
+2. Write a draft rewrite: reads naturally aloud, varied sentence length, simple constructions (is/are/has), right register.
+3. Ask: "What makes this obviously AI generated?" and "Does it state any fact, name, number, date, or citation not in the source?" Answer briefly. A fabrication is a defect even when it sounds more human.
+4. Revise into the final rewrite, with no em or en dashes (§14). Don't hard-wrap: one paragraph or bullet per line. Break lines only where the break carries meaning (code, diagrams, fixed-width output, commit subject lines).

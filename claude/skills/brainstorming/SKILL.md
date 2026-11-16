@@ -4,55 +4,26 @@ description: You MUST use this before any creative work - creating features, bui
 user-invocable: false
 ---
 
-# Brainstorming Ideas Into Designs
+# Brainstorming
 
-## Overview
+**Understand the idea:**
 
-Help turn ideas into fully formed designs and specs through natural collaborative dialogue.
+- Check project state first (files, docs, recent commits).
+- One question per message; multiple choice when possible.
+- Pin down purpose, constraints, success criteria.
 
-Start by understanding the current project context, then ask questions one at a time to refine the idea. Once you understand what you're building, present the design in small sections (200-300 words), checking after each section whether it looks right so far.
+**Explore approaches:**
 
-## The Process
+- Propose 2-3 approaches with trade-offs, leading with your recommendation and why.
+- YAGNI: cut unnecessary features.
 
-**Understanding the idea:**
+**Present the design:**
 
-- Check out the current project state first (files, docs, recent commits)
-- Ask questions one at a time to refine the idea
-- Prefer multiple choice questions when possible, but open-ended is fine too
-- Only one question per message - if a topic needs more exploration, break it into multiple questions
-- Focus on understanding: purpose, constraints, success criteria
+- In sections of 200-300 words, asking after each whether it looks right.
+- Cover architecture, components, data flow, error handling, testing.
+- Go back and clarify when something doesn't fit.
 
-**Exploring approaches:**
+**After the design:**
 
-- Propose 2-3 different approaches with trade-offs
-- Present options conversationally with your recommendation and reasoning
-- Lead with your recommended option and explain why
-
-**Presenting the design:**
-
-- Once you believe you understand what you're building, present the design
-- Break it into sections of 200-300 words
-- Ask after each section whether it looks right so far
-- Cover: architecture, components, data flow, error handling, testing
-- Be ready to go back and clarify if something doesn't make sense
-
-## After the Design
-
-**Documentation:**
-
-- Write the validated design to a plan file
-- Use the humanize skill
-
-**Implementation (if continuing):**
-
-- Ask: "Ready to start planning implementation?"
-- Use the `planning` skill to create a GitHub issue and implementation plan
-
-## Key Principles
-
-- **One question at a time** - Don't overwhelm with multiple questions
-- **Multiple choice preferred** - Easier to answer than open-ended when possible
-- **YAGNI ruthlessly** - Remove unnecessary features from all designs
-- **Explore alternatives** - Always propose 2-3 approaches before settling
-- **Incremental validation** - Present design in sections, validate each
-- **Be flexible** - Go back and clarify when something doesn't make sense
+- Write the validated design to a plan file, using the `humanize` skill.
+- Ask "Ready to start planning implementation?"; if yes, use the `planning` skill to create the GitHub issue.

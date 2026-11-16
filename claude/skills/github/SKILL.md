@@ -1,126 +1,80 @@
 ---
 name: github
 description: |
-  GitHub CLI patterns for issues, projects, and PRs. Invoke when: creating issues, linking PRs to issues, updating project status, or any GitHub project operations.
+  GitHub CLI patterns for issues, projects, sub-issues, and PRs. Invoke when: creating issues, linking PRs to issues, updating project status, attaching screenshots, or any GitHub project operation.
 user-invocable: false
 ---
 
 # GitHub CLI Patterns
 
-Generic patterns for GitHub operations using `gh` CLI.
-
----
-
 ## Writes
 
-Every command here that changes something on GitHub is a write: `gh issue create`, `gh issue edit`, `gh issue comment`, `gh project item-add`, `gh pr create`, `gh pr edit`, `gh pr comment`, and every `gh api graphql` call whose query is a `mutation`. The `list`, `view`, `search`, and `checks` commands and the `query` GraphQL calls are reads.
+Writes: `gh issue create|edit|comment`, `gh project item-add`, `gh pr create|edit|comment`, and any `gh api graphql` `mutation`. `list`, `view`, `search`, `checks`, and GraphQL `query` calls are reads.
 
-Each write follows the same three steps:
+Every write:
 
-1. Present it in full — the exact title and body for an issue, comment, or PR; the exact action and target for a label, type, status, project, or sub-issue change.
-2. Run it once Josh approves that exact text or action. Each write is its own ask at the moment of acting, including one that sat in a plan he approved.
-3. Verify what landed with the matching read below.
+1. Present it in full — exact title and body for an issue, comment, or PR; exact action and target for a label, type, status, project, or sub-issue change.
+2. Run it once Josh approves that exact text or action. Each write is its own ask at the moment of acting, even if it was in an approved plan.
+3. Verify with the matching read — number, type, state — not the exit code.
 
 ```bash
-# After gh issue create, gh issue edit, or the updateIssue mutation
+# gh issue create / edit / updateIssue
 gh issue view <number> --repo <org>/<repo> --json number,title,body,labels,issueType,state,url
 
-# After gh issue comment
+# gh issue comment
 gh issue view <number> --repo <org>/<repo> --json comments --jq '.comments[-1] | {url, body}'
 
-# After gh project item-add, gh issue create --project, or the updateProjectV2ItemFieldValue mutation
+# gh project item-add / issue create --project / updateProjectV2ItemFieldValue
 gh issue view <number> --repo <org>/<repo> --json projectItems --jq '.projectItems[] | {title, status: .status.name}'
 
-# After the addSubIssue or removeSubIssue mutation, on the parent
+# addSubIssue / removeSubIssue, on the parent
 gh issue view <parent-num> --repo <org>/<repo> --json subIssues --jq '[.subIssues.nodes[].url]'
 
-# After gh pr create or gh pr edit
+# gh pr create / edit
 gh pr view <number> --repo <org>/<repo> --json number,title,body,isDraft,state,url,closingIssuesReferences
 
-# After gh pr comment
+# gh pr comment
 gh pr view <number> --repo <org>/<repo> --json comments --jq '.comments[-1] | {url, body}'
 ```
 
----
-
 ## Issues
 
-### Creating Issues
-
 ```bash
-gh issue create \
-  --repo <org>/<repo> \
-  --title "Issue title" \
+gh issue create --repo <org>/<repo> --title "Issue title" \
   --body "What needs doing and why, in a sentence or two.
 
 - [ ] Criterion 1
-- [ ] Criterion 2"
-```
+- [ ] Criterion 2" \
+  [--project "<project-name>"]
 
-With project board:
-
-```bash
-gh issue create \
-  --repo <org>/<repo> \
-  --title "Issue title" \
-  --body "..." \
-  --project "<project-name>"
-```
-
-### Issue Operations
-
-```bash
-# List issues
 gh issue list --repo <org>/<repo>
-
-# View issue
 gh issue view <number> --repo <org>/<repo>
-
-# Edit issue
 gh issue edit <number> --repo <org>/<repo>
-
-# Add comment
 gh issue comment <number> --repo <org>/<repo> --body "..."
-
-# Search across org
 gh search issues --owner <org> "search terms"
-
-# Get issue node ID (for GraphQL)
-gh issue view <number> --repo <org>/<repo> --json id --jq '.id'
+gh issue view <number> --repo <org>/<repo> --json id --jq '.id'   # node ID for GraphQL
 ```
-
----
 
 ## Project Boards (v2)
-
-### Adding to Project
 
 ```bash
 gh project item-add <project-number> --owner <org> \
   --url https://github.com/<org>/<repo>/issues/<number>
-
-# List project items
 gh project item-list <project-number> --owner <org>
 ```
 
-### Getting Project Item ID
-
-Required for status updates:
+Project item ID (needed for status):
 
 ```bash
 gh api graphql -f query='
 query($url: URI!) {
   resource(url: $url) {
-    ... on Issue {
-      projectItems(first: 1) {
-        nodes { id }
-      }
-    }
+    ... on Issue { projectItems(first: 1) { nodes { id } } }
   }
 }' -f url="https://github.com/<org>/<repo>/issues/<num>" --jq '.data.resource.projectItems.nodes[0].id'
 ```
 
-### Setting Status
+Set status:
 
 ```bash
 gh api graphql -f query='
@@ -130,31 +84,22 @@ mutation {
     itemId: "<project-item-id>"
     fieldId: "<status-field-id>"
     value: { singleSelectOptionId: "<status-option-id>" }
-  }) {
-    projectV2Item { id }
-  }
+  }) { projectV2Item { id } }
 }'
 ```
 
-### Setting Issue Type
+Set issue type:
 
 ```bash
 gh api graphql -f query='
 mutation {
-  updateIssue(input: {
-    id: "<issue-node-id>",
-    issueTypeId: "<issue-type-id>"
-  }) {
+  updateIssue(input: { id: "<issue-node-id>", issueTypeId: "<issue-type-id>" }) {
     issue { title issueType { name } }
   }
 }'
 ```
 
----
-
 ## Pull Requests
-
-### Creating PRs
 
 ```bash
 PR_URL=$(gh pr create \
@@ -165,15 +110,21 @@ PR_URL=$(gh pr create \
 
 Closes #<issue-number>")
 
-printf '%s' "$PR_URL" | pbcopy   # draft PR URL copied to clipboard, ready to paste
+printf '%s' "$PR_URL" | pbcopy
 echo "$PR_URL"
+
+gh pr list --repo <org>/<repo>
+gh pr view <number> --repo <org>/<repo>
+gh pr checks <number> --repo <org>/<repo>
 ```
 
-### Attaching Screenshots and Video
+Linking in the body: `Closes #123` / `Fixes #123` / `Resolves #123` auto-close; `Closes <org>/<other-repo>#123` cross-repo; `Related to #123` references without closing.
 
-Upload images and video yourself with `--attach` — never tell Josh to drag them in on GitHub. It works on `gh pr create`, `gh pr edit`, `gh pr comment`, `gh issue create`, `gh issue edit`, and `gh issue comment`; repeat it for each file, up to 50 per command.
+### Screenshots and Video
 
-To place an image, reference the local path in the body; `gh` rewrites it to the uploaded asset URL. A file the body doesn't reference is appended to the end.
+Upload with `--attach` yourself — never tell Josh to drag files in on GitHub. Works on `gh pr create|edit|comment` and `gh issue create|edit|comment`; repeat per file, up to 50 per command.
+
+Reference the local path in the body and `gh` rewrites it to the uploaded URL; an unreferenced file is appended to the end.
 
 ```bash
 # pr-body.md holds the approved body, with the image above the closes line:
@@ -183,126 +134,42 @@ To place an image, reference the local path in the body; `gh` rewrites it to the
 gh pr edit 17402 --body-file pr-body.md --attach ./claim-to-finish.png
 ```
 
-- Alt text goes after `#`: `--attach './login.png#The login error state'`. Without it the filename is used; video takes none.
-- `gh pr edit` or `gh issue edit` with `--attach` and no body flag keeps the existing body and appends the file.
-- If some uploads fail, the rest still land and the command exits non-zero — check the result with the matching read.
+- Alt text after `#`: `--attach './login.png#The login error state'`. Default is the filename; video takes none.
+- `edit` with `--attach` and no body flag keeps the body and appends the file.
+- Failed uploads don't stop the rest, but the command exits non-zero — verify with the matching read.
 
-The attachments are part of the body Josh approves: present the body with the image references in place and name the files being attached. Before the write, `open <file>` each screenshot so Josh sees it, and get his sign-off on each one; attach only the ones he approved.
-
-### PR Operations
-
-```bash
-# List PRs
-gh pr list --repo <org>/<repo>
-
-# View PR
-gh pr view <number> --repo <org>/<repo>
-
-# Check PR status
-gh pr checks <number> --repo <org>/<repo>
-```
-
----
-
-## Linking PRs to Issues
-
-Include in PR body to auto-close:
-
-```
-Closes #123
-Fixes #123
-Resolves #123
-```
-
-Cross-repo reference:
-
-```
-Closes <org>/<other-repo>#123
-```
-
-Reference without closing:
-
-```
-Related to #123
-```
-
----
+Attachments are part of the approved body: present it with image references in place and name the files. Before the write, `open <file>` each screenshot and get Josh's sign-off on each; attach only approved ones.
 
 ## Sub-Issues
 
-GitHub's native parent-child issue hierarchy for cross-repo coordination.
-
-### Adding Sub-Issues
+Native parent-child hierarchy, works cross-repo.
 
 ```bash
-# Get parent issue ID
+# Add
 PARENT_ID=$(gh issue view <num> --repo <org>/<repo> --json id --jq '.id')
-
-# Add sub-issue by URL
 gh api graphql -f query="
 mutation {
   addSubIssue(input: {
     issueId: \"$PARENT_ID\"
     subIssueUrl: \"https://github.com/<org>/<repo>/issues/<num>\"
-  }) {
-    issue { title }
-    subIssue { title url }
-  }
+  }) { issue { title } subIssue { title url } }
 }"
-```
 
-### Viewing Sub-Issues
-
-```bash
+# View
 gh api graphql -f query='
 query($url: URI!) {
   resource(url: $url) {
-    ... on Issue {
-      title
-      subIssues(first: 10) {
-        nodes {
-          title
-          url
-          state
-        }
-      }
-    }
+    ... on Issue { title subIssues(first: 10) { nodes { title url state } } }
   }
 }' -f url="https://github.com/<org>/<repo>/issues/<num>"
-```
 
-### Removing Sub-Issues
-
-```bash
-# Get both issue IDs
+# Remove
 PARENT_ID=$(gh issue view <parent-num> --repo <org>/<repo> --json id --jq '.id')
 SUB_ID=$(gh issue view <sub-num> --repo <org>/<repo> --json id --jq '.id')
-
-# Remove sub-issue
 gh api graphql -f query="
 mutation {
-  removeSubIssue(input: {
-    issueId: \"$PARENT_ID\"
-    subIssueId: \"$SUB_ID\"
-  }) {
-    issue { title }
-    subIssue { title }
+  removeSubIssue(input: { issueId: \"$PARENT_ID\" subIssueId: \"$SUB_ID\" }) {
+    issue { title } subIssue { title }
   }
 }"
 ```
-
----
-
-## Quick Reference
-
-| Action         | Command                                       | Kind  |
-| -------------- | --------------------------------------------- | ----- |
-| Create issue   | `gh issue create --repo <org>/<repo> ...`     | Write |
-| Add to project | `gh project item-add <num> --owner <org> ...` | Write |
-| List issues    | `gh issue list --repo <org>/<repo>`           | Read  |
-| View issue     | `gh issue view <num> --repo <org>/<repo>`     | Read  |
-| Search org     | `gh search issues --owner <org> "query"`      | Read  |
-| Create PR      | `gh pr create --draft --repo <org>/<repo> ...` (pbcopy URL) | Write |
-| Attach media   | `gh pr edit <num> --body-file <file> --attach ./shot.png` | Write |
-
-Writes follow the present, approve, verify steps under [Writes](#writes).

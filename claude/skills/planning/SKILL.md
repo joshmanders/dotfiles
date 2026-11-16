@@ -1,193 +1,95 @@
 ---
 name: planning
 description: |
-  Create and refine the GitHub issues and epics that later sessions work — draft a standalone issue for one piece of work, or a parent tracker issue (epic) with child issues. Invoke when: planning new work, drafting or editing an issue or epic, or when asked 'let's plan X'. Counterpart to the `issue` and `epic` skills, which work already-created issues; `planning` authors them. Each issue covers one coherent thing.
+  Create and refine the GitHub issues and epics that later sessions work — a standalone issue for one piece of work, or a parent tracker issue (epic) with child issues. Invoke when: planning new work, drafting or editing an issue or epic, or 'let's plan X'. The `issue` and `epic` skills work already-created issues; `planning` authors them.
 user-invocable: false
 ---
 
-# Planning Workflow
+# Planning
 
-**This skill authors the work. It drafts and refines GitHub issues and epics so a later session can pick them up: a standalone issue captures one coherent piece of work; a parent tracker issue — an epic — groups child issues under one initiative. The `issue` and `epic` skills work already-created issues; `planning` is where those issues come from.**
+Every unit of work gets a GitHub issue covering one coherent thing — never a mix of unrelated concerns. A session may plan several issues at once.
 
-**Every unit of work gets a GitHub issue. Each issue covers one coherent thing — not a mix of unrelated concerns. A session may plan several issues at once, but an issue may not span multiple concerns.**
-
----
-
-## When to Create an Issue
-
-| Situation                        | Action                      |
-| -------------------------------- | --------------------------- |
-| Starting new work                | Create issue first          |
-| "Let's plan X"                   | Create detailed issue       |
-| New work discovered mid-session  | Add to the follow-up list   |
-| Quick fix / trivial change       | Ask if issue needed         |
-
----
+| Situation                       | Action                    |
+| ------------------------------- | ------------------------- |
+| Starting new work               | Create issue first        |
+| "Let's plan X"                  | Create detailed issue     |
+| New work discovered mid-session | Add to the follow-up list |
+| Quick fix / trivial change      | Ask if issue needed       |
 
 ## Flow
 
-```
-1. Understand the work — the problem, the outcome, the constraints
-2. Draft the issue content (leaf or tracker — see below)
-3. Present the full draft — title, body, type — and wait for Josh's approval of that exact text
-4. Create the issue and capture its URL
-5. Verify the created issue's number, type, and state
-6. Hand the URL back — don't assume the next step is working it
-```
+1. Understand the problem, the outcome, the constraints.
+2. Draft the issue (leaf or tracker).
+3. Present title, body, and type; wait for Josh's approval of that exact text. Agreeing to the plan, or telling you to open it, isn't that approval; a draft changed after approval goes back to him.
+4. `gh issue create`, capture the URL.
+5. Verify: `gh issue view <number> --repo <org>/<repo> --json number,title,issueType,state,url`
+6. Hand the URL back. Working it is the `issue`/`epic` skills' job — don't assume it's next.
 
-Working the issue is the `issue` and `epic` skills' job, not this one.
+Track a created issue as session context (`Active Issue: #123 - <title>`, `Repo: <org>/<repo>`) for implementation decisions, scope questions, and the PR. After compaction, re-fetch it with `gh issue view`.
 
----
+## Writing the body
 
-## Creating the Issue
+**Outcome, never how.** No files, function names, refactor steps, migration order, code snippets, approach, or "first X then Y". The session that picks it up investigates the code as it exists then; a baked-in recipe is stale or wrong. Include only what's needed to describe the outcome: the problem and why, observable outcomes that prove done, and constraints that must hold (behavior to preserve, APIs not to break, invariants).
 
-> **High level, always.** An issue describes an *outcome* — what needs to be true when it's resolved. Never *how*. Files, function names, refactor steps, migration order, code snippets, "first do X then Y": none of it belongs in the body. If you catch yourself typing an implementation detail, delete it. The future session picking this up must investigate the code as it exists then — not follow a recipe you baked in now, which is almost certainly stale or wrong.
+**Reply-terse.** Lead with the payload, cap lists, no report voice, no headers over two-line sections. Each paragraph on one line; break lines only between paragraphs, list items, and headings.
 
-> **Body prose follows CLAUDE.md's prose and body rules** — terse, lead with the payload, cap lists, one paragraph on one line. Break a line only to separate paragraphs, list items, and headings; let the display wrap the rest.
+No session-specific debugging context — a particular customer's setup, a one-off repro, a mechanism that only mattered while diagnosing. Frame the general case. No `## Scope` section; the concept doesn't exist here.
 
-### Before Creating
-
-Gather what you need to describe the outcome — not how to reach it:
-
-- What problem are we solving, and why?
-- What does "done" look like — what observable outcomes prove it?
-- Are there constraints that must be honored (existing behavior to preserve, APIs not to break, invariants to hold)?
-
-Do not draft an approach. Do not enumerate files. Do not sketch implementation steps. The future session picking this up needs to investigate the codebase itself, not follow a recipe you baked into the body.
-
-### Issue Format
-
-The body shape depends on whether the issue is a leaf or a tracker.
-
-**Leaf issues** — Task, Bug, Feature, or anything else meant to be resolved in a single PR. Body = Summary + Acceptance Criteria.
+**Leaf** (Task, Bug, Feature — anything resolved in one PR): Summary + Acceptance Criteria.
 
 ```bash
 ISSUE_URL=$(gh issue create \
   --repo <org>/<repo> \
   --title "Brief description" \
   --body "## Summary
-High-level overview of what we need to achieve and why. Include only constraints that must be honored (e.g. \"must not break the public v1 API\", \"must preserve existing session behavior\"). No approach, no files, no implementation steps.
+What we need to achieve and why, plus constraints that must be honored (e.g. \"must not break the public v1 API\").
 
 ## Acceptance Criteria
 - [ ] Observable outcome 1
 - [ ] Observable outcome 2")
 
-printf '%s' "$ISSUE_URL" | pbcopy   # issue URL copied to clipboard
-echo "$ISSUE_URL"
-```
-
-Acceptance criteria are the source of truth for "done" on a leaf — each item should be something you can point at and verify, not an implementation task. Tests passing is assumed for any code change, so don't list it as a criterion.
-
-When an issue originates from a Sentry issue, add a `Sentry: [PRIMCLOUD-<n>](<permalink>)` line to the body (short ID linked to its permalink). This is a reference, not implementation detail, so it doesn't violate the "no approach, no files" rule.
-
-**Tracker issues** — Epic, or any parent issue whose purpose is to group sub-issues under one initiative. Body = Summary only. **No acceptance criteria** — the acceptance lives on the children. The tracker describes what the initiative is about; the sub-issues are the work.
-
-```bash
-ISSUE_URL=$(gh issue create \
-  --repo <org>/<repo> \
-  --title "Brief description" \
-  --body "## Summary
-High-level overview of the initiative — what are we trying to achieve overall, and why. Constraints that span all children (e.g. \"no child PR may break the public v1 API\") go here.")
-
 printf '%s' "$ISSUE_URL" | pbcopy
 echo "$ISSUE_URL"
 ```
 
-Present the draft — title, body, and type — and wait for Josh's explicit approval of that exact text. Agreeing to the plan or the design is not that approval, and a draft that changes after he approves it goes back to him. Then run `gh issue create`, capture the URL, and verify what landed:
+Acceptance criteria are the source of truth for done: verifiable outcomes, not tasks. Don't list tests passing.
+
+**Tracker** (Epic, any parent grouping sub-issues): Summary only — what the initiative achieves and why, plus constraints spanning all children. No acceptance criteria; those live on the children. Same command with only `## Summary` in the body.
+
+## Multiple issues
+
+Split when deliverables could merge independently, touch unrelated areas, or benefit from separate review.
+
+1. Draft them all; note dependencies and order.
+2. Present one at a time, each worked to Josh's approve or deny before the next.
+3. Create and verify each approved one; say which is the starting point.
+
+One initiative broken into pieces → a tracker with the pieces as children; present the tracker first. Linking each child is its own ask at the moment of linking (`github` skill, Sub-Issues).
+
+## Discovered work
+
+Needed to meet the acceptance criteria → part of the work; do it, never defer it as "out of scope". Anything else, however small → don't do it; add it to the follow-up list.
+
+## Editing an existing issue
+
+Run `gh issue create` or `gh issue edit` only when asked — issues are Josh's planning surface; otherwise work against an existing issue and leave its body alone. When asked, present the full revised title and body, get approval of that exact text, then:
 
 ```bash
-gh issue view <number> --repo <org>/<repo> --json number,title,issueType,state,url
-```
-
-Hand the URL back. Don't assume the next step is starting work on it.
-
----
-
-## Session Context Tracking
-
-Once an issue is created, track it as session context:
-
-```
-Active Issue: #123 - Feature description
-Repo: <org>/<repo>
-```
-
-This context should be referenced:
-
-- When making implementation decisions
-- When scope questions arise
-- When creating the PR
-
-If context compaction occurs, the issue contains the full context. Fetch it:
-
-```bash
-gh issue view <number> --repo <org>/<repo>
-```
-
----
-
-## Planning Multiple Issues
-
-Sometimes planning reveals work that should be split into multiple issues.
-
-### When to Split
-
-- Distinct deliverables that could merge independently
-- Different areas of the codebase with no dependencies
-- Work that benefits from separate review cycles
-
-### How to Handle
-
-1. Draft all the issues together
-2. Note dependencies and order, if any
-3. Present the drafts one at a time — each worked through to Josh's approve or deny before the next is shown
-4. Create each approved issue, verify it, and say which is the starting point
-
-When the split is one initiative broken into pieces rather than independent deliverables, make the initiative a tracker (epic) and the pieces its children — see the tracker body shape above. Present the tracker first, then each child. Linking a child to the tracker is its own ask at the moment of linking — see the `github` skill's Sub-Issues section for the command.
-
----
-
-## Discovered Work
-
-When additional work surfaces mid-session, judge it against the acceptance criteria.
-
-- **Needed to meet the acceptance criteria** — it's part of the work. Do it. Don't defer it under "out of scope" language.
-- **Anything else, however small** — don't do it. It goes on the follow-up list as a candidate follow-up issue.
-
-## Updating an Existing Issue Body
-
-Present the full revised title and body and wait for Josh's approval of that exact text, then apply it and verify.
-
-```bash
-# View current body
-gh issue view <number> --repo <org>/<repo>
-
-# Apply the approved body
 gh issue edit <number> --repo <org>/<repo> --body-file <file>
-
-# Verify what landed
 gh issue view <number> --repo <org>/<repo> --json number,title,body,issueType,state
 ```
 
-## Refining an Existing Issue
+Refining:
 
-Same rules apply, including the present-and-approve step above before `gh issue edit` runs. When editing an issue that already exists:
+- Strip `## Approach`, `## Files/Areas`, `## Notes`, `## Scope`, and step-by-step sections.
+- Summary → high-level overview + constraints only.
+- Leaf → acceptance criteria as observable outcomes.
+- Tracker → remove acceptance criteria.
+- Keep constraints that shape what done means; drop the rest.
 
-- Strip any `## Approach`, `## Files/Areas`, `## Notes`, `## Scope`, or step-by-step implementation sections. They short-circuit investigation.
-- Rewrite the summary as a high-level overview + constraints only.
-- For leaf issues: rewrite acceptance criteria as observable outcomes, not implementation tasks.
-- For tracker issues (Epic, etc.): remove any acceptance criteria — the acceptance belongs on the child issues, not the umbrella.
-- Keep constraints that materially shape what "done" means; drop everything else.
+## PR
 
----
-
-## Finalization
-
-When work is complete and approved for commit:
-
-### 1. Create PR with Issue Reference
-
-Title and body follow CLAUDE.md's PR rules — `feat: short description`, body is what/why at a high level, and it must end with `Closes #<issue-number>`. Present the full title and body and wait for Josh's approval of that exact text before running `gh pr create`.
+When work is done and approved for commit: title like `feat: short description`, body is what/why at a high level, ending with `Closes #<issue>` (links the PR; moves the issue to Done on merge). Present the full title and body and get approval of that exact text first.
 
 ```bash
 PR_URL=$(gh pr create \
@@ -199,43 +101,8 @@ What was done and why.
 
 Closes #<issue-number>")
 
-printf '%s' "$PR_URL" | pbcopy   # draft PR URL copied to clipboard, ready to paste
+printf '%s' "$PR_URL" | pbcopy
 echo "$PR_URL"
 ```
 
-### 2. The `Closes` Line
-
-The `Closes #123` line is what wires the PR to the issue. It:
-
-- Links the PR to the issue
-- Moves issue to "Done" when PR merges
-
----
-
-## Quick Reference
-
-| Action       | Command                                                |
-| ------------ | ------------------------------------------------------ |
-| Create issue | `gh issue create --repo <org>/<repo> ...`              |
-| View issue   | `gh issue view <num> --repo <org>/<repo>`              |
-| Edit issue   | `gh issue edit <num> --repo <org>/<repo>`              |
-| Add comment  | `gh issue comment <num> --repo <org>/<repo> --body ""` |
-| Create PR    | `gh pr create --draft --repo <org>/<repo> ... Closes #N` (pbcopy URL) |
-
----
-
-## Don't
-
-- Start work without an issue
-- Create or edit an issue before Josh has approved its exact text
-- Include implementation steps, an approach, or a step-by-step recipe in the body
-- List files, function names, or areas in the body
-- Include code snippets, refactor plans, or migration order in the body
-- Carry session-specific or incidental debugging context into the body — a particular customer's setup, a one-off repro detail, or a mechanism that only mattered while diagnosing the current session. Frame the general case the future reader needs, not the story of how the problem surfaced.
-- Add a `## Scope` section — the concept doesn't exist here
-- Attach acceptance criteria to a tracker issue (Epic, etc.) — acceptance lives on the children
-- Defer work that's needed to meet acceptance criteria under an "out of scope" excuse
-- Create PR without `Closes #N`
-- Mix unrelated concerns into a single issue
-- Forget to track the active issue
-- Amend commits unless explicitly told to
+Don't amend commits unless told to.

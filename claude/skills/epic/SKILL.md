@@ -1,34 +1,33 @@
 ---
 name: epic
 description: |
-  Close out an entire epic in one session — every open child issue of a parent issue, worked by dispatched agents, reviewed and committed one at a time. Use when Josh points at a parent issue and wants the whole thing finished: 'close out the epic', 'let's do epic 40', 'knock out the children of #40', 'work through all of #40's sub-issues', 'finish the whole epic'. Also use when a ref he named — even plain 'let's work on #40' — turns out to have open sub-issues. Routing: if the ref has no open sub-issues it is a single issue, so hand off to the `issue` skill with that ref.
+  Close out an entire epic in one session — every open child issue of a parent issue, worked by dispatched agents, reviewed and committed one at a time. Use when Josh points at a parent issue and wants it finished: 'close out the epic', 'let's do epic 40', 'knock out the children of #40', 'work through all of #40's sub-issues', 'finish the whole epic'. Also use when a ref he named — even plain 'let's work on #40' — has open sub-issues. No open sub-issues → hand off to the `issue` skill with that ref.
 argument-hint: "[epic-ref] [note]"
 ---
 
 ## Task: Close out epic $ARGUMENTS
 
-Finish this epic: every open child issue, one commit each, in one sitting. Nothing else gets worked this session.
+Every open child issue, one commit each, in one sitting. Nothing else gets worked this session.
 
-Issue work always goes to an agent, however small it looks. Your only exceptions are metadata: `gh` calls fetching issue context, `git` calls managing the branch and commit. What you keep is the conversation.
+Issue work always goes to an agent, however small. You do only metadata: `gh` calls for issue context, `git` calls for the branch and commits.
 
 ## The Ledger
 
-Agents are dispatched fresh; what Josh said during issue 2 never reaches issue 7 unless you carry it. Update after every exchange. Every dispatch carries only the slice bearing on that issue.
+Agents start fresh; what Josh said during issue 2 reaches issue 7 only if you carry it. Update after every exchange; each dispatch carries only the slice bearing on that issue.
 
-| Track                 | What goes in it                                                    |
+| Track                 | Contents                                                           |
 | --------------------- | ------------------------------------------------------------------ |
 | **Decisions**         | Direction Josh gave, approaches ruled out, preferences stated       |
 | **Answers**           | Questions agents raised, how they resolved, and by whom             |
 | **Constraints**       | Invariants, APIs that must not break, things left alone on purpose  |
 | **Cross-issue facts** | Discoveries a later agent will need                                 |
-| **Deferred work**     | Out-of-scope work that surfaced, parked for Josh                    |
-| **Commits**           | One row per sub-issue: the commit SHA and the implementer's name    |
+| **Commits**           | One row per sub-issue: commit SHA and implementer's name            |
 
 ## Step 0: Parse arguments
 
-First token is the ref, everything after is a note: `/epic 437 harden before GA, skip anything cosmetic` → ref `437`, note `harden before GA, skip anything cosmetic`. A note is standing guidance for every issue in the epic; log it under Decisions. Ref formats, parsed as `/issue` does — `437` (current repo), `foo/bar#437` (that repo), `bar#437` (current owner, repo `bar`). Resolve the owner with `gh repo view --json owner -q '.owner.login'`.
+First token is the ref, the rest is a note: `/epic 437 harden before GA, skip anything cosmetic`. A note is standing guidance for every issue; log it under Decisions. Ref formats: `437` (current repo), `foo/bar#437`, `bar#437` (current owner, repo `bar`; owner from `gh repo view --json owner -q '.owner.login'`).
 
-`$ARGUMENTS` may be empty. Take the ref from the first source that yields one: a ref in `$ARGUMENTS`, then a ref Josh named in the conversation, then the issue tracked by the current branch — `git rev-parse --abbrev-ref HEAD` gives `<TYPE>-<number>`, e.g. `FEATURE-40`. Nothing resolves → ask which epic, one line, no preamble.
+No ref in `$ARGUMENTS` → a ref Josh named in the conversation → the current branch's issue (`git rev-parse --abbrev-ref HEAD` gives `<TYPE>-<number>`, e.g. `FEATURE-40`). Nothing resolves → ask which epic, one line.
 
 ## Step 1: Fetch the epic
 
@@ -41,14 +40,14 @@ query($url: URI!) { resource(url: $url) { ... on Issue {
   subIssues(first: 100) { nodes { number title state url labels(first: 10) { nodes { name } } } }
 } } }'
 
-# descriptions carry meaning the names don't — fetch when the epic uses labels or a milestone
+# when the epic uses labels or a milestone — descriptions carry meaning names don't
 gh label list --repo <owner/repo> --limit 200 --json name,description
 gh api repos/<owner/repo>/milestones/<milestone-number>
 ```
 
-`subIssues` carries a `state` on every node. **No sub-issue is `OPEN` → this is a single issue.** Say so in one line and invoke the `issue` skill with the same ref and note.
+No sub-issue `OPEN` → single issue: say so in one line and invoke the `issue` skill with the same ref and note.
 
-At least one `OPEN` sub-issue → announce what's running, one line, then continue without waiting for confirmation:
+Otherwise announce in one line and continue without waiting:
 
 ```
 Running the epic close-out on #40 — <title>
@@ -56,7 +55,7 @@ Running the epic close-out on #40 — <title>
 
 ## Step 2: Present the queue
 
-Read the parent body and every sub-issue title. Order by dependency, not number: if A changes a contract B builds on, A goes first. Keep independent issues adjacent so a rejection on one doesn't strand the other. One line each, with the reason for its position, and note anything already closed:
+Order by dependency, not number: if A changes a contract B builds on, A goes first. Keep independent issues adjacent so a rejection on one doesn't strand the other. One line each with the reason for its position; note anything already closed:
 
 ```
 Epic #437 — <title>. 7 open sub-issues. Proposed order:
@@ -66,15 +65,15 @@ Epic #437 — <title>. 7 open sub-issues. Proposed order:
 #445 is closed already — skipping it.
 ```
 
-Wait for Josh to confirm or reorder. Never start off your own proposed order.
+Wait for Josh to confirm or reorder before starting.
 
 ## Step 3: Branch
 
-From the base branch, branch off the **parent** with `git issue <epic-number>`. Every sub-issue commits here; no branch churn mid-epic.
+From the base branch: `git issue <epic-number>`. Every sub-issue commits on this branch.
 
 ## Step 4: The per-issue loop
 
-**4a. Gather and dispatch.** Fetch the sub-issue's body, comments, labels, type, and linked PRs yourself — metadata. Dispatch an `implementer` agent:
+**4a. Gather and dispatch.** Fetch the sub-issue's body, comments, labels, type, and linked PRs yourself. Dispatch an `implementer`:
 
 ```
 Work GitHub issue #<n> in <owner/repo>: <title>
@@ -89,61 +88,46 @@ Sub-issue of epic #<parent> — <parent title>.
 <the relevant slice of the ledger>
 ```
 
-**4b. Handle a block.** **100% confident** from the conversation, ledger, issue, or epic → answer it. **Anything less** → put the question to Josh verbatim with the context needed to answer it; don't soften it, don't answer around it, don't hand him a guess to confirm. Never invent an answer. Resume the same implementer with `SendMessage` so its context survives, and log the resolution.
+**4b. Handle a block.** 100% confident from the conversation, ledger, issue, or epic → answer it. Anything less → put the question to Josh verbatim with the context to answer it; no softening, no guess for him to confirm, never an invented answer. Resume the same implementer with `SendMessage` and log the resolution.
 
-**4c. Scrutinize.** Dispatch a fresh `general-purpose` agent — not the `reviewer` agent — whose prompt carries: (1) the full contents of `adversarial-review.md` in this skill's directory, (2) the sub-issue number, URL, and body, (3) the branch name and the fact that the diff is the uncommitted working tree, (4) the implementer's summary and its verbatim claims, (5) the relevant ledger slice.
+**4c. Scrutinize.** Dispatch a fresh `general-purpose` agent with: (1) the full contents of `adversarial-review.md` in this skill's directory, (2) the sub-issue number, URL, and body, (3) the branch name and that the diff is the uncommitted working tree, (4) the implementer's summary and verbatim claims, (5) the relevant ledger slice. Route findings per **Findings** below. One pass: the implementer fixes every finding and meets every acceptance criterion, then 4d.
 
-- **Code findings** → back to the implementer via `SendMessage`. All of them, no cherry-picking. If one looks wrong, dispatch an agent to check it before dismissing it.
-- **Claims findings** → to Josh, in your own message: in full when it bears on the topic open with him, otherwise first once that topic is concluded.
+**4d. Run the gate.** If the project defines a `team-review` skill, invoke it yourself (a skill, not an agent). Route findings per **Findings**. One pass, then the work goes to Josh. Tests failing means the issue isn't done — it doesn't go to Josh with a caveat.
 
-One pass: the implementer fixes every finding and meets every acceptance criterion on the sub-issue, then on to 4d. No second scrutinizer.
-
-**4d. Run the gate.** The project defines a `team-review` skill → invoke it yourself as the gate; it's a skill, not an agent to dispatch. Otherwise dispatch a `reviewer` agent with the list of changed files, the sub-issue URL, the implementer's claims quoted verbatim, and the fact that this sub-issue's work is the uncommitted working tree — the commits already on the branch belong to earlier sub-issues and were gated with them.
-
-- **Code findings** → back to the implementer via `SendMessage`. All of them, no cherry-picking. If one looks wrong, dispatch an agent to check it before dismissing it.
-- **Claims findings** → to Josh, in your own message: in full when it bears on the topic open with him, otherwise first once that topic is concluded.
-
-One pass: the implementer fixes every finding, then the work goes to Josh. No second reviewer. **Tests failing means the issue isn't done** — it does not go to Josh with a caveat.
-
-**4e. Present and stop.** Hand it over like a colleague would — a short plain-language paragraph, not a file listing. Then **stop**. Changes requested → implementer via `SendMessage`, feedback verbatim, then back through 4c and 4d. Signed off → commit.
+**4e. Present and stop.** A short plain-language paragraph, not a file listing. Then stop. Changes requested → implementer via `SendMessage`, feedback verbatim, then 4c and 4d again. Signed off → commit.
 
 **4f. Commit.**
 
 ```bash
 git add -A
-git commit -m "<prefix>: <subject>" -m "<attribution>"
+git commit -m "<prefix>: <subject>" -m "Closes #<sub-issue>" -m "<attribution>"
 ```
 
-One commit per sub-issue, prefix and subject in the project's established commit style, and only once Josh has signed off. If the subject needs an "and", the issue holds two logical changes — say so and let Josh decide whether to split.
+One commit per sub-issue, only after Josh's sign-off, in the project's commit style. Always include `Closes #<n>` (`owner/repo#<n>` cross-repo) yourself, without asking. A subject needing "and" means two logical changes — say so and let Josh decide whether to split.
 
-Log the sub-issue number, the SHA from `git rev-parse --short HEAD`, and the name of the implementer that wrote it under Commits. Step 5 sends to that name to resume the right agent, and by then the branch holds several commits with nothing else tying one to the agent that produced it. Then move to the next issue.
+Log the sub-issue, the SHA (`git rev-parse --short HEAD`), and the implementer's name under Commits — Step 5 routes fixes to that name. Next issue.
 
 ## Step 5: Close out the epic
 
-Queue empty → run the whole-branch gate. The project defines a `team-review` skill → invoke it yourself over the whole branch diff; it's a skill, not an agent to dispatch. Otherwise dispatch a `reviewer` agent with the list of changed files, the epic URL, and the implementers' claims quoted verbatim — no single-issue reviewer saw the commits together.
+Queue empty → if the project defines `team-review`, invoke it yourself over the whole branch diff. Code findings go to the implementer that wrote the commit they land in (by name, from Commits); claims findings per **Findings**. A fix to committed work is a new commit, never an amend. One pass, then present:
 
-- **Code findings** → back to the implementer that wrote the commit each one lands in, by the name recorded under Commits, via `SendMessage`. All of them, no cherry-picking. If one looks wrong, dispatch an agent to check it before dismissing it.
-- **Claims findings** → to Josh, in your own message: in full when it bears on the topic open with him, otherwise first once that topic is concluded.
+`Epic #437 done. 7 commits on <branch>.` plus one line per issue (number and subject).
 
-A fix to already-committed work is a new commit, never an amend. One pass: the implementers fix every finding, then the branch goes to Josh. No second reviewer.
-
-Then present: `Epic #437 done. 7 commits on <branch>.`, one line per issue (number and subject), and a `Deferred:` line carrying anything parked for Josh, or "nothing".
-
-**Stop there.** No push, no PR, no merge until Josh signs off on the branch as a whole — and then only what he asked for.
-
-When he asks for the PR, present its full title and body and wait for his approval of that exact text before `gh pr create` runs; signing off on the branch is not that approval. Then verify what landed:
+Stop. No push, PR, or merge until Josh signs off on the branch — then only what he asked for. For a PR, present its full title and body and wait for approval of that exact text (branch sign-off isn't that approval), then verify:
 
 ```bash
 gh pr view <number> --repo <owner/repo> --json number,title,isDraft,state,url,closingIssuesReferences
 ```
 
+## Findings
+
+- **Code findings** → the implementer via `SendMessage`. All of them. One that looks wrong gets checked by a dispatched agent before it's dismissed.
+- **Claims findings** → Josh, in your own message: in full when it bears on the open topic, otherwise first once that topic concludes.
+
 ## Rules
 
-- **Dispatch, don't do.** Code work goes to agents.
-- **Sequential, not parallel.** Sub-issues share a branch and usually a blast radius. One at a time, reviewed between each.
-- **The review gate is per issue.** Never commit two issues on one approval. Never commit without one.
-- **Josh sees finished work.** Scrutiny clean, `reviewer` gate clean, tests passing, acceptance criteria met. He should be able to LGTM on a skim.
-- **Nothing leaves without a sign-off.** No commit without his per-issue approval. No push, PR, or merge without his approval of the finished branch. No PR without his approval of its exact title and body.
-- **100% or ask.** Anything short of certainty goes to Josh.
-- **Scope expands → stop.** Out-of-issue work gets reported, logged as deferred, and decided by Josh. It does not get quietly fixed.
-- **The ledger is the product.** Lose track of what was decided and the epic degrades into seven unrelated sessions.
+- **Sequential.** Sub-issues share a branch; one at a time, reviewed between each.
+- **Per-issue gate.** Never commit two issues on one approval, or any without one.
+- **Josh sees finished work.** Scrutiny clean, tests passing, acceptance criteria met.
+- **Out of scope → dropped.** The change is what the issue needs plus the minimum prerequisite that keeps its invariant, including any consumer or sibling the change itself would break; a sibling is otherwise in scope only when the issue asks. Findings outside the issue, cosmetic slips outside the touched lines included, are dropped without mention. A defect the issue doesn't need stays out, however small: don't fix it, and don't draft an issue for it unless asked.
+- **The ledger is the product.** Lose it and the epic becomes seven unrelated sessions.

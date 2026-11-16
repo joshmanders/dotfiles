@@ -1,77 +1,37 @@
 ---
 name: issue
 description: |
-  Work a single GitHub issue end to end — fetch its full context, branch, and start. Use when Josh points at an issue and wants it worked: 'let's look at issue 43', 'work on #43', 'start 43', 'pick up foo/bar#43', 'what's next?', 'grab the next issue', 'let's fix that bug'. Also use with no ref when he says 'let's get started' or 'what am I on?' — the ref resolves from the conversation or from the current git branch. Routing: if the issue has at least one open sub-issue it is a parent, so hand off to the `epic` skill with that ref; `epic` covers 'close out the epic', 'work through all of #40's children', 'do the whole epic'.
+  Work a single GitHub issue end to end — fetch its full context, branch, and start. Use when Josh points at an issue and wants it worked: 'let's look at issue 43', 'work on #43', 'start 43', 'pick up foo/bar#43', 'what's next?', 'grab the next issue', 'let's fix that bug'. Also with no ref on 'let's get started' or 'what am I on?' — the ref resolves from the conversation or the current git branch. An issue with at least one open sub-issue is a parent → hand off to the `epic` skill ('close out the epic', 'work through all of #40's children').
 argument-hint: "[issue-ref] [note]"
 ---
 
 ## Task: Work on Issue $ARGUMENTS
 
-Pull the specified GitHub issue, gather its full context, create a working branch, and start.
-
-Work touching code always goes to an agent, however small it looks. Your exceptions are metadata: `gh` calls fetching issue context, `git` calls managing the branch. What you keep is the conversation.
+Code work always goes to an agent, however small. You do only metadata: `gh` calls for issue context, `git` calls for the branch.
 
 ### Step 0: Resolve the ref and note
 
-`$ARGUMENTS` is the issue ref optionally followed by a note. The first token is the issue ref, everything after is a note providing additional context.
-
-Example: `/issue 123 focus on the api endpoint, ignore the frontend for now` → issue ref: `123`, note: `focus on the api endpoint, ignore the frontend for now`
-
-`$ARGUMENTS` may be empty. Resolve the ref from the first source that yields one:
-
-| Order | Source                                                                                                    |
-| ----- | --------------------------------------------------------------------------------------------------------- |
-| 1     | A ref in `$ARGUMENTS`                                                                                     |
-| 2     | A ref Josh named in the conversation                                                                      |
-| 3     | The issue tracked by the current branch — `git rev-parse --abbrev-ref HEAD` gives `<TYPE>-<number>`, e.g. `FEATURE-43` |
-
-Nothing resolves → ask which issue, one line, no preamble.
-
-If a note is present, treat it as guidance throughout planning and execution — it may narrow scope, set priorities, or provide context not in the issue itself.
-
-### Step 1: Parse the issue reference
-
-Parse the issue ref to determine the repo and issue number:
+First token is the ref, the rest is a note: `/issue 123 focus on the api endpoint, ignore the frontend for now`. The note guides planning and execution — it may narrow scope, set priorities, or add context.
 
 | Format              | Example       | Meaning                               |
 | ------------------- | ------------- | ------------------------------------- |
-| Number only         | `123`         | Current repo, issue 123               |
-| `owner/repo#number` | `foo/bar#123` | Repo `foo/bar`, issue 123             |
-| `repo#number`       | `bar#123`     | Current owner + repo `bar`, issue 123 |
+| Number only         | `123`         | Current repo                          |
+| `owner/repo#number` | `foo/bar#123` | Repo `foo/bar`                        |
+| `repo#number`       | `bar#123`     | Current owner (`gh repo view --json owner -q '.owner.login'`), repo `bar` |
 
-To get the current repo's owner:
+No ref in `$ARGUMENTS` → a ref Josh named in the conversation → the current branch's issue (`git rev-parse --abbrev-ref HEAD` gives `<TYPE>-<number>`, e.g. `FEATURE-43`). Nothing resolves → ask which issue, one line.
 
-```bash
-gh repo view --json owner -q '.owner.login'
-```
+### Step 1: Fetch everything
 
-### Step 2: Fetch issue context
-
-Gather everything the issue has attached. Any of it may carry relevant context; interpretation isn't this skill's job — pull it all first, then read.
-
-- The issue: title, body, comments, assignees, state
-- Labels and their descriptions (label names can be opaque; descriptions often carry the meaning)
-- Milestone and its description
-- Issue type, if set
-- Parent issue, if this is a sub-issue
-- Sub-issues, if this issue has any
-- Linked PRs
-- Project board fields, if the issue is on a board
-
-`gh issue view` returns names but not label/milestone descriptions or type/parent/sub-issue/project data. Reach further for the rest:
+Pull it all before reading. `gh issue view` lacks label/milestone descriptions and type, parent, sub-issue, linked-PR, and project data:
 
 ```bash
-# The issue itself
 gh issue view <number> --repo <owner/repo> \
   --json number,title,body,state,assignees,labels,milestone,comments
 
-# Label descriptions (issue view returns only names)
 gh label list --repo <owner/repo> --limit 200 --json name,description
-
-# Milestone description (issue view returns only title)
 gh api repos/<owner/repo>/milestones/<milestone-number>
 
-# Issue type, parent, sub-issues, linked PRs, project fields
 gh api graphql -f query='
 query($url: URI!) {
   resource(url: $url) {
@@ -108,56 +68,30 @@ query($url: URI!) {
 }' -f url="https://github.com/<owner/repo>/issues/<number>"
 ```
 
-### Step 3: Route and announce
+### Step 2: Route and announce
 
-The GraphQL call returns `subIssues` with a `state` on every node. If at least one sub-issue is `OPEN`, this is a parent with work left in it and the `epic` skill owns it — say so in one line and invoke `epic` with the same ref and note.
+Any sub-issue `OPEN` → say so in one line and invoke `epic` with the same ref and note.
 
-Otherwise announce what's running in one line, then go straight to Step 4 — invoking `/issue` with a resolved ref is Josh's go-ahead to work it, not a prompt for a second yes:
+Otherwise announce in one line and go straight on — `/issue` with a resolved ref is the go-ahead:
 
 ```
 Working issue #43 — <title>
 ```
 
-Only pause for confirmation when something genuinely needs it: the ref resolved implicitly and might be the wrong issue, or the issue itself leaves a decision open that you can't settle from context.
+Pause only if the ref resolved implicitly and might be wrong, or the issue leaves a decision open that context can't settle.
 
-### Step 4: Create working branch
+### Step 3: Branch and track
 
-Ensure you're on the base branch (usually `master` or `main`), then:
+From the base branch: `git issue <number>`. Track `Active Issue: #<number> - <title>` as session context.
 
-```bash
-git issue <number>
-```
+### Step 4: Assess
 
-### Step 5: Set session context
+**Any bug signal** — bug issue type, defect label, body or comments describing broken or regressed behavior, a linked reverting PR, or a note framing it as an investigation → invoke `systematic-debugging` and trace the root cause before proposing a fix. Then assess complexity.
 
-Track the issue as active session context: `Active Issue: #<number> - <title>`.
+- **Straightforward** (clear requirements, obvious approach) → Step 5. The default.
+- **Complex** (ambiguous requirements, several approaches, architectural decisions, or the note asks to plan) → draft a plan with the `planning` skill, exit plan mode for approval, then Step 5 with the plan as direction.
 
-### Step 6: Assess and route
-
-Read the fetched context and assess.
-
-**If any signal suggests this is a bug** — issue type set to a bug variant, a label indicating a defect, body or comments describing broken or regressed behavior, a linked PR that reverted something, or the note frames it as an investigation:
-
-- Invoke the `systematic-debugging` skill.
-- Trace the root cause before proposing a fix. Do not jump to a patch based on the symptom.
-- Once the root cause is understood, continue to the complexity assessment below to decide how to proceed with the fix.
-
-**Otherwise, assess complexity:**
-
-**Straightforward** — requirements clear, approach obvious, no architectural decisions needed:
-
-- Skip planning. Go straight to step 7.
-
-**Complex** — ambiguous requirements, multiple approaches possible, architectural decisions needed, or the note asks to plan first:
-
-- Use the `planning` skill to draft a plan.
-- Exit plan mode for approval, then go to step 7 with the approved plan as direction.
-
-Default to just starting. Only plan when the work genuinely needs it.
-
-### Step 7: Dispatch the implementer
-
-Dispatch an `implementer` agent. It starts cold, so everything bearing on the work goes in the prompt:
+### Step 5: Dispatch the implementer
 
 ```
 Work GitHub issue #<n> in <owner/repo>: <title>
@@ -169,19 +103,21 @@ Work GitHub issue #<n> in <owner/repo>: <title>
 <the note, the approved plan, the root cause traced in triage — whatever applies>
 ```
 
-`BLOCKED: <question>` comes back — **100% confident** from the conversation or the issue → answer it and resume the same agent with `SendMessage` so its context survives. **Anything less** → put the question to Josh verbatim with the context needed to answer it; don't soften it, don't answer around it, don't hand him a guess to confirm.
+`BLOCKED:` → 100% confident from the conversation or issue → answer and resume the same agent with `SendMessage`. Anything less → put the question to Josh verbatim with the context to answer it; no softening, no guess for him to confirm.
 
 Scope expands past the issue → stop and ask about a new issue.
 
-### Step 8: Run the gate
+The change is what the issue needs plus the minimum prerequisite that keeps its invariant, including any consumer or sibling the change itself would break; a sibling is otherwise in scope only when the issue asks. Findings outside the issue, cosmetic slips outside the touched lines included, are dropped without mention. A defect the issue doesn't need stays out, however small: don't fix it, and don't draft an issue for it unless asked.
 
-The project defines a `team-review` skill → invoke it yourself as the gate; it's a skill, not an agent to dispatch. Otherwise dispatch a `reviewer` agent with the list of changed files, the issue URL, and the implementer's claims quoted verbatim.
+### Step 6: Run the gate
 
-- **Code findings** → back to the implementer via `SendMessage`. All of them, no cherry-picking. If one looks wrong, dispatch an agent to check it before dismissing it.
-- **Claims findings** → to Josh, in your own message: in full when it bears on the topic open with him, otherwise first once that topic is concluded.
+If the project defines a `team-review` skill, invoke it yourself (a skill, not an agent).
 
-One pass: the implementer fixes every finding, then the work goes to Josh. No second reviewer. **Tests failing means the issue isn't done** — it does not go to Josh with a caveat.
+- **Code findings** → the implementer via `SendMessage`. All of them. One that looks wrong gets checked by a dispatched agent before it's dismissed.
+- **Claims findings** → Josh, in your own message: in full when it bears on the open topic, otherwise first once that topic concludes.
 
-### Step 9: Present and stop
+One pass, then the work goes to Josh. Tests failing means the issue isn't done — it doesn't go to Josh with a caveat.
 
-Hand it over like a colleague would — a short plain-language paragraph, not a file listing. Then **stop** and wait for review. Changes requested → implementer via `SendMessage`, feedback verbatim, then back through steps 8 and 9.
+### Step 7: Present and stop
+
+A short plain-language paragraph, not a file listing. Then stop and wait for review. Changes requested → implementer via `SendMessage`, feedback verbatim, then Steps 6 and 7 again.

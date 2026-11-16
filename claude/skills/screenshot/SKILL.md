@@ -6,38 +6,20 @@ user-invocable: false
 
 # Screenshot
 
-This is a general visual-capture tool: reach for it whenever seeing the rendered result would help. Verifying that code does what you expect by looking at the result rather than spinning up a test suite, confirming a change renders, capturing a bug repro, grabbing a visual for a PR or a message — any reason a rendered visual is useful. The output is a PNG.
+Generic engine: the runner `screenshot.mjs` (next to this file) plus a throwaway driver you write. Project specifics (auth, seeding, dev URL, framework state tricks) belong in that project's own `taking-screenshots` skill, not here.
 
-This skill is the generic engine: a reusable runner (`screenshot.mjs`) plus a per-shot driver you write. Project-specific setup — auth, seeding, the dev URL, framework-specific state tricks — lives in a project's own `taking-screenshots` skill that references this one and layers those specifics on top. Keep that customization out of here.
+**Prerequisite:** `playwright` in the project's `node_modules`; the runner resolves it from the cwd. Assume it's there if the project documents screenshots. Any reachable URL works, including localhost with self-signed certs.
 
----
+## Runner behavior
 
-## Prerequisites
+- Headless Chromium, default viewport 1400x1100.
+- `ignoreHTTPSErrors` is set at context creation and can't be changed.
+- Page errors and console errors are echoed to stdout.
+- One driver → one PNG. Don't edit the runner.
 
-The only real prerequisite is that `playwright` is installed in the project's `node_modules` — the runner is run from the project root and resolves it from there. Assume it is if the project documents screenshots.
+## Driver
 
-The driver navigates to whatever URL you give it. Any URL that resolves works — a deployed site, a local dev server, anything reachable. `ignoreHTTPSErrors` covers local self-signed certs, so localhost works too.
-
----
-
-## The runner
-
-`screenshot.mjs` (alongside this skill) launches headless Chromium, imports your driver, runs it against a `page`, and writes one PNG. You don't edit it — you write a driver and pass it in.
-
-Fixed behavior worth knowing:
-
-- Default viewport is 1400x1100.
-- `ignoreHTTPSErrors` is on at context creation (can't be changed later), so local self-signed certs work without extra setup.
-- Page errors and console errors are echoed to stdout, so a broken page shows up in the run output.
-- One driver produces one screenshot.
-
----
-
-## Write a driver
-
-A driver is a throwaway `*.mjs` in the project root that default-exports `async (page) => {}`. It owns everything about reaching the target state — it hardcodes its own URL, does its own navigation and waiting, and can call `page.setViewportSize()` for a non-default viewport.
-
-Minimal viewport shot:
+A throwaway `*.mjs` in the project root that default-exports `async (page) => {}`. It hardcodes its URL, navigates, waits, and may call `page.setViewportSize()`. Return value is ignored.
 
 ```js
 export default async (page) => {
@@ -46,51 +28,31 @@ export default async (page) => {
 };
 ```
 
-A driver that never calls `page.capture()` gets a viewport shot — what you'd get screenshotting a page by hand. To customize, call `page.capture()` — it's a side-effect setter the runner injects, and you only need it when customizing:
+Without `page.capture()` you get a viewport shot. The runner injects `page.capture()` as a setter to customize:
 
 ```js
-export default async (page) => {
-  await page.goto('https://example.com/settings', { waitUntil: 'networkidle' });
-  page.capture({ selector: '#panel' });   // element shot
-  // page.capture({ clip: { x: 0, y: 0, width: 800, height: 600 } });  // region
-  // page.capture({ fullPage: true });     // the whole page
-};
+page.capture({ selector: '#panel' });                              // element
+page.capture({ clip: { x: 0, y: 0, width: 800, height: 600 } });  // region
+page.capture({ fullPage: true });                                  // whole page
 ```
 
-The driver's return value is ignored.
+## Run
 
----
-
-## Invoke
-
-Run from the project root:
+From the project root:
 
 ```bash
 node ~/.claude/skills/screenshot/screenshot.mjs ./shot.mjs [outPath]
 ```
 
-The out-path defaults to an auto-timestamped file under `/tmp`. Pass a second argument to override it.
+`outPath` defaults to a timestamped file under `/tmp`.
 
----
+## Clipboard
 
-## Copy to clipboard
-
-If the screenshot needs to be on the clipboard (e.g. to paste into a PR or a message), use `osascript`:
+`pbcopy` copies only the path. For the image:
 
 ```bash
 osascript -e 'set the clipboard to (read (POSIX file "/tmp/out.png") as «class PNGf»)'
+osascript -e 'clipboard info'   # verify: output leads with «class PNGf» and a byte count
 ```
 
-Verify it landed — the output should lead with `«class PNGf»` and a byte count:
-
-```bash
-osascript -e 'clipboard info'
-```
-
-`pbcopy` is text-only and copies the file path, not the image, so it won't work here.
-
----
-
-## Clean up
-
-Delete the throwaway driver script when it's no longer needed so it doesn't pollute the working tree.
+Delete the driver when done.

@@ -1,0 +1,64 @@
+# Words and expressions commonly misused
+
+Strunk, _The Elements of Style_ (1918), Section V. Some entries are plain errors, some disfavored, some good words that intrude where they don't belong. When one slips in, recast the sentence rather than swapping a word.
+
+- **All right:** two words. Fine as a detached "Agreed"/"Go ahead"; otherwise avoid.
+- **As good or better than:** rearrange: "as good as his, or better."
+- **As to whether:** *whether* suffices.
+- **Bid:** infinitive without *to*; past tense "ordered" is *bade*.
+- **But:** unnecessary after *doubt* and *help* ("no doubt that"; "could not help seeing"). A loose *but* sentence can become a periodic *although* sentence. Don't stack one *but* contrast on another.
+- **Can:** means "is able"; not a substitute for *may*.
+- **Case:** usually unnecessary. "In many cases, the rooms were poorly ventilated" → "Many of the rooms were poorly ventilated."
+- **Certainly:** not an all-purpose intensifier.
+- **Character, nature:** often redundant. "Acts of a hostile character" → "Hostile acts." *Nature* is also vague ("poems about nature") without specifics.
+- **Claim:** means "lay claim to"; not a substitute for *declare*, *maintain*, *charge*.
+- **Clever:** overused; keep for ingenuity in small matters.
+- **Compare to / with:** *to* for resemblances between things of different orders (life to a pilgrimage); *with* for differences between things of the same order (Congress with Parliament).
+- **Consider:** no *as* when it means "believe to be."
+- **Data:** plural. "These data were tabulated."
+- **Dependable:** use *reliable*, *trustworthy*.
+- **Different than:** use *different from*, *other than*, *unlike*.
+- **Divided into:** not for *composed of* (plays are divided into acts; poems are composed of stanzas).
+- **Don't:** = do not; "does not" is *doesn't*.
+- **Due to:** must attach to a noun ("losses due to fire"), not stand for *because of* adverbially ("lost, due to carelessness").
+- **Effect:** noun = result; verb = bring about (vs *affect*, influence). Avoid vague "a charming effect."
+- **Etc.:** only when the reader isn't left in doubt about anything important; never after *such as* or *for example*.
+- **Fact:** only for directly verifiable matters, not judgments. Revise out *the fact that*.
+- **Factor, feature:** hackneyed; say what actually happened. "Training was the great factor in his winning" → "He won by being better trained." *Feature* as an advertising verb: avoid.
+- **Fix:** in writing, *fasten*, not *arrange*/*mend*.
+- **Folk:** collective, singular form only.
+- **Get:** not *have got* for *have*; participle *got*.
+- **He is a man who:** redundant. "He is a man who is very ambitious" → "He is very ambitious."
+- **However:** meaning *nevertheless*, not first in its clause ("At last, however, we..."). First, it means "in whatever way / to whatever extent."
+- **Interesting:** don't announce it; make it so.
+- **Kind of, sort of:** not for *rather* or *something like*; literal sense only.
+- **Less / fewer:** *less* for quantity, *fewer* for number. "Less than a hundred" is fine (round number as amount).
+- **Like:** governs nouns and pronouns; use *as* before clauses ("as I did").
+- **Line, along these lines:** overworked; drop it.
+- **Literally:** not for exaggeration ("literally dead with fatigue").
+- **Lose out, try out, win out, sign up:** the particle adds nothing; contrast idioms like *find out*, *dry up*.
+- **Most:** not for *almost* ("almost everybody").
+- **Near by:** prefer *near*; as adjective use *neighboring*.
+- **Oftentimes:** use *often*.
+- **One hundred and one:** keep the *and*.
+- **One of the most:** threadbare opener. In a following relative clause, the verb is plural ("one of the ablest men that have").
+- **Participle for verbal noun:** use the possessive: "my asking," "the Senate's accepting." Recast when the possessive is clumsy.
+- **People:** political term; *the public* for audiences and customers.
+- **Phase:** a stage of development; not *aspect* or *topic*.
+- **Possess:** not a substitute for *have* or *own*.
+- **Prove:** past participle *proved*.
+- **Respective, respectively:** usually omit.
+- **Shall / will:** *shall* for first-person future belief, *will* for second and third; *I will* expresses determination.
+- **So:** not an intensifier ("so good").
+- **Split infinitive:** avoid ("to inquire diligently").
+- **State:** means express fully; not a substitute for *say*.
+- **Student body:** *students*.
+- **System:** often needless ("the dormitory system" → dormitories).
+- **Thanking you in advance:** write "Will you please" and thank them later.
+- **They:** singular *he* after each, everybody, anybody, someone, unless the antecedent is feminine.
+- **Very:** sparingly; use words strong in themselves.
+- **Viewpoint:** write *point of view*, and not for *view* or *opinion*.
+- **While:** not a loose substitute for *and*/*but* (use a semicolon). As *although* only where unambiguous; best kept to "during the time that."
+- **Whom:** *who* when it's the subject of a following verb ("who he said would send").
+- **Worth while:** only of actions; never before a noun.
+- **Would:** first-person conditional takes *should*; indirect *shall* becomes *should*. For habitual action, plain past ("he visited") beats *would visit*.

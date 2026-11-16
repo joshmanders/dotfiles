@@ -1,12 +1,12 @@
 ---
 name: bin-scripts
-description: Use when performing git operations, running Laravel/Composer commands, managing local dev sites, or killing processes on ports. Custom scripts in your PATH provide shortcuts for common workflows.
+description: Use when performing git operations, running Laravel/Composer commands, managing local dev sites, running per-project processes, or killing processes on ports. Custom PATH scripts shortcut these workflows.
 user-invocable: false
 ---
 
 # Bin Scripts
 
-Custom shell scripts available on your PATH for common development workflows.
+Custom scripts on PATH.
 
 ## Committing
 
@@ -52,7 +52,7 @@ Custom shell scripts available on your PATH for common development workflows.
 | `git-tidy`    | `git tidy`    | Delete local branches merged/deleted on remote    |
 | `git-publish` | `git publish` | Push with `-u origin <branch>`                    |
 
-**Note:** `git-publish` pushes to remote. AI cannot execute push commands per workflow rules.
+`git-publish` pushes, so AI doesn't run it.
 
 ## Project Helpers
 
@@ -61,7 +61,7 @@ Custom shell scripts available on your PATH for common development workflows.
 | `artisan` | `artisan migrate` | Run Laravel artisan from any subdirectory    |
 | `cpx`     | `cpx pint`        | Composer Package eXecuter (like npx for PHP) |
 
-`cpx` searches for vendor/bin commands up the directory tree, falls back to composer scripts, then global composer bin.
+`cpx` looks for vendor/bin commands up the tree, then composer scripts, then global composer bin.
 
 ## Utilities
 
@@ -71,9 +71,8 @@ Custom shell scripts available on your PATH for common development workflows.
 | `concierge` | `concierge add mysite` | Manage local Caddy dev sites       |
 | `git-issue` | `git issue 123`        | Create branch from GitHub issue    |
 
-**git-issue requirements:** Needs `DOTFILES_GITHUB_USERNAME` env var. Creates branch like `FEATURE-123` or `BUG-123` based on issue labels.
-
-**concierge commands:** `add <name>`, `remove <name>`, `list`. Optional `--ip <addr>` for X-Forwarded-For testing.
+- `git-issue` needs `DOTFILES_GITHUB_USERNAME`; names the branch `FEATURE-123` or `BUG-123` from issue labels.
+- `concierge`: `add <name>`, `remove <name>`, `list`; `--ip <addr>` for X-Forwarded-For testing.
 
 ## Per-cwd Process Runner
 
@@ -82,30 +81,11 @@ Custom shell scripts available on your PATH for common development workflows.
 | `solo` | `solo`              | Launch the TUI for the current directory                          |
 | `solo` | `solo rekey [hash]` | Rename configs to match their `directory:` field (all if no hash) |
 
-**solo:** React/Bun TUI on `@opentui/react` + `node-pty`. Each cwd has its own YAML at `~/.config/solo/<sha1(cwd)>.yaml`, listing the commands to run for that project — dev server, queue worker, log tail, etc. Tabbed UI: one tab per command, full-width output pane per tab, start/stop/restart/clear from the bottom bar. First run in a new directory opens the **Add command** wizard.
-
-## tmux Session Management
-
-| Script | Usage                    | Purpose                                                                             |
-| ------ | ------------------------ | ----------------------------------------------------------------------------------- |
-| `mux`  | `mux`                    | Create/attach session for CWD                                                       |
-| `mux`  | `mux my-session`         | Override the derived session name (CWD not yet registered)                          |
-| `mux`  | `mux list`               | List all registered sessions                                                        |
-| `mux`  | `mux show [name]`        | Show saved panes and layout (defaults to CWD's session)                             |
-| `mux`  | `mux title [name]`       | Set display title for CWD's session; no name prints it                              |
-| `mux`  | `mux copy <name>`        | Copy a session's saved pane layout to CWD's entry, without commands                 |
-| `mux`  | `mux delete [name]`      | Remove session from registry, then kill it if running (defaults to CWD's session)   |
-| `mux`  | `mux kill [name]`        | Kill running session, keep its registry entry (defaults to CWD's session)           |
-| `mux`  | `mux tab <name> [path]`  | Create/switch to a named tab in current session                                     |
-| `mux`  | `mux tab:show [session]` | List tabs in a session (defaults to current)                                        |
-| `mux`  | `mux tab:kill [name]`    | Remove a tab from registry, kill its window if running (defaults to current window) |
-| `mux`  | `mux tab:at <path>`      | Create a tab from a path; name = basename of path                                   |
-
-Each project directory gets its own session, named `<parent>-<dir>` in lowercase with `.` and `:` replaced by `-` (e.g. `~/Code/primcloud/platform` → session `primcloud-platform`); a directory directly under `$HOME` uses its own name alone (`~/.files` → `files`). The primary window takes the session's name, and `mux <name>` names both `<name>`. `show`, `copy`, `delete`, `kill` and `tab:show` accept the session name or `parent:child` (`primcloud:platform`). Pane layouts and running commands are saved by tmux hooks and restored the next time `mux` creates the session. Each session has a primary window (the project itself) plus any tabs the user adds — tabs are saved in the registry and restored with the session. Inside a registered session, `mux` from any other directory opens a tab named `<parent>-<dir>`; from the session's own directory it selects the primary window.
+TUI (Bun, `@opentui/react` + `node-pty`). Each cwd's commands (dev server, queue worker, log tail…) live in `~/.config/solo/<sha1(cwd)>.yaml`. One tab per command with start/stop/restart/clear; first run in a new directory opens the **Add command** wizard.
 
 ## Not Documented
 
-Scripts excluded from this skill (niche, interactive, or dangerous):
+Excluded on purpose:
 
-- `git-yolo`, `git-obliterate`, `git-rekt`, `git-squash` — Push or history rewriting
-- `hiroshima`, `git-redate`, `git-repl`, `edit` — Niche or interactive
+- `git-yolo`, `git-obliterate`, `git-rekt`, `git-squash`: push or history rewriting
+- `hiroshima`, `git-redate`, `git-repl`, `edit`: niche or interactive
