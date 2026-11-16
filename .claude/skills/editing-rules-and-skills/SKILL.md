@@ -13,11 +13,11 @@ user-invocable: false
 
 If unsure, ask: "Is this you correcting a behavior, or you wanting me to know about a capability?"
 
-Most global skills are informative; most flat behavioral rules are correction-driven.
+Most global skills are informative; most global behavioral rules are correction-driven.
 
 ## Scope
 
-- The flat behavioral rules in `claude/CLAUDE.md`
+- The behavioral rules in `claude/CLAUDE.md`
 - The code-authoring standards in `claude/agents/implementer.md`
 - Project rules, as sections in the project `CLAUDE.md`
 - Any skill file, global or project

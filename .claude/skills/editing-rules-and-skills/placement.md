@@ -2,24 +2,24 @@
 
 Two questions, independent of voice:
 
-1. Which home does a behavioral lesson land in: the flat list or an agent def?
+1. Which home does a behavioral lesson land in: a section of `claude/CLAUDE.md` or an agent def?
 2. Which tree does a rule or skill belong in: global or project?
 
 ## Homes for a behavioral lesson
 
-- **How the session works** → a bullet in the flat list in `claude/CLAUDE.md`.
+- **How the session works** → a bullet under the matching heading in `claude/CLAUDE.md`.
 - **How code gets authored** (cleanup, tests, docs) → prose in `claude/agents/implementer.md`, matching its existing prose.
 
-## The flat list
+## The global rules
 
-The global rules are one flat bullet list in `claude/CLAUDE.md`, after the `---`, with no headings. It's short and loosely grouped by topic (agent orchestration, verification, commits, git safety, posting, and similar), with no hard boundaries or priority tiers. Place a new item next to existing items on the same topic. Never hardcode a count.
+The global rules in `claude/CLAUDE.md` are bullets grouped under short `##` topic headings (agents, verification, git and commits, destructive actions, posting, and similar), with no priority tiers. Place a new item under the heading for its topic; add a heading only when no existing one fits. Never hardcode a count.
 
 Each item:
 
 - One or two imperative sentences, one concern
 - "the user", never "Josh"; these rules ship to every project
 - `master`, never `main`
-- No heading, Why/How block, or separator
+- No Why/How block or separator
 
 ## The two trees
 
@@ -49,7 +49,7 @@ Project content in global adds noise to every other project. Global content in p
 
 | Path                | Purpose                                              |
 | ------------------- | ---------------------------------------------------- |
-| `CLAUDE.md`         | Global instructions and the flat rules list          |
+| `CLAUDE.md`         | Global instructions; rules under topic headings       |
 | `agents/*.md`       | Subagent definitions; code-authoring standards       |
 | `skills/*/SKILL.md` | Capability skills                                    |
 
