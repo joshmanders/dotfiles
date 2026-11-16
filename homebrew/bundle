@@ -31,7 +31,6 @@ brew "php", restart_service: :changed
 brew "ripgrep"
 brew "rust"
 brew "trash", link: true
-brew "tmux"
 brew "tree"
 brew "tree-sitter-cli"
 brew "wget"

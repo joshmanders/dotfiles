@@ -22,7 +22,6 @@ PATH="${PATH}:${DOTFILES}/bin"
 | `killport`  | Kill process on a specified port                                                |
 | `hiroshima` | Nuke all Docker containers and prune system                                     |
 | `edit`      | Open files/configs in editor                                                    |
-| `mux`       | tmux session orchestrator (CWD-aware)                                           |
 | `solo`      | Per-cwd process-runner TUI (Bun/React; see [solo/README.md](../solo/README.md)) |
 
 ### Git Workflow

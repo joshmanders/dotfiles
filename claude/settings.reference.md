@@ -286,7 +286,6 @@ Managed (MDM/policy) > CLI flags > Local (.claude/settings.local.json)
 - **Type:** `"auto" | "iterm2" | "iterm2_with_bell" | "terminal_bell" | "kitty" | "ghostty" | "notifications_disabled"`
 - **Default:** `"auto"` (detects terminal)
 - **Purpose:** Preferred OS notification channel for task-complete and attention-needed alerts.
-- **Gotcha:** In tmux, progress bars and notifications require `set -g allow-passthrough on`.
 
 ### `terminalProgressBarEnabled`
 

@@ -94,7 +94,6 @@ concierge add
 ├── ripgrep/           # Ripgrep config
 ├── solo/              # Process-runner TUI (Bun/React)
 ├── ssh/               # SSH configuration
-├── tmux/              # Terminal multiplexer
 ├── config.sh.example  # Config template (copy to config.sh)
 ├── install.sh         # Main installer
 └── README.md          # This file
@@ -135,7 +134,6 @@ bash claude/install.sh      # Just Claude Code config and Claude desktop app pre
 bash solo/install.sh        # Just solo TUI (configs symlink + bun install)
 bash lazygit/install.sh     # Just Lazygit config
 bash neovim/install.sh      # Just Neovim config
-bash tmux/install.sh        # Just tmux config
 bash rex/install.sh         # Just Rex config and preferences
 bash ghostty/install.sh     # Just Ghostty config
 bash macos/install.sh       # Just macOS system preferences
@@ -175,7 +173,6 @@ Each directory has its own README with detailed documentation:
 - [ripgrep/README.md](ripgrep/README.md) - Ripgrep
 - [solo/README.md](solo/README.md) - Process-runner TUI (per-cwd command set)
 - [ssh/README.md](ssh/README.md) - SSH configuration
-- [tmux/README.md](tmux/README.md) - Terminal multiplexer
 
 ## Key Commands
 

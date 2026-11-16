@@ -36,7 +36,7 @@ const { App } = await import("./App.js");
 
 // OpenTUI's default exit signals. Its own listener for them only destroys the
 // renderer, which cancels the default terminate action and leaves solo alive
-// with its children (SIGHUP is what closing the tmux pane sends). solo takes
+// with its children (SIGHUP is what closing the terminal sends). solo takes
 // them all over instead and stops every child before exiting.
 const EXIT_SIGNALS: NodeJS.Signals[] = [
   "SIGHUP",

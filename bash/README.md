@@ -18,7 +18,6 @@ Modern bash setup with a customizable prompt and enhanced navigation.
 | `exports.sh`    | Environment variables (EDITOR, etc.)      |
 | `path.sh`       | PATH configuration (keeps Rex's CLI)      |
 | `aliases.sh`    | Shell aliases                             |
-| `functions.sh`  | Shell functions (e.g. `exit` pane guard)  |
 | `plugins.sh`    | Plugin initialization (fzf, zoxide)       |
 | `completion.sh` | Tab completions (kubectl, gh, etc.)       |
 | `prompt.sh`     | oh-my-posh prompt initialization          |

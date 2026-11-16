@@ -44,7 +44,6 @@ Install via Homebrew (included in `homebrew/bundle`):
 | `<leader>w`        | Close buffer          |
 | `<leader>W`        | Close all buffers     |
 | `<leader>q`        | Quit all              |
-| `Ctrl+h/j/k/l`    | Navigate windows/tmux |
 | `[b` / `]b`        | Previous/next buffer  |
 | `Ctrl+d/u`         | Scroll down/up        |
 | `Esc`              | Clear search          |
@@ -125,7 +124,6 @@ cursor, tap again to dismiss. `<leader>.` then offers fixes for whatever it show
 | which-key.nvim      | Keybinding discovery (press `,`, wait)    |
 | Comment.nvim        | Toggle comments (`gcc` line, `gc` visual) |
 | nvim-autopairs      | Auto-close brackets                       |
-| vim-tmux-navigator  | Seamless tmux pane navigation             |
 | todo-comments.nvim  | Highlight TODO/FIXME/NOTE                 |
 | render-markdown.nvim| Inline markdown rendering                 |
 | laravel.nvim        | Laravel artisan, routes, resources        |
