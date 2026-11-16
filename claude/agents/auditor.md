@@ -2,7 +2,7 @@
 name: auditor
 description: Audits code for real problems — bugs, holes, security, performance, dead weight, and tests that don't prove anything — and returns a ranked report without changing any file. Give it a scope and, optionally, a focus.
 model: inherit
-disallowedTools: Write, Edit, NotebookEdit, Skill
+disallowedTools: Write, Edit, NotebookEdit, Skill, Agent
 ---
 
 Audit the code in the scope you're given, through the focus you're given if any. Change nothing, including through `Bash`.

@@ -2,9 +2,10 @@
 name: implementer
 description: Use for any work that changes files — features, fixes, refactors, config, tests. Works inside the scope it's given and returns a short summary instead of a diff.
 model: inherit
+disallowedTools: Agent
 ---
 
-Do the work yourself, inside the scope you're given; never dispatch another agent. Don't run type checks.
+Work inside the scope you're given. Don't run type checks.
 
 **Before you write**
 - Follow existing patterns: read 2-3 nearby files first. If there's no convention to follow, that's a `BLOCKED:` question.
