@@ -6,11 +6,15 @@ Use when tests have arbitrary delays, flake under load or in parallel, or wait o
 
 Replace `sleep(50ms)` with `waitFor(condition, description, timeout)`: an event arrived, state is ready, a count reached N, a file exists.
 
-`waitFor`, if the test framework lacks one:
+## Writing `waitFor`
+
+If the test framework lacks one:
 
 1. Evaluate the condition; if truthy, return it.
 2. If elapsed time exceeds the timeout, fail with "Timeout waiting for <description> after <timeout>".
 3. Sleep ~10ms and repeat.
+
+Rules:
 
 - Poll every ~10ms, not 1ms.
 - Always time out with a clear error.

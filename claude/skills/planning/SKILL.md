@@ -35,7 +35,9 @@ Track a created issue as session context (`Active Issue: #123 - <title>`, `Repo:
 
 No session-specific debugging context — a particular customer's setup, a one-off repro, a mechanism that only mattered while diagnosing. Frame the general case. No `## Scope` section; the concept doesn't exist here.
 
-**Leaf** (Task, Bug, Feature — anything resolved in one PR): Summary + Acceptance Criteria.
+### Leaf
+
+Task, Bug, Feature — anything resolved in one PR. Body: Summary + Acceptance Criteria.
 
 ```bash
 ISSUE_URL=$(gh issue create \
@@ -54,7 +56,9 @@ echo "$ISSUE_URL"
 
 Acceptance criteria are the source of truth for done: verifiable outcomes, not tasks. Don't list tests passing.
 
-**Tracker** (Epic, any parent grouping sub-issues): Summary only — what the initiative achieves and why, plus constraints spanning all children. No acceptance criteria; those live on the children. Same command with only `## Summary` in the body.
+### Tracker
+
+Epic, any parent grouping sub-issues. Body: Summary only — what the initiative achieves and why, plus constraints spanning all children. No acceptance criteria; those live on the children. Same command with only `## Summary` in the body.
 
 ## Multiple issues
 

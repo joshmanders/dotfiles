@@ -288,7 +288,7 @@ Look for clusters, not isolated hits. Don't gut legitimate prose for:
 
 Apply to any prose a human will read, inside the same loop. `usage.md` holds Strunk's misused-words list (Section V); consult it for specific usage questions.
 
-**Usage**
+### Usage
 
 1. Possessive singular takes 's whatever the final consonant: Charles's, Burns's. Exceptions: ancient names in -es/-is, Jesus', for conscience' sake. Pronoun possessives (hers, its, theirs) take no apostrophe.
 2. Serial comma: red, white, and blue. Firm names omit it (Brown, Shipley & Co.).
@@ -298,7 +298,7 @@ Apply to any prose a human will read, inside the same loop. `usage.md` holds Str
 6. Don't break sentences in two ("He was an interesting talker. A man who had traveled..."). A deliberate emphatic fragment is allowed only when the emphasis is warranted.
 7. An opening participial phrase must refer to the subject. Wrong: "On arriving in Chicago, his friends met him." Right: "When he arrived in Chicago, his friends met him."
 
-**Composition**
+### Composition
 
 8. One paragraph per topic. Single-sentence paragraphs only for transitions or in reference text; new paragraph per speaker in dialogue.
 9. Open each paragraph with a topic sentence; develop it; end on its point or consequence, never a digression.
