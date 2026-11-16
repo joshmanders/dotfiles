@@ -45,6 +45,9 @@ declare -A SAMPLES
 # --- git ---
 SAMPLES["git commit --amend"]="git commit --amend -m 'x'"
 SAMPLES["git push (--force|-f) origin (main|master)"]="git push --force origin main"
+SAMPLES['^git +(commit|push)( +[^ ]+)* +--no-verify']="git commit -m x --no-verify"
+SAMPLES['^git +(rebase|add|clean)( +[^ ]+)* +(-i|--interactive)( |$)']="git rebase -i HEAD~3"
+SAMPLES['^git +-[Cc] ']="git -C /tmp status"
 SAMPLES["git reset --hard origin/(main|master)"]="git reset --hard origin/master"
 
 # --- filesystem destruction: rm ---
@@ -174,6 +177,18 @@ fi
 # Separator tests: a ^-anchored pattern must still fire when the
 # dangerous command sits after a shell command separator.
 # ============================================================
+printf '\n== Git rules ==\n'
+block 'git push --no-verify origin feature'
+block 'git commit --no-verify -m x'
+block 'git add -i'
+block 'git add --interactive'
+block 'git clean -i'
+block 'git -c user.name=x commit -m y'
+block 'cd /tmp && git -C repo log'
+allow 'git push origin master'
+allow 'git grep -i foo'
+allow 'git log -i --grep=fix'
+
 printf '\n== Separator bypass ==\n'
 
 block 'cd /Users/mockuser/project && rm -rf /Users/mockuser/project/thing'
